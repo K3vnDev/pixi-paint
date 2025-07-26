@@ -1,3 +1,9 @@
+import { PaintCanvas } from '@/components/PaintCanvas'
+
 export default function Home() {
-	return <h1>Pixi Paint</h1>
+	return (
+		<main className='w-screen h-dvh flex justify-center items-center'>
+			<PaintCanvas />
+		</main>
+	)
 }
