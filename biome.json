@@ -10,7 +10,7 @@
 	},
 	"formatter": {
 		"enabled": true,
-		"indentStyle": "tab",
+		"indentStyle": "space",
 		"lineWidth": 110
 	},
 	"linter": {
@@ -24,7 +24,8 @@
 				"noSvgWithoutTitle": "off",
 				"noAutofocus": "off",
 				"noLabelWithoutControl": "off",
-				"useValidAriaRole": "off"
+				"useValidAriaRole": "off",
+				"noStaticElementInteractions": "off"
 			},
 			"suspicious": {
 				"noArrayIndexKey": "off",

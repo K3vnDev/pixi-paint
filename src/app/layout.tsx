@@ -3,35 +3,35 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 
 const geistSans = Geist({
-	variable: '--font-geist-sans',
-	subsets: ['latin']
+  variable: '--font-geist-sans',
+  subsets: ['latin']
 })
 
 const geistMono = Geist_Mono({
-	variable: '--font-geist-mono',
-	subsets: ['latin']
+  variable: '--font-geist-mono',
+  subsets: ['latin']
 })
 
 export const metadata: Metadata = {
-	title: 'Pixi Paint',
-	description: 'A cool 16x pixel art paint tool.'
+  title: 'Pixi Paint',
+  description: 'A cool 16x pixel art paint tool.'
 }
 
 export default function RootLayout({
-	children
+  children
 }: Readonly<{
-	children: React.ReactNode
+  children: React.ReactNode
 }>) {
-	return (
-		<html lang='en'>
-			<body
-				className={`
+  return (
+    <html lang='en'>
+      <body
+        className={`
 					${geistSans.variable} ${geistMono.variable} antialiased
-					bg-gray-900
+					bg-gray-900 overflow-hidden
 				`}
-			>
-				{children}
-			</body>
-		</html>
-	)
+      >
+        {children}
+      </body>
+    </html>
+  )
 }
