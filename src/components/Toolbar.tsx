@@ -1,27 +1,39 @@
-import { MODES } from '@/consts'
+'use client'
+
+import { MODES } from '@consts'
+import type { ToolbarItem } from '@types'
 import { usePaintStore } from '@/store/usePaintStore'
 
 export const ToolBar = () => {
-	const setMode = usePaintStore(s => s.setMode)
+  const items: ToolbarItem[] = [
+    {
+      name: 'Paint',
+      mode: MODES.PAINT
+    },
+    {
+      name: 'Erase',
+      mode: MODES.ERASE
+    }
+  ]
 
-	const items = [
-		{
-			name: 'Paint',
-			mode: MODES.PAINT
-		},
-		{
-			name: 'Erase',
-			mode: MODES.ERASE
-		}
-	]
+  return (
+    <aside className='absolute flex flex-col left-8 gap-4'>
+      {items.map(item => (
+        <Item {...item} key={item.mode} />
+      ))}
+    </aside>
+  )
+}
 
-	return (
-		<aside>
-			{items.map(({ name, mode }, i) => (
-				<button onClick={() => setMode(mode)} key={i}>
-					{name}
-				</button>
-			))}
-		</aside>
-	)
+const Item = ({ name, mode }: ToolbarItem) => {
+  const setMode = usePaintStore(s => s.setMode)
+  const handleClick = () => {
+    setMode(mode)
+  }
+
+  return (
+    <button className='bg-blue-400 size-24 button' onClick={handleClick}>
+      {name}
+    </button>
+  )
 }

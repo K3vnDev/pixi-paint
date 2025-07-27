@@ -1,3 +1,10 @@
+import type { MODES } from '@consts'
+
 export interface Pixel {
-	color: string
+  color: string
+}
+
+export interface ToolbarItem {
+  name: string
+  mode: MODES
 }

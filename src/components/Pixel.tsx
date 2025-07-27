@@ -11,7 +11,7 @@ export const Pixel = ({ color, index }: Props) => {
       data-pixel-index={index}
     >
       <div
-        className='size-full transition duration-75 rounded-[1.5px] pointer-events-none'
+        className='size-full transition duration-[50ms] rounded-[1.5px] pointer-events-none'
         style={{ background: color }}
       >
         {index}
