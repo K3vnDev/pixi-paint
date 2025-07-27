@@ -27,12 +27,16 @@ export const ToolBar = () => {
 
 const Item = ({ name, mode }: ToolbarItem) => {
   const setMode = usePaintStore(s => s.setMode)
+  const selectedMode = usePaintStore(s => s.mode)
+
   const handleClick = () => {
     setMode(mode)
   }
 
+  const outline = selectedMode === mode ? 'outline-4 outline-white' : ''
+
   return (
-    <button className='bg-blue-400 size-24 button' onClick={handleClick}>
+    <button className={`bg-blue-400 size-24 button ${outline}`} onClick={handleClick}>
       {name}
     </button>
   )

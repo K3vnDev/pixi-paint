@@ -1,5 +1,3 @@
-'use client'
-
 import { PIXEL_ART_RES } from '@consts'
 import { useCanvas } from '@/hooks/useCanvas'
 import { Pixel } from './Pixel'
@@ -12,7 +10,6 @@ export const PaintCanvas = () => {
     <div
       className='content-center size-[700px] grid'
       style={{ gridTemplateColumns }}
-      onDragStart={e => e.preventDefault()}
       draggable={false}
       ref={canvasRef}
     >
