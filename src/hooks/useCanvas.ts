@@ -6,21 +6,23 @@ import { usePaintStore } from '@/store/usePaintStore'
 export const useCanvas = () => {
   const canvas = usePaintStore(s => s.canvas)
   const setCanvas = usePaintStore(s => s.setCanvas)
-  const draft = useCanvasStore(s => s.draft)
 
   const setCanvasPixel = usePaintStore(s => s.setCanvasPixel)
   const selectedColor = usePaintStore(s => s.color)
   const bgColor = usePaintStore(s => s.bgColor)
   const mode = usePaintStore(s => s.mode)
 
+  const draft = useCanvasStore(s => s.draft)
+  const hydrated = useCanvasStore(s => s.hydrated)
+
   const canvasRef = useRef<HTMLDivElement | null>(null)
 
+  // Load draft canvas // TODO: IMPROVE
   useEffect(() => {
-    if (canvas.length === 0) {
-      console.log({ canvas, draft })
+    if (canvas.length === 0 && hydrated) {
       setCanvas(draft.pixels)
     }
-  }, [])
+  }, [hydrated])
 
   useEffect(() => {
     // Triggered on move and click

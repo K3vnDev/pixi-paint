@@ -2,7 +2,7 @@
 
 import { MODES } from '@consts'
 import type { ToolbarItem } from '@types'
-import { useSaveCanvas } from '@/hooks/useSaveCanvas'
+import { useSaveCanvases } from '@/hooks/useSaveCanvases'
 import { usePaintStore } from '@/store/usePaintStore'
 
 export const ToolBar = () => {
@@ -45,7 +45,7 @@ const Item = ({ name, mode }: ToolbarItem) => {
 }
 
 const SaveState = () => {
-  const { isDraft, newSave, newDraft } = useSaveCanvas()
+  const { isDraft, newSave, newDraft } = useSaveCanvases()
 
   const handleClick = () => {
     if (isDraft) {
