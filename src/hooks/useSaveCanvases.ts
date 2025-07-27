@@ -68,5 +68,5 @@ export const useSaveCanvases = () => {
     }
   }, [editingPixels])
 
-  return { isDraft, createNewSave, createNewDraft, savedCanvases, draft }
+  return { isDraft, createNewSave, createNewDraft, savedCanvases, draft, hydrated }
 }

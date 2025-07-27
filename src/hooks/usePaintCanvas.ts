@@ -19,15 +19,23 @@ export const usePaintCanvas = () => {
 
   const canvasRef = useRef<HTMLDivElement | null>(null)
 
+  const pixelsRef = useRef(pixels)
+  useEffect(() => {
+    pixelsRef.current = pixels
+  }, [pixels])
+
   useEffect(() => {
     if (!hydrated) return
 
+    // Check if the user left an open canvas
     const foundCanvas = savedCanvases.find(c => c.id === editingCanvasId)
     if (foundCanvas) {
       setPixels(foundCanvas.pixels)
-    } else {
-      setPixels(draft.pixels)
+      return
     }
+
+    // If not, load draft
+    setPixels(draft.pixels)
   }, [hydrated])
 
   useEffect(() => {
@@ -41,20 +49,30 @@ export const usePaintCanvas = () => {
       const extractedIndex = +(element.getAttribute('data-pixel-index') ?? NaN)
       if (Number.isNaN(extractedIndex)) return
 
-      const pixel = pixels[extractedIndex]
+      const pixel = structuredClone(pixelsRef.current[extractedIndex])
+      const clickButton = e.buttons
 
-      if (e.buttons === 1) {
-        const paintingColor = tool === TOOLS.BRUSH ? selectedColor : bgColor
+      let newColor: null | string = null
 
-        if (paintingColor !== pixel.color) {
-          setPixelsPixel(extractedIndex, { ...pixel, color: paintingColor })
+      if ((clickButton === 2 && tool === TOOLS.BRUSH) || (clickButton === 1 && tool === TOOLS.ERASER)) {
+        // Handle erase
+        newColor = bgColor
+      } else if (clickButton === 1 && tool === TOOLS.BRUSH) {
+        // Paint
+        newColor = selectedColor
+      }
+
+      if (newColor) {
+        const color = newColor.toLowerCase()
+        if (color !== pixel.color.toLowerCase()) {
+          setPixelsPixel(extractedIndex, { ...pixel, color })
         }
       }
     }
 
     if (canvasRef.current) {
-      canvasRef.current.addEventListener('pointermove', handlePointer)
-      canvasRef.current.addEventListener('pointerdown', handlePointer)
+      canvasRef.current.addEventListener('pointermove', handlePointer, { passive: false })
+      canvasRef.current.addEventListener('pointerdown', handlePointer, { passive: false })
     }
 
     return () => {

@@ -32,16 +32,16 @@ export const usePaintStore = create<PaintStore>(set => ({
 
   setPixelsPixel: (index, value) =>
     set(({ pixels: canvas }) => {
-      const newCanvas = structuredClone(canvas)
-      const roundedIndex = Math.round(index)
+      const newPixels = structuredClone(canvas)
+      const floorIndex = Math.floor(index)
 
       // Check if the index is within the range
-      if (roundedIndex < 0 || roundedIndex >= newCanvas.length) {
-        console.warn(`Index out of range: ${roundedIndex}`)
+      if (floorIndex < 0 || floorIndex >= newPixels.length) {
+        console.warn(`Index out of range: ${floorIndex}`)
         return {}
       }
 
-      newCanvas[roundedIndex] = value
-      return { pixels: newCanvas }
+      newPixels[floorIndex] = value
+      return { pixels: newPixels }
     })
 }))

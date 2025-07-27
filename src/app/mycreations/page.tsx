@@ -11,19 +11,23 @@ import type { SavedCanvas as SavedCanvasType } from '@/types'
 
 export default function Home() {
   useBasicPrevention()
-  const { savedCanvases, draft } = useSaveCanvases()
+  const { savedCanvases, draft, hydrated } = useSaveCanvases()
 
   return (
     <main className='mt-32 w-screen flex flex-col gap-8 justify-center items-center relative'>
       <h2 className='text-white font-bold text-2xl'>MY CREATIONS</h2>
       <ul className='grid grid-cols-5 gap-5'>
-        <div className='text-white'>
-          DRAFT
-          <SavedCanvas {...draft} />
-        </div>
-        {savedCanvases.map(({ id, pixels }) => (
-          <SavedCanvas key={id} {...{ id, pixels }} />
-        ))}
+        {hydrated && (
+          <>
+            <div className='text-white'>
+              DRAFT
+              <SavedCanvas {...draft} />
+            </div>
+            {savedCanvases.map(({ id, pixels }) => (
+              <SavedCanvas key={id} {...{ id, pixels }} />
+            ))}
+          </>
+        )}
       </ul>
     </main>
   )
