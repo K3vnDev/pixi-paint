@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { BLANK_DRAFT } from '@/consts'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { usePaintStore } from '@/store/usePaintStore'
 import { generateId } from '@/utils/generateId'
@@ -38,10 +39,16 @@ export const useSaveCanvases = () => {
 
   const createNewDraft = () => {
     setEditingCanvasId(null)
+    setDraft({
+      ...BLANK_DRAFT,
+      pixels: editingPixels
+    })
   }
 
   // Load data from local storage
-  useEffect(hydrate, [])
+  useEffect(() => {
+    if (!hydrated) hydrate()
+  }, [])
 
   useEffect(() => {
     // Update draft

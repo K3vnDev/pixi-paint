@@ -1,4 +1,4 @@
-import { MODES } from '@consts'
+import { TOOLS } from '@consts'
 import { useEffect, useRef } from 'react'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { usePaintStore } from '@/store/usePaintStore'
@@ -10,7 +10,7 @@ export const usePaintCanvas = () => {
   const setPixelsPixel = usePaintStore(s => s.setPixelsPixel)
   const selectedColor = usePaintStore(s => s.color)
   const bgColor = usePaintStore(s => s.bgColor)
-  const mode = usePaintStore(s => s.mode)
+  const tool = usePaintStore(s => s.tool)
 
   const draft = useCanvasStore(s => s.draft)
   const hydrated = useCanvasStore(s => s.hydrated)
@@ -44,7 +44,7 @@ export const usePaintCanvas = () => {
       const pixel = pixels[extractedIndex]
 
       if (e.buttons === 1) {
-        const paintingColor = mode === MODES.PAINT ? selectedColor : bgColor
+        const paintingColor = tool === TOOLS.BRUSH ? selectedColor : bgColor
 
         if (paintingColor !== pixel.color) {
           setPixelsPixel(extractedIndex, { ...pixel, color: paintingColor })
@@ -61,7 +61,7 @@ export const usePaintCanvas = () => {
       canvasRef.current?.removeEventListener('pointermove', handlePointer)
       canvasRef.current?.removeEventListener('pointerdown', handlePointer)
     }
-  }, [canvasRef.current, mode, selectedColor, bgColor])
+  }, [canvasRef.current, tool, selectedColor, bgColor])
 
   return { pixels, canvasRef }
 }

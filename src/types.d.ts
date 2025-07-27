@@ -1,4 +1,4 @@
-import type { MODES } from '@consts'
+import type { TOOLS } from '@consts'
 
 export interface Pixel {
   color: string
@@ -6,7 +6,8 @@ export interface Pixel {
 
 export interface ToolbarItem {
   name: string
-  mode: MODES
+  tool: TOOLS
+  shortcut: string
 }
 
 export interface SavedCanvas {

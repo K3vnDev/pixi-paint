@@ -1,10 +1,10 @@
-import { INITIAL_BG, MODES } from '@consts'
+import { COLOR_PALETTE, INITIAL_BG, TOOLS } from '@consts'
 import type { Pixel } from '@types'
 import { create } from 'zustand'
 
 interface PaintStore {
-  mode: MODES
-  setMode: (value: MODES) => void
+  tool: TOOLS
+  setTool: (value: TOOLS) => void
 
   color: string
   setColor: (value: string) => void
@@ -18,10 +18,10 @@ interface PaintStore {
 }
 
 export const usePaintStore = create<PaintStore>(set => ({
-  mode: MODES.NONE,
-  setMode: value => set(() => ({ mode: value })),
+  tool: TOOLS.NONE,
+  setTool: value => set(() => ({ tool: value })),
 
-  color: '#eb4034',
+  color: COLOR_PALETTE.RED,
   setColor: value => set(() => ({ color: value })),
 
   bgColor: INITIAL_BG,
