@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { usePaintStore } from '@/store/usePaintStore'
 import { generateId } from '@/utils/generateId'
@@ -9,6 +10,11 @@ export const useSaveCanvas = () => {
 
   const savedCanvas = useCanvasStore(s => s.savedCanvases)
   const setSavedCanvas = useCanvasStore(s => s.setSavedCanvases)
+
+  const draft = useCanvasStore(s => s.draft)
+  const setDraft = useCanvasStore(s => s.setDraft)
+
+  const isDraft = editingCanvasId === null
 
   const generateNewCanvasId = (): string => {
     const generatedId = generateId()
@@ -30,9 +36,11 @@ export const useSaveCanvas = () => {
     setEditingCanvasId(null)
   }
 
-  return {
-    isDraft: editingCanvasId === null,
-    newSave,
-    newDraft
-  }
+  useEffect(() => {
+    if (isDraft) {
+      setDraft({ ...draft, pixels: canvas })
+    }
+  }, [canvas])
+
+  return { isDraft, newSave, newDraft }
 }

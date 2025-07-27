@@ -17,6 +17,7 @@ export const useCanvas = () => {
 
   useEffect(() => {
     if (canvas.length === 0) {
+      console.log({ canvas, draft })
       setCanvas(draft.pixels)
     }
   }, [])
