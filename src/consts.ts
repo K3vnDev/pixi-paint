@@ -15,3 +15,4 @@ export const BLANK_DRAFT = { id: 'draft', pixels: BLANK_CANVAS }
 // LocalStorage keys
 export const LS_DRAFT_KEY = 'draft-canvas'
 export const LS_SAVED_CANVASES_KEY = 'saved-canvases'
+export const LS_EDITING_CANVAS_ID_KEY = 'editing-canvas-id'

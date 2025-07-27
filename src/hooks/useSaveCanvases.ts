@@ -4,7 +4,8 @@ import { usePaintStore } from '@/store/usePaintStore'
 import { generateId } from '@/utils/generateId'
 
 export const useSaveCanvases = () => {
-  const canvas = usePaintStore(s => s.canvas)
+  const editingPixels = usePaintStore(s => s.pixels)
+
   const editingCanvasId = useCanvasStore(s => s.editingCanvasId)
   const setEditingCanvasId = useCanvasStore(s => s.setEditingCanvasId)
 
@@ -29,7 +30,7 @@ export const useSaveCanvases = () => {
 
     const savingCanvas = {
       id: newCanvasId,
-      pixels: canvas
+      pixels: editingPixels
     }
     setSavedCanvases([...savedCanvases, savingCanvas])
     setEditingCanvasId(newCanvasId)
@@ -43,10 +44,22 @@ export const useSaveCanvases = () => {
   useEffect(hydrate, [])
 
   useEffect(() => {
+    // Update draft
     if (isDraft && hydrated) {
-      setDraft({ ...draft, pixels: canvas })
-    }
-  }, [canvas])
+      setDraft({ ...draft, pixels: editingPixels })
+    } else {
+      // Update saved
+      const index = savedCanvases.findIndex(c => c.id === editingCanvasId)
+      if (index === -1) return
 
-  return { isDraft, createNewSave, createNewDraft, savedCanvases }
+      const newCanvases = structuredClone(savedCanvases)
+      newCanvases[index] = {
+        ...newCanvases[index],
+        pixels: editingPixels
+      }
+      setSavedCanvases(newCanvases)
+    }
+  }, [editingPixels])
+
+  return { isDraft, createNewSave, createNewDraft, savedCanvases, draft }
 }

@@ -1,4 +1,4 @@
-import { BLANK_DRAFT, LS_DRAFT_KEY, LS_SAVED_CANVASES_KEY } from '@consts'
+import { BLANK_DRAFT, LS_DRAFT_KEY, LS_EDITING_CANVAS_ID_KEY, LS_SAVED_CANVASES_KEY } from '@consts'
 import type { SavedCanvas } from '@types'
 import { create } from 'zustand'
 import { getLocalStorageItem } from '@/utils/getLocalStorageItem'
@@ -32,14 +32,19 @@ export const useCanvasStore = create<CanvasStore>(set => ({
       return { draft: value }
     }),
 
+  editingCanvasId: null,
+  setEditingCanvasId: value =>
+    set(() => {
+      window.localStorage.setItem(LS_EDITING_CANVAS_ID_KEY, JSON.stringify(value))
+      return { editingCanvasId: value }
+    }),
+
   hydrated: false,
   hydrate: () =>
     set(() => ({
       savedCanvases: getLocalStorageItem<SavedCanvas[]>(LS_SAVED_CANVASES_KEY, []),
       draft: getLocalStorageItem<SavedCanvas>(LS_DRAFT_KEY, BLANK_DRAFT),
+      editingCanvasId: getLocalStorageItem<CanvasStore['editingCanvasId']>(LS_EDITING_CANVAS_ID_KEY, null),
       hydrated: true
-    })),
-
-  editingCanvasId: null,
-  setEditingCanvasId: value => set(() => ({ editingCanvasId: value }))
+    }))
 }))

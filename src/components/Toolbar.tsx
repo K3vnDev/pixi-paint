@@ -45,13 +45,13 @@ const Item = ({ name, mode }: ToolbarItem) => {
 }
 
 const SaveState = () => {
-  const { isDraft, newSave, newDraft } = useSaveCanvases()
+  const { isDraft, createNewSave, createNewDraft } = useSaveCanvases()
 
   const handleClick = () => {
     if (isDraft) {
-      newSave()
+      createNewSave()
     } else {
-      newDraft()
+      createNewDraft()
     }
   }
 

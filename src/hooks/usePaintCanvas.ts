@@ -1,26 +1,32 @@
+import { MODES } from '@consts'
 import { useEffect, useRef } from 'react'
-import { MODES } from '@/consts'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { usePaintStore } from '@/store/usePaintStore'
 
-export const useCanvas = () => {
-  const canvas = usePaintStore(s => s.canvas)
-  const setCanvas = usePaintStore(s => s.setCanvas)
+export const usePaintCanvas = () => {
+  const pixels = usePaintStore(s => s.pixels)
+  const setPixels = usePaintStore(s => s.setPixels)
 
-  const setCanvasPixel = usePaintStore(s => s.setCanvasPixel)
+  const setPixelsPixel = usePaintStore(s => s.setPixelsPixel)
   const selectedColor = usePaintStore(s => s.color)
   const bgColor = usePaintStore(s => s.bgColor)
   const mode = usePaintStore(s => s.mode)
 
   const draft = useCanvasStore(s => s.draft)
   const hydrated = useCanvasStore(s => s.hydrated)
+  const editingCanvasId = useCanvasStore(s => s.editingCanvasId)
+  const savedCanvases = useCanvasStore(s => s.savedCanvases)
 
   const canvasRef = useRef<HTMLDivElement | null>(null)
 
-  // Load draft canvas // TODO: IMPROVE
   useEffect(() => {
-    if (canvas.length === 0 && hydrated) {
-      setCanvas(draft.pixels)
+    if (!hydrated) return
+
+    const foundCanvas = savedCanvases.find(c => c.id === editingCanvasId)
+    if (foundCanvas) {
+      setPixels(foundCanvas.pixels)
+    } else {
+      setPixels(draft.pixels)
     }
   }, [hydrated])
 
@@ -35,13 +41,13 @@ export const useCanvas = () => {
       const extractedIndex = +(element.getAttribute('data-pixel-index') ?? NaN)
       if (Number.isNaN(extractedIndex)) return
 
-      const pixel = canvas[extractedIndex]
+      const pixel = pixels[extractedIndex]
 
       if (e.buttons === 1) {
         const paintingColor = mode === MODES.PAINT ? selectedColor : bgColor
 
         if (paintingColor !== pixel.color) {
-          setCanvasPixel(extractedIndex, { ...pixel, color: paintingColor })
+          setPixelsPixel(extractedIndex, { ...pixel, color: paintingColor })
         }
       }
     }
@@ -57,5 +63,5 @@ export const useCanvas = () => {
     }
   }, [canvasRef.current, mode, selectedColor, bgColor])
 
-  return { canvas, canvasRef }
+  return { pixels, canvasRef }
 }

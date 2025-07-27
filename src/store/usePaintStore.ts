@@ -12,9 +12,9 @@ interface PaintStore {
   bgColor: string
   setBgColor: (value: string) => void
 
-  canvas: Pixel[]
-  setCanvas: (value: Pixel[]) => void
-  setCanvasPixel: (index: number, value: Pixel) => void
+  pixels: Pixel[]
+  setPixels: (value: Pixel[]) => void
+  setPixelsPixel: (index: number, value: Pixel) => void
 }
 
 export const usePaintStore = create<PaintStore>(set => ({
@@ -27,11 +27,11 @@ export const usePaintStore = create<PaintStore>(set => ({
   bgColor: INITIAL_BG,
   setBgColor: value => set(() => ({ bgColor: value })),
 
-  canvas: [],
-  setCanvas: value => set(() => ({ canvas: value })),
+  pixels: [],
+  setPixels: value => set(() => ({ pixels: value })),
 
-  setCanvasPixel: (index, value) =>
-    set(({ canvas }) => {
+  setPixelsPixel: (index, value) =>
+    set(({ pixels: canvas }) => {
       const newCanvas = structuredClone(canvas)
       const roundedIndex = Math.round(index)
 
@@ -42,6 +42,6 @@ export const usePaintStore = create<PaintStore>(set => ({
       }
 
       newCanvas[roundedIndex] = value
-      return { canvas: newCanvas }
+      return { pixels: newCanvas }
     })
 }))
