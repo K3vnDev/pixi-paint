@@ -1,15 +1,25 @@
 import { useEffect, useRef } from 'react'
 import { MODES } from '@/consts'
+import { useCanvasStore } from '@/store/useCanvasStore'
 import { usePaintStore } from '@/store/usePaintStore'
 
 export const useCanvas = () => {
   const canvas = usePaintStore(s => s.canvas)
+  const setCanvas = usePaintStore(s => s.setCanvas)
+  const draft = useCanvasStore(s => s.draft)
+
   const setCanvasPixel = usePaintStore(s => s.setCanvasPixel)
   const selectedColor = usePaintStore(s => s.color)
   const bgColor = usePaintStore(s => s.bgColor)
   const mode = usePaintStore(s => s.mode)
 
   const canvasRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (canvas.length === 0) {
+      setCanvas(draft.pixels)
+    }
+  }, [])
 
   useEffect(() => {
     // Triggered on move and click

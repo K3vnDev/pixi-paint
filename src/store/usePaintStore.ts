@@ -1,4 +1,4 @@
-import { INITIAL_BG, MODES, PIXEL_ART_RES } from '@consts'
+import { INITIAL_BG, MODES } from '@consts'
 import type { Pixel } from '@types'
 import { create } from 'zustand'
 
@@ -27,7 +27,7 @@ export const usePaintStore = create<PaintStore>(set => ({
   bgColor: INITIAL_BG,
   setBgColor: value => set(() => ({ bgColor: value })),
 
-  canvas: Array.from({ length: PIXEL_ART_RES ** 2 }, () => ({ color: INITIAL_BG })),
+  canvas: [],
   setCanvas: value => set(() => ({ canvas: value })),
 
   setCanvasPixel: (index, value) =>

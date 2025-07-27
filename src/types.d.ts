@@ -8,3 +8,8 @@ export interface ToolbarItem {
   name: string
   mode: MODES
 }
+
+export interface SavedCanvas {
+  id: string
+  pixels: Pixel[]
+}

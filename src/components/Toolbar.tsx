@@ -2,6 +2,7 @@
 
 import { MODES } from '@consts'
 import type { ToolbarItem } from '@types'
+import { useSaveCanvas } from '@/hooks/useSaveCanvas'
 import { usePaintStore } from '@/store/usePaintStore'
 
 export const ToolBar = () => {
@@ -21,6 +22,7 @@ export const ToolBar = () => {
       {items.map(item => (
         <Item {...item} key={item.mode} />
       ))}
+      <SaveState />
     </aside>
   )
 }
@@ -38,6 +40,27 @@ const Item = ({ name, mode }: ToolbarItem) => {
   return (
     <button className={`bg-blue-400 size-24 button ${outline}`} onClick={handleClick}>
       {name}
+    </button>
+  )
+}
+
+const SaveState = () => {
+  const { isDraft, newSave, newDraft } = useSaveCanvas()
+
+  const handleClick = () => {
+    if (isDraft) {
+      newSave()
+    } else {
+      newDraft()
+    }
+  }
+
+  return (
+    <button
+      className='bg-blue-300 size-24 flex items-center justify-center mt-8 button px-2'
+      onClick={handleClick}
+    >
+      {isDraft ? 'Draft. Click to save' : 'Saved! Click to start a new draft'}
     </button>
   )
 }
