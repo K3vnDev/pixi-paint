@@ -3,34 +3,27 @@ import { usePaintStore } from '@/store/usePaintStore'
 
 export const Colorbar = () => {
   const colors = [
-    '#FF0000', // red
-    '#FF7F00', // orange
-    '#FFFF00', // yellow
-    '#00FF00', // green
-    '#0000FF', // blue
-    '#4B0082', // indigo
-    '#8B00FF', // violet
-    '#FF1493' // pink (extra)
+    '#E14434', // red
+    '#FF7A30', // orange
+    '#735951', // brown
+    '#fae337', // yellow
+    '#7ad63a', // light green
+    '#187a23', // dark green
+    '#60cdfc', // light blue
+    '#3d63fc', // dark blue
+    '#8b26eb', // purple
+    '#fc72da', // pink
+    '#fff', // white
+    '#000' // black
   ]
-
-  // red
-  // pink
-  // orange
-  // yellow
-  // light green
-  // dark green
-  // light blue
-  // dark blue
-  // purple
-  // white
-  // black
-  // brown
 
   return (
     <aside className='flex flex-col gap-2 absolute right-8'>
-      {colors.map(col => (
-        <Color color={col} key={col} />
-      ))}
+      <ul className='grid grid-cols-2 gap-2'>
+        {colors.map(col => (
+          <Color color={col} key={col} />
+        ))}
+      </ul>
     </aside>
   )
 }
@@ -52,7 +45,7 @@ const Color = ({ color }: ColorProps) => {
   const outline = selectedColor === color ? 'outline-4 outline-white' : ''
 
   return (
-    <button
+    <li
       className={`size-16 button rounded-sm ${outline}`}
       style={{ background: color }}
       onClick={handleClick}
