@@ -1,9 +1,9 @@
 import { PIXEL_ART_RES } from '@consts'
-import { useCanvas } from '@/hooks/useCanvas'
+import { usePaintCanvas } from '@/hooks/usePaintCanvas'
 import { Pixel } from './Pixel'
 
 export const PaintCanvas = () => {
-  const { canvas, canvasRef } = useCanvas()
+  const { pixels, canvasRef } = usePaintCanvas()
   const gridTemplateColumns = `repeat(${PIXEL_ART_RES}, minmax(0, 1fr))`
 
   return (
@@ -13,7 +13,7 @@ export const PaintCanvas = () => {
       draggable={false}
       ref={canvasRef}
     >
-      {canvas.map((pixel, i) => (
+      {pixels.map((pixel, i) => (
         <Pixel color={pixel.color} index={i} key={i} />
       ))}
     </div>

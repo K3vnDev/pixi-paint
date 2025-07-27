@@ -1,21 +1,9 @@
-import { MODES } from '@consts'
+import { COLOR_PALETTE, TOOLS } from '@consts'
 import { usePaintStore } from '@/store/usePaintStore'
 
 export const Colorbar = () => {
-  const colors = [
-    '#E14434', // red
-    '#FF7A30', // orange
-    '#735951', // brown
-    '#fae337', // yellow
-    '#7ad63a', // light green
-    '#187a23', // dark green
-    '#60cdfc', // light blue
-    '#3d63fc', // dark blue
-    '#8b26eb', // purple
-    '#fc72da', // pink
-    '#fff', // white
-    '#000' // black
-  ]
+  // Parse color palette into a string array
+  const colors = Object.entries(COLOR_PALETTE).map(([, col]) => col)
 
   return (
     <aside className='flex flex-col gap-2 absolute right-8'>
@@ -35,11 +23,11 @@ interface ColorProps {
 const Color = ({ color }: ColorProps) => {
   const setSelectedColor = usePaintStore(s => s.setColor)
   const selectedColor = usePaintStore(s => s.color)
-  const setMode = usePaintStore(s => s.setMode)
+  const setSelectedTool = usePaintStore(s => s.setTool)
 
   const handleClick = () => {
     setSelectedColor(color)
-    setMode(MODES.PAINT)
+    setSelectedTool(TOOLS.BRUSH)
   }
 
   const outline = selectedColor === color ? 'outline-4 outline-white' : ''

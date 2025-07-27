@@ -1,10 +1,10 @@
-import { INITIAL_BG, MODES, PIXEL_ART_RES } from '@consts'
+import { COLOR_PALETTE, INITIAL_BG, TOOLS } from '@consts'
 import type { Pixel } from '@types'
 import { create } from 'zustand'
 
 interface PaintStore {
-  mode: MODES
-  setMode: (value: MODES) => void
+  tool: TOOLS
+  setTool: (value: TOOLS) => void
 
   color: string
   setColor: (value: string) => void
@@ -12,36 +12,36 @@ interface PaintStore {
   bgColor: string
   setBgColor: (value: string) => void
 
-  canvas: Pixel[]
-  setCanvas: (value: Pixel[]) => void
-  setCanvasPixel: (index: number, value: Pixel) => void
+  pixels: Pixel[]
+  setPixels: (value: Pixel[]) => void
+  setPixelsPixel: (index: number, value: Pixel) => void
 }
 
 export const usePaintStore = create<PaintStore>(set => ({
-  mode: MODES.NONE,
-  setMode: value => set(() => ({ mode: value })),
+  tool: TOOLS.NONE,
+  setTool: value => set(() => ({ tool: value })),
 
-  color: '#eb4034',
+  color: COLOR_PALETTE.RED,
   setColor: value => set(() => ({ color: value })),
 
   bgColor: INITIAL_BG,
   setBgColor: value => set(() => ({ bgColor: value })),
 
-  canvas: Array.from({ length: PIXEL_ART_RES ** 2 }, () => ({ color: INITIAL_BG })),
-  setCanvas: value => set(() => ({ canvas: value })),
+  pixels: [],
+  setPixels: value => set(() => ({ pixels: value })),
 
-  setCanvasPixel: (index, value) =>
-    set(({ canvas }) => {
-      const newCanvas = structuredClone(canvas)
-      const roundedIndex = Math.round(index)
+  setPixelsPixel: (index, value) =>
+    set(({ pixels: canvas }) => {
+      const newPixels = structuredClone(canvas)
+      const floorIndex = Math.floor(index)
 
       // Check if the index is within the range
-      if (roundedIndex < 0 || roundedIndex >= newCanvas.length) {
-        console.warn(`Index out of range: ${roundedIndex}`)
+      if (floorIndex < 0 || floorIndex >= newPixels.length) {
+        console.warn(`Index out of range: ${floorIndex}`)
         return {}
       }
 
-      newCanvas[roundedIndex] = value
-      return { canvas: newCanvas }
+      newPixels[floorIndex] = value
+      return { pixels: newPixels }
     })
 }))
