@@ -9,7 +9,7 @@ export default function Home() {
   useBasicPrevention()
 
   return (
-    <main className='w-screen h-dvh flex justify-center items-center relative'>
+    <main className='w-screen h-dvh flex justify-center items-center relative overflow-hidden'>
       <PaintCanvas />
       <ToolBar />
       <Colorbar />

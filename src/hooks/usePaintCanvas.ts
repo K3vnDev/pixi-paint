@@ -3,6 +3,7 @@ import type { BucketPixel } from '@types'
 import { useEffect, useRef } from 'react'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { usePaintStore } from '@/store/usePaintStore'
+import { colorComparison } from '@/utils/colorComparison'
 
 export const usePaintCanvas = () => {
   const pixels = usePaintStore(s => s.pixels)
@@ -131,11 +132,6 @@ export const usePaintCanvas = () => {
     handlePixel(bucketMap[startIndex])
 
     return paintIndexes
-  }
-
-  // THIS IS TEMPORARY
-  const colorComparison = (a: string, b: string) => {
-    return a.toLowerCase() === b.toLowerCase()
   }
 
   return { pixels, canvasRef }

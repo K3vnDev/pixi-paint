@@ -16,7 +16,7 @@ export default function Home() {
   return (
     <main className='mt-32 w-screen flex flex-col gap-8 justify-center items-center relative'>
       <h2 className='text-white font-bold text-2xl'>MY CREATIONS</h2>
-      <ul className='grid grid-cols-5 gap-5'>
+      <ul className='grid grid-cols-5 gap-5 pb-20'>
         {hydrated && (
           <>
             <div className='text-white'>
