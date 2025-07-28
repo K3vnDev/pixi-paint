@@ -53,15 +53,13 @@ export const usePaintCanvas = () => {
       const pixel = structuredClone(pixelsRef.current[extractedIndex])
       const clickButton = e.buttons
 
-      let newColor: null | string = null
-
       if ((clickButton === 2 && tool === TOOLS.BRUSH) || (clickButton === 1 && tool === TOOLS.ERASER)) {
         // Handle erase
-        newColor = bgColor
+        paintPixel(pixel, bgColor, extractedIndex)
       } else if (clickButton === 1 && tool === TOOLS.BRUSH) {
         // Paint
-        newColor = selectedColor
-      } else if (clickButton === 1 && tool === TOOLS.BUCKET) {
+        paintPixel(pixel, selectedColor, extractedIndex)
+      } else if (clickButton === 1 && tool === TOOLS.BUCKET && !colorComparison(pixel.color, selectedColor)) {
         // Handle bucket
         const newPixels = structuredClone(pixelsRef.current)
         const indexes = getBucketPixels(newPixels, extractedIndex, pixel.color)
@@ -73,13 +71,6 @@ export const usePaintCanvas = () => {
           }
         }
         setPixels(newPixels)
-      }
-
-      if (newColor) {
-        const color = newColor.toLowerCase()
-        if (color !== pixel.color.toLowerCase()) {
-          setPixelsPixel(extractedIndex, { ...pixel, color })
-        }
       }
     }
 
@@ -94,6 +85,12 @@ export const usePaintCanvas = () => {
     }
   }, [canvasRef.current, tool, selectedColor, bgColor])
 
+  const paintPixel = (pixel: Pixel, color: string, index: number) => {
+    if (!colorComparison(pixel.color, color)) {
+      setPixelsPixel(index, { ...pixel, color })
+    }
+  }
+
   const getBucketPixels = (originalPixels: Pixel[], startIndex: number, zoneColor: string) => {
     const bucketMap: BucketPixel[] = originalPixels.map(({ color }, index) => ({
       color,
@@ -105,7 +102,7 @@ export const usePaintCanvas = () => {
       const { index, color: pixelColor, painted } = bucketPixel
 
       // If the color doesn't match or it was already painted, exit
-      if (pixelColor.toLowerCase() !== zoneColor || painted) {
+      if (!colorComparison(pixelColor, zoneColor) || painted) {
         return
       }
 
@@ -118,7 +115,7 @@ export const usePaintCanvas = () => {
 
       const up = index - PIXEL_ART_RES >= 0 ? index - PIXEL_ART_RES : null
       const right = rest === PIXEL_ART_RES - 1 ? null : index + 1
-      const down = index + PIXEL_ART_RES < PIXEL_ART_RES ** 2 - 1 ? index + PIXEL_ART_RES : null
+      const down = index + PIXEL_ART_RES < PIXEL_ART_RES ** 2 ? index + PIXEL_ART_RES : null
       const left = rest === 0 ? null : index - 1
 
       for (const neighbour of [up, right, down, left]) {
@@ -130,6 +127,11 @@ export const usePaintCanvas = () => {
     handlePixel(bucketMap[startIndex])
 
     return paintIndexes
+  }
+
+  // THIS IS TEMPORARY
+  const colorComparison = (a: string, b: string) => {
+    return a.toLowerCase() === b.toLowerCase()
   }
 
   return { pixels, canvasRef }
