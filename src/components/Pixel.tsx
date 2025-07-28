@@ -15,7 +15,9 @@ export const Pixel = ({ color, index }: Props) => {
       draggable={false}
       data-pixel-index={index}
     >
-      <div className={`size-full pointer-events-none ${innerRoundness}`} style={{ background: color }} />
+      <div className={`size-full pointer-events-none ${innerRoundness}`} style={{ background: color }}>
+        {index}
+      </div>
     </div>
   )
 }

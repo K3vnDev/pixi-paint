@@ -4,6 +4,12 @@ export interface Pixel {
   color: string
 }
 
+export interface BucketPixel {
+  index: number
+  color: string
+  painted: boolean
+}
+
 export interface ToolbarItem {
   name: string
   tool: TOOLS

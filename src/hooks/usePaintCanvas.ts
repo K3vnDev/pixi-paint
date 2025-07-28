@@ -1,4 +1,5 @@
-import { TOOLS } from '@consts'
+import { PIXEL_ART_RES, TOOLS } from '@consts'
+import type { BucketPixel, Pixel } from '@types'
 import { useEffect, useRef } from 'react'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { usePaintStore } from '@/store/usePaintStore'
@@ -6,8 +7,8 @@ import { usePaintStore } from '@/store/usePaintStore'
 export const usePaintCanvas = () => {
   const pixels = usePaintStore(s => s.pixels)
   const setPixels = usePaintStore(s => s.setPixels)
-
   const setPixelsPixel = usePaintStore(s => s.setPixelsPixel)
+
   const selectedColor = usePaintStore(s => s.color)
   const bgColor = usePaintStore(s => s.bgColor)
   const tool = usePaintStore(s => s.tool)
@@ -60,6 +61,18 @@ export const usePaintCanvas = () => {
       } else if (clickButton === 1 && tool === TOOLS.BRUSH) {
         // Paint
         newColor = selectedColor
+      } else if (clickButton === 1 && tool === TOOLS.BUCKET) {
+        // Handle bucket
+        const newPixels = structuredClone(pixelsRef.current)
+        const indexes = getBucketPixels(newPixels, extractedIndex, pixel.color)
+
+        for (const index of indexes) {
+          newPixels[index] = {
+            ...newPixels[index],
+            color: selectedColor
+          }
+        }
+        setPixels(newPixels)
       }
 
       if (newColor) {
@@ -80,6 +93,44 @@ export const usePaintCanvas = () => {
       canvasRef.current?.removeEventListener('pointerdown', handlePointer)
     }
   }, [canvasRef.current, tool, selectedColor, bgColor])
+
+  const getBucketPixels = (originalPixels: Pixel[], startIndex: number, zoneColor: string) => {
+    const bucketMap: BucketPixel[] = originalPixels.map(({ color }, index) => ({
+      color,
+      index,
+      painted: false
+    }))
+
+    const handlePixel = (bucketPixel: BucketPixel) => {
+      const { index, color: pixelColor, painted } = bucketPixel
+
+      // If the color doesn't match or it was already painted, exit
+      if (pixelColor.toLowerCase() !== zoneColor || painted) {
+        return
+      }
+
+      // Do paint
+      bucketMap[index].painted = true
+      paintIndexes.push(index)
+
+      // Handle neighbours
+      const rest = index % PIXEL_ART_RES
+
+      const up = index - PIXEL_ART_RES >= 0 ? index - PIXEL_ART_RES : null
+      const right = rest === PIXEL_ART_RES - 1 ? null : index + 1
+      const down = index + PIXEL_ART_RES < PIXEL_ART_RES ** 2 - 1 ? index + PIXEL_ART_RES : null
+      const left = rest === 0 ? null : index - 1
+
+      for (const neighbour of [up, right, down, left]) {
+        if (neighbour !== null) handlePixel(bucketMap[neighbour])
+      }
+    }
+
+    const paintIndexes: number[] = []
+    handlePixel(bucketMap[startIndex])
+
+    return paintIndexes
+  }
 
   return { pixels, canvasRef }
 }

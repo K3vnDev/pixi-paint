@@ -23,11 +23,16 @@ interface ColorProps {
 const Color = ({ color }: ColorProps) => {
   const setSelectedColor = usePaintStore(s => s.setColor)
   const selectedColor = usePaintStore(s => s.color)
+
   const setSelectedTool = usePaintStore(s => s.setTool)
+  const selectedTool = usePaintStore(s => s.tool)
 
   const handleClick = () => {
     setSelectedColor(color)
-    setSelectedTool(TOOLS.BRUSH)
+
+    if (selectedTool === TOOLS.ERASER) {
+      setSelectedTool(TOOLS.BRUSH)
+    }
   }
 
   const outline = selectedColor === color ? 'outline-4 outline-white' : ''
