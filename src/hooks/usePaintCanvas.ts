@@ -1,5 +1,5 @@
 import { PIXEL_ART_RES, TOOLS } from '@consts'
-import type { BucketPixel, Pixel } from '@types'
+import type { BucketPixel } from '@types'
 import { useEffect, useRef } from 'react'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { usePaintStore } from '@/store/usePaintStore'
@@ -20,10 +20,10 @@ export const usePaintCanvas = () => {
 
   const canvasRef = useRef<HTMLDivElement | null>(null)
 
-  const pixelsRef = useRef(pixels)
+  const pointerRefs = useRef({ pixels, tool, selectedColor, bgColor })
   useEffect(() => {
-    pixelsRef.current = pixels
-  }, [pixels])
+    pointerRefs.current = { pixels, tool, selectedColor, bgColor }
+  }, [pixels, tool, selectedColor, bgColor])
 
   useEffect(() => {
     if (!hydrated) return
@@ -40,6 +40,9 @@ export const usePaintCanvas = () => {
   }, [hydrated])
 
   useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
     // Triggered on move and click
     const handlePointer = (e: PointerEvent) => {
       e.preventDefault()
@@ -47,53 +50,54 @@ export const usePaintCanvas = () => {
 
       // Extract pixel index and don't proceed if its not valid
       const element = e.target as HTMLDivElement
-      const extractedIndex = +(element.getAttribute('data-pixel-index') ?? NaN)
-      if (Number.isNaN(extractedIndex)) return
+      const pixelIndex = +(element.getAttribute('data-pixel-index') ?? NaN)
+      if (Number.isNaN(pixelIndex)) return
 
-      const pixel = structuredClone(pixelsRef.current[extractedIndex])
+      const { pixels, bgColor, tool, selectedColor } = pointerRefs.current
+
+      const pixelColor = structuredClone(pixels[pixelIndex])
       const clickButton = e.buttons
 
       if ((clickButton === 2 && tool === TOOLS.BRUSH) || (clickButton === 1 && tool === TOOLS.ERASER)) {
         // Handle erase
-        paintPixel(pixel, bgColor, extractedIndex)
+        paintPixel(pixelColor, bgColor, pixelIndex)
+        console.log('Erasing...', { tool, pixelIndex, pixelColor, bgColor })
       } else if (clickButton === 1 && tool === TOOLS.BRUSH) {
-        // Paint
-        paintPixel(pixel, selectedColor, extractedIndex)
-      } else if (clickButton === 1 && tool === TOOLS.BUCKET && !colorComparison(pixel.color, selectedColor)) {
+        // Handle brush
+        paintPixel(pixelColor, selectedColor, pixelIndex)
+        console.log('Brush painting...', { tool, pixelIndex, pixelColor, selectedColor })
+      } else if (clickButton === 1 && tool === TOOLS.BUCKET && !colorComparison(pixelColor, selectedColor)) {
         // Handle bucket
-        const newPixels = structuredClone(pixelsRef.current)
-        const indexes = getBucketPixels(newPixels, extractedIndex, pixel.color)
+        const newPixels = structuredClone(pixels)
+        const indexes = getBucketPixels(newPixels, pixelIndex, pixelColor)
+
+        console.log(`Bucket painting ${indexes.length} pixels...`, { tool, pixelIndex, pixelColor })
 
         for (const index of indexes) {
-          newPixels[index] = {
-            ...newPixels[index],
-            color: selectedColor
-          }
+          newPixels[index] = selectedColor
         }
         setPixels(newPixels)
       }
     }
 
-    if (canvasRef.current) {
-      canvasRef.current.addEventListener('pointermove', handlePointer, { passive: false })
-      canvasRef.current.addEventListener('pointerdown', handlePointer, { passive: false })
-    }
+    canvas.addEventListener('pointermove', handlePointer, { passive: false })
+    canvas.addEventListener('pointerdown', handlePointer, { passive: false })
 
     return () => {
-      canvasRef.current?.removeEventListener('pointermove', handlePointer)
-      canvasRef.current?.removeEventListener('pointerdown', handlePointer)
+      canvas.removeEventListener('pointermove', handlePointer)
+      canvas.removeEventListener('pointerdown', handlePointer)
     }
-  }, [canvasRef.current, tool, selectedColor, bgColor])
+  }, [])
 
-  const paintPixel = (pixel: Pixel, color: string, index: number) => {
-    if (!colorComparison(pixel.color, color)) {
-      setPixelsPixel(index, { ...pixel, color })
+  const paintPixel = (pixelColor: string, color: string, index: number) => {
+    if (!colorComparison(pixelColor, color)) {
+      setPixelsPixel(index, color)
     }
   }
 
-  const getBucketPixels = (originalPixels: Pixel[], startIndex: number, zoneColor: string) => {
-    const bucketMap: BucketPixel[] = originalPixels.map(({ color }, index) => ({
-      color,
+  const getBucketPixels = (originalPixels: string[], startIndex: number, zoneColor: string) => {
+    const bucketMap: BucketPixel[] = originalPixels.map((pixelColor, index) => ({
+      color: pixelColor,
       index,
       painted: false
     }))

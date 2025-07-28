@@ -13,8 +13,8 @@ export const PaintCanvas = () => {
       draggable={false}
       ref={canvasRef}
     >
-      {pixels.map((pixel, i) => (
-        <Pixel color={pixel.color} index={i} key={i} />
+      {pixels.map((pixelColor, i) => (
+        <Pixel color={pixelColor} index={i} key={i} />
       ))}
     </div>
   )

@@ -1,5 +1,4 @@
 import { COLOR_PALETTE, INITIAL_BG, TOOLS } from '@consts'
-import type { Pixel } from '@types'
 import { create } from 'zustand'
 
 interface PaintStore {
@@ -12,9 +11,9 @@ interface PaintStore {
   bgColor: string
   setBgColor: (value: string) => void
 
-  pixels: Pixel[]
-  setPixels: (value: Pixel[]) => void
-  setPixelsPixel: (index: number, value: Pixel) => void
+  pixels: string[]
+  setPixels: (value: string[]) => void
+  setPixelsPixel: (index: number, value: string) => void
 }
 
 export const usePaintStore = create<PaintStore>(set => ({

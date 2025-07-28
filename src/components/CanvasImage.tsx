@@ -1,12 +1,11 @@
 import { PIXEL_ART_RES } from '@consts'
-import type { Pixel } from '@types'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 interface Props {
   className?: string
-  pixels: Pixel[]
+  pixels: string[]
 }
 
 export const CanvasImage = ({ className = '', pixels }: Props) => {
@@ -20,10 +19,10 @@ export const CanvasImage = ({ className = '', pixels }: Props) => {
     if (!ctx) throw new Error('Canvas context not available')
 
     // Draw each pixel
-    pixels.forEach((p, i) => {
+    pixels.forEach((pixelColor, i) => {
       const x = i % PIXEL_ART_RES
       const y = Math.floor(i / PIXEL_ART_RES)
-      ctx.fillStyle = p.color
+      ctx.fillStyle = pixelColor
       ctx.fillRect(x, y, 1, 1)
     })
 

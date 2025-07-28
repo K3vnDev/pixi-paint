@@ -10,7 +10,7 @@ export const PIXEL_ART_RES = 8
 export const INITIAL_BG = '#FFF'
 
 // Store
-export const BLANK_CANVAS = Array.from({ length: PIXEL_ART_RES ** 2 }, () => ({ color: INITIAL_BG }))
+export const BLANK_CANVAS = Array.from({ length: PIXEL_ART_RES ** 2 }, () => INITIAL_BG)
 export const BLANK_DRAFT = { id: 'draft', pixels: BLANK_CANVAS }
 
 // LocalStorage keys

@@ -1,9 +1,5 @@
 import type { TOOLS } from '@consts'
 
-export interface Pixel {
-  color: string
-}
-
 export interface BucketPixel {
   index: number
   color: string
@@ -18,5 +14,5 @@ export interface ToolbarItem {
 
 export interface SavedCanvas {
   id: string
-  pixels: Pixel[]
+  pixels: string[]
 }
