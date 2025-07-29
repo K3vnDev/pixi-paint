@@ -36,7 +36,7 @@ export const Pixel = ({ color, index }: Props) => {
 
   return (
     <div
-      className={`w-full aspect-square cursor-pointer transition-all select-none ${outerPadding}`}
+      className={`w-full aspect-square cursor-pointer-px transition-all select-none ${outerPadding}`}
       draggable={false}
       data-pixel-index={index}
     >

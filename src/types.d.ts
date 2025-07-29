@@ -6,10 +6,12 @@ export interface BucketPixel {
   painted: boolean
 }
 
-export interface ToolbarItem {
+export interface ToolbarTool {
   name: string
+  imageSrc: string
   tool: TOOLS
   shortcut: string
+  onSelect?: () => void
 }
 
 export interface SavedCanvas {
