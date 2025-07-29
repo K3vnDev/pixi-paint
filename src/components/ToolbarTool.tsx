@@ -31,6 +31,7 @@ export const ToolbarTool = ({ name, tool, shortcut, imageSrc }: ToolbarToolType)
       title={title}
       className={`bg-blue-400 size-24 button cursor-pointer-px ${outline}`}
       onClick={handleClick}
+      onFocusCapture={e => e.preventDefault()}
     >
       <Image
         unoptimized
