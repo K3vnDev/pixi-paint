@@ -23,10 +23,10 @@ export const usePaintCanvas = () => {
   const canvasRef = useRef<HTMLDivElement | null>(null)
   const usedSecondClickOnEraser = useRef(false)
 
-  // Set up pointer refs
-  const pointerRefs = useRef({ pixels, tool, selectedColor, bgColor })
+  // Set up state refs
+  const stateRefs = useRef({ pixels, tool, selectedColor, bgColor })
   useEffect(() => {
-    pointerRefs.current = { pixels, tool, selectedColor, bgColor }
+    stateRefs.current = { pixels, tool, selectedColor, bgColor }
   }, [pixels, tool, selectedColor, bgColor])
 
   // Load the correct painting on startup
@@ -49,6 +49,7 @@ export const usePaintCanvas = () => {
     }
   }, [tool])
 
+  // Pointer event handlers
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -62,6 +63,14 @@ export const usePaintCanvas = () => {
     }
 
     const handlePointerUp = () => {
+      handleUsedSecondClickOnEraser()
+    }
+
+    const handlePointerLeave = () => {
+      handleUsedSecondClickOnEraser()
+    }
+
+    const handleUsedSecondClickOnEraser = () => {
       // Switch to brush after using second click on eraser
       if (usedSecondClickOnEraser.current) {
         setTool(TOOLS.BRUSH)
@@ -82,7 +91,7 @@ export const usePaintCanvas = () => {
       const pixelIndex = +(element.getAttribute('data-pixel-index') ?? NaN)
       if (Number.isNaN(pixelIndex)) return
 
-      const { pixels, tool, selectedColor } = pointerRefs.current
+      const { pixels, tool, selectedColor } = stateRefs.current
       const pixelColor = structuredClone(pixels[pixelIndex])
 
       switch (tool) {
@@ -122,23 +131,25 @@ export const usePaintCanvas = () => {
     canvas.addEventListener('pointerdown', handlePointerDown, { passive: false })
     canvas.addEventListener('pointermove', HandlePointerMove, { passive: false })
     canvas.addEventListener('pointerup', handlePointerUp, { passive: false })
+    canvas.addEventListener('pointerleave', handlePointerLeave, { passive: false })
 
     return () => {
       canvas.removeEventListener('pointerdown', handlePointerDown)
       canvas.removeEventListener('pointermove', HandlePointerMove)
       canvas.removeEventListener('pointerup', handlePointerUp)
+      canvas.removeEventListener('pointerleave', handlePointerLeave)
     }
   }, [])
 
   const paintPixel = (pixelColor: string, index: number) => {
-    if (!colorComparison(pixelColor, selectedColor)) {
-      setPixelsPixel(index, selectedColor)
+    if (!colorComparison(pixelColor, stateRefs.current.selectedColor)) {
+      setPixelsPixel(index, stateRefs.current.selectedColor)
     }
   }
 
   const erasePixel = (pixelColor: string, index: number) => {
-    if (!colorComparison(pixelColor, bgColor)) {
-      setPixelsPixel(index, bgColor)
+    if (!colorComparison(pixelColor, stateRefs.current.bgColor)) {
+      setPixelsPixel(index, stateRefs.current.bgColor)
     }
   }
 

@@ -28,7 +28,7 @@ export const ToolBar = () => {
   ]
 
   return (
-    <aside className='absolute flex flex-col left-8 gap-4'>
+    <aside className='absolute flex flex-col left-8 gap-4 cursor-pointer-px'>
       {items.map(item => (
         <ToolbarTool {...item} key={item.tool} />
       ))}

@@ -6,7 +6,7 @@ import { usePaintStore } from '@/store/usePaintStore'
 export const ToolbarTool = ({ name, tool, shortcut, imageSrc }: ToolbarToolType) => {
   const setSelectedTool = usePaintStore(s => s.setTool)
   const selectedTool = usePaintStore(s => s.tool)
-  const IMAGE_SIZE = 80
+  const IMAGE_SIZE = 96
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

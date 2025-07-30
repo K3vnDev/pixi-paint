@@ -5,11 +5,11 @@
 }
 
 @theme {
-  --cursor-pointer-px: url("/imgs/tools/pointer.png") 21 16, auto;
-  --cursor-brush-px: url("/imgs/tools/brush.png") 11 68, auto;
-  --cursor-eraser-px: url("/imgs/tools/eraser.png") 16 68, auto;
-  --cursor-bucket-px: url("/imgs/tools/bucket.png") 15 49, auto;
-  --cursor-color-picker-px: url("/imgs/tools/color-picker.png") 20 64, auto;
+  --cursor-pointer-px: url("/imgs/tools/pointer.png") 28 19, auto;
+  --cursor-brush-px: url("/imgs/tools/brush.png") 13 82, auto;
+  --cursor-eraser-px: url("/imgs/tools/eraser.png") 34 79, auto;
+  --cursor-bucket-px: url("/imgs/tools/bucket.png") 18 53, auto;
+  --cursor-color-picker-px: url("/imgs/tools/color-picker.png") 23 72, auto;
 }
 
 .pixel-anim {
