@@ -29,7 +29,7 @@ export const ToolbarTool = ({ name, tool, shortcut, imageSrc }: ToolbarToolType)
   return (
     <button
       title={title}
-      className={`bg-blue-400 size-24 button ${outline}`}
+      className={`bg-blue-500 rounded-md size-24 button ${outline}`}
       onClick={handleClick}
       onFocusCapture={e => e.preventDefault()}
     >

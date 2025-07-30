@@ -17,7 +17,7 @@ export const CustomCursor = () => {
   const pointerPosition = useRef({ x: 0, y: 0 })
   const [currentCursorIndex, setCurrentCursorIndex] = useState(0)
 
-  const [isShowingCursor, setIsShowingCursor] = useState(true)
+  const [isShowingCursor, setIsShowingCursor] = useState(false)
 
   // Tool main movement
   useEffect(() => {
@@ -32,6 +32,7 @@ export const CustomCursor = () => {
       // Refresh pointer position and cursor
       pointerPosition.current = { x: e.clientX, y: e.clientY }
       refreshCursor()
+      setIsShowingCursor(true)
     }
 
     const handlePointerUp = () => {
@@ -57,7 +58,6 @@ export const CustomCursor = () => {
       ;(el as HTMLDivElement).style.transform = `translate(${clientX}px, ${clientY}px)`
     }
     setCurrentCursorIndex(newCursorIndex)
-    setIsShowingCursor(true)
   }
 
   // Refresh tool ref
@@ -120,7 +120,7 @@ const Cursor = ({ name, url, x, y, index, selectedIndex, show }: CursorProps) =>
     <div
       className={`
         fixed z-[9999] pointer-events-none 
-        transition-opacity duration-[90ms] ${visibility}
+        transition-opacity duration-75 ${visibility}
       `}
       style={style}
     >

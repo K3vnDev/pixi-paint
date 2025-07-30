@@ -28,6 +28,8 @@ export const usePaintCanvas = () => {
   const lastUsedPaintTool = useRef(TOOLS.BRUSH)
   const toolsHistory = useRef<TOOLS[]>([])
 
+  const colorPickerHoldingColor = useRef<string | null>(null)
+
   // Set up state refs
   const stateRefs = useRef({ pixels, tool, selectedColor, bgColor })
   useEffect(() => {
@@ -78,14 +80,15 @@ export const usePaintCanvas = () => {
     }
 
     const handlePointerUp = () => {
-      handleUsedSecondClickOnEraser()
-    }
-
-    const handleUsedSecondClickOnEraser = () => {
-      // Switch to brush after using second click on eraser
       if (usedSecondClickOnEraser.current) {
+        // Handle ceasing the use of eraser, switching back to the last used tool
         const [lastUsedTool] = toolsHistory.current
         setTool(lastUsedTool ?? TOOLS.BRUSH)
+      } else if (colorPickerHoldingColor.current) {
+        // Handle ceasing the use of eraser, switching back to the last used paint tool
+        setSelectedColor(colorPickerHoldingColor.current)
+        colorPickerHoldingColor.current = null
+        setTool(lastUsedPaintTool.current)
       }
     }
 
@@ -96,7 +99,8 @@ export const usePaintCanvas = () => {
 
       // Dont proceed if it wasn't a valid click
       const clickButton = e.buttons
-      if (![1, 2].includes(clickButton)) return
+
+      if (![1, 2, 4].includes(clickButton)) return
 
       // Extract pixel index and don't proceed if its not valid
       const element = e.target as HTMLDivElement
@@ -106,10 +110,18 @@ export const usePaintCanvas = () => {
       const { pixels, tool, selectedColor } = stateRefs.current
       const pixelColor = structuredClone(pixels[pixelIndex])
 
+      // Switch to the eraser automatically on right click
       if (tool !== TOOLS.ERASER && clickButton === 2) {
         erasePixel(pixelColor, pixelIndex)
         setTool(TOOLS.ERASER)
         usedSecondClickOnEraser.current = true
+        return
+      }
+
+      if (clickButton === 4) {
+        // Switch to the color picker automaticallly on middle click
+        setTool(TOOLS.COLOR_PICKER)
+        colorPickerHoldingColor.current = pixelColor
         return
       }
 
@@ -123,13 +135,11 @@ export const usePaintCanvas = () => {
           break
         }
         case TOOLS.BRUSH: {
-          if (clickButton === 1) {
-            paintPixel(pixelColor, pixelIndex)
-          }
+          paintPixel(pixelColor, pixelIndex)
           break
         }
         case TOOLS.BUCKET: {
-          if (clickButton !== 1 || colorComparison(pixelColor, selectedColor)) break
+          if (colorComparison(pixelColor, selectedColor)) break
 
           const newPixels = structuredClone(pixels)
           const indexes = getBucketPixels(newPixels, pixelIndex, pixelColor)
@@ -141,10 +151,8 @@ export const usePaintCanvas = () => {
           break
         }
         case TOOLS.COLOR_PICKER: {
-          if (clickButton === 1) {
-            setSelectedColor(pixelColor)
-            setTool(lastUsedPaintTool.current)
-          }
+          setSelectedColor(pixelColor)
+          setTool(lastUsedPaintTool.current)
           break
         }
       }

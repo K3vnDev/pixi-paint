@@ -18,3 +18,8 @@ export interface SavedCanvas {
   id: string
   pixels: string[]
 }
+
+export interface GalleryCanvas {
+  id: string
+  dataUrl: string
+}
