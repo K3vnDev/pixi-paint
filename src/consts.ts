@@ -2,7 +2,8 @@ export enum TOOLS {
   NONE,
   BRUSH,
   ERASER,
-  BUCKET
+  BUCKET,
+  COLOR_PICKER
 }
 
 export const PIXEL_ART_RES = 8
@@ -33,3 +34,13 @@ export const COLOR_PALETTE = {
   WHITE: '#fff',
   BLACK: '#000'
 } as const
+
+export const CURSORS = [
+  { name: 'pointer', url: '/imgs/tools/pointer.png', x: 32, y: 23 },
+  { name: 'brush', url: '/imgs/tools/brush.png', x: 19, y: 77 },
+  { name: 'eraser', url: '/imgs/tools/eraser.png', x: 34, y: 75 },
+  { name: 'bucket', url: '/imgs/tools/bucket.png', x: 18, y: 53 },
+  { name: 'colorPicker', url: '/imgs/tools/color-picker.png', x: 23, y: 72 }
+]
+
+export const CURSOR_SIZE = 96

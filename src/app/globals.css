@@ -1,15 +1,11 @@
 @import "tailwindcss";
 
-.button {
-  @apply hover:brightness-125 transition-all active:scale-95 active:brightness-95 disabled:opacity-75 disabled:scale-100 disabled:brightness-75 disabled:pointer-events-none select-none;
+* {
+  cursor: none;
 }
 
-@theme {
-  --cursor-pointer-px: url("/imgs/tools/pointer.png") 28 19, auto;
-  --cursor-brush-px: url("/imgs/tools/brush.png") 13 82, auto;
-  --cursor-eraser-px: url("/imgs/tools/eraser.png") 34 79, auto;
-  --cursor-bucket-px: url("/imgs/tools/bucket.png") 18 53, auto;
-  --cursor-color-picker-px: url("/imgs/tools/color-picker.png") 23 72, auto;
+.button {
+  @apply hover:brightness-125 transition-all active:scale-95 active:brightness-95 disabled:opacity-75 disabled:scale-100 disabled:brightness-75 disabled:pointer-events-none select-none;
 }
 
 .pixel-anim {

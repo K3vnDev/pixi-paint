@@ -11,6 +11,8 @@ export const usePaintCanvas = () => {
   const setPixelsPixel = usePaintStore(s => s.setPixelsPixel)
 
   const selectedColor = usePaintStore(s => s.color)
+  const setSelectedColor = usePaintStore(s => s.setColor)
+
   const bgColor = usePaintStore(s => s.bgColor)
   const tool = usePaintStore(s => s.tool)
   const setTool = usePaintStore(s => s.setTool)
@@ -22,6 +24,9 @@ export const usePaintCanvas = () => {
 
   const canvasRef = useRef<HTMLDivElement | null>(null)
   const usedSecondClickOnEraser = useRef(false)
+
+  const lastUsedPaintTool = useRef(TOOLS.BRUSH)
+  const toolsHistory = useRef<TOOLS[]>([])
 
   // Set up state refs
   const stateRefs = useRef({ pixels, tool, selectedColor, bgColor })
@@ -44,8 +49,18 @@ export const usePaintCanvas = () => {
   }, [hydrated])
 
   useEffect(() => {
+    // Stop eraser behavior
     if (tool !== TOOLS.ERASER) {
       usedSecondClickOnEraser.current = false
+    }
+
+    // Handle tools history
+    toolsHistory.current.push(tool)
+    toolsHistory.current = toolsHistory.current.slice(-2)
+
+    // Set last used paint tool
+    if ([TOOLS.BRUSH, TOOLS.BUCKET].includes(tool)) {
+      lastUsedPaintTool.current = tool
     }
   }, [tool])
 
@@ -66,14 +81,11 @@ export const usePaintCanvas = () => {
       handleUsedSecondClickOnEraser()
     }
 
-    const handlePointerLeave = () => {
-      handleUsedSecondClickOnEraser()
-    }
-
     const handleUsedSecondClickOnEraser = () => {
       // Switch to brush after using second click on eraser
       if (usedSecondClickOnEraser.current) {
-        setTool(TOOLS.BRUSH)
+        const [lastUsedTool] = toolsHistory.current
+        setTool(lastUsedTool ?? TOOLS.BRUSH)
       }
     }
 
@@ -94,6 +106,13 @@ export const usePaintCanvas = () => {
       const { pixels, tool, selectedColor } = stateRefs.current
       const pixelColor = structuredClone(pixels[pixelIndex])
 
+      if (tool !== TOOLS.ERASER && clickButton === 2) {
+        erasePixel(pixelColor, pixelIndex)
+        setTool(TOOLS.ERASER)
+        usedSecondClickOnEraser.current = true
+        return
+      }
+
       switch (tool) {
         case TOOLS.ERASER: {
           erasePixel(pixelColor, pixelIndex)
@@ -106,10 +125,6 @@ export const usePaintCanvas = () => {
         case TOOLS.BRUSH: {
           if (clickButton === 1) {
             paintPixel(pixelColor, pixelIndex)
-          } else {
-            erasePixel(pixelColor, pixelIndex)
-            setTool(TOOLS.ERASER)
-            usedSecondClickOnEraser.current = true
           }
           break
         }
@@ -125,19 +140,24 @@ export const usePaintCanvas = () => {
           setPixels(newPixels)
           break
         }
+        case TOOLS.COLOR_PICKER: {
+          if (clickButton === 1) {
+            setSelectedColor(pixelColor)
+            setTool(lastUsedPaintTool.current)
+          }
+          break
+        }
       }
     }
 
     canvas.addEventListener('pointerdown', handlePointerDown, { passive: false })
     canvas.addEventListener('pointermove', HandlePointerMove, { passive: false })
     canvas.addEventListener('pointerup', handlePointerUp, { passive: false })
-    canvas.addEventListener('pointerleave', handlePointerLeave, { passive: false })
 
     return () => {
       canvas.removeEventListener('pointerdown', handlePointerDown)
       canvas.removeEventListener('pointermove', HandlePointerMove)
       canvas.removeEventListener('pointerup', handlePointerUp)
-      canvas.removeEventListener('pointerleave', handlePointerLeave)
     }
   }, [])
 
@@ -191,5 +211,5 @@ export const usePaintCanvas = () => {
     return paintIndexes
   }
 
-  return { pixels, canvasRef, showTool: tool }
+  return { pixels, canvasRef }
 }

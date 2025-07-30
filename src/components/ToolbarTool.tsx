@@ -1,3 +1,4 @@
+import { CURSOR_SIZE } from '@consts'
 import type { ToolbarTool as ToolbarToolType } from '@types'
 import Image from 'next/image'
 import { useEffect } from 'react'
@@ -6,7 +7,6 @@ import { usePaintStore } from '@/store/usePaintStore'
 export const ToolbarTool = ({ name, tool, shortcut, imageSrc }: ToolbarToolType) => {
   const setSelectedTool = usePaintStore(s => s.setTool)
   const selectedTool = usePaintStore(s => s.tool)
-  const IMAGE_SIZE = 96
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -29,7 +29,7 @@ export const ToolbarTool = ({ name, tool, shortcut, imageSrc }: ToolbarToolType)
   return (
     <button
       title={title}
-      className={`bg-blue-400 size-24 button cursor-pointer-px ${outline}`}
+      className={`bg-blue-400 size-24 button ${outline}`}
       onClick={handleClick}
       onFocusCapture={e => e.preventDefault()}
     >
@@ -38,8 +38,8 @@ export const ToolbarTool = ({ name, tool, shortcut, imageSrc }: ToolbarToolType)
         className='size-full'
         style={{ imageRendering: 'pixelated' }}
         src={`/imgs/${imageSrc}`}
-        width={IMAGE_SIZE}
-        height={IMAGE_SIZE}
+        width={CURSOR_SIZE}
+        height={CURSOR_SIZE}
         alt={`A pixel art of the ${name} tool.`}
       />
     </button>

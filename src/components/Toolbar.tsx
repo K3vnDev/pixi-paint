@@ -24,11 +24,17 @@ export const ToolBar = () => {
       tool: TOOLS.BUCKET,
       shortcut: 'G',
       imageSrc: 'tools/bucket.png'
+    },
+    {
+      name: 'Color Picker',
+      tool: TOOLS.COLOR_PICKER,
+      shortcut: 'I',
+      imageSrc: 'tools/color-picker.png'
     }
   ]
 
   return (
-    <aside className='absolute flex flex-col left-8 gap-4 cursor-pointer-px'>
+    <aside className='absolute flex flex-col left-8 gap-4'>
       {items.map(item => (
         <ToolbarTool {...item} key={item.tool} />
       ))}
@@ -50,7 +56,7 @@ const SaveState = () => {
 
   return (
     <button
-      className='bg-blue-300 size-24 flex items-center justify-center mt-8 button cursor-pointer-px px-2'
+      className='bg-blue-300 size-24 flex items-center justify-center mt-8 button px-2'
       onClick={handleClick}
     >
       {isDraft ? 'Draft. Click to save' : 'Saved! Click to start a new draft'}
