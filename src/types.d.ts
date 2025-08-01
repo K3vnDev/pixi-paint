@@ -7,8 +7,7 @@ export interface BucketPixel {
 }
 
 export interface ToolbarTool {
-  name: string
-  imageSrc: string
+  cursor: Cursor
   tool: TOOLS
   shortcut: string
   onSelect?: () => void

@@ -1,12 +1,12 @@
-import { CURSOR_SIZE } from '@consts'
 import type { ToolbarTool as ToolbarToolType } from '@types'
-import Image from 'next/image'
 import { useEffect } from 'react'
 import { usePaintStore } from '@/store/usePaintStore'
+import { CursorImage } from './CursorImage'
 
-export const ToolbarTool = ({ name, tool, shortcut, imageSrc }: ToolbarToolType) => {
+export const ToolbarTool = ({ cursor, tool, shortcut }: ToolbarToolType) => {
   const setSelectedTool = usePaintStore(s => s.setTool)
   const selectedTool = usePaintStore(s => s.tool)
+  const IMAGE_SIZE = 90
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -24,23 +24,20 @@ export const ToolbarTool = ({ name, tool, shortcut, imageSrc }: ToolbarToolType)
   }
 
   const outline = selectedTool === tool ? 'outline-4 outline-white' : ''
-  const title = `${name} (${shortcut})`
+  const title = `${cursor.name} (${shortcut})`
 
   return (
     <button
       title={title}
-      className={`bg-blue-500 rounded-md size-24 button ${outline}`}
+      className={`bg-blue-500 rounded-md size-24 button relative ${outline}`}
       onClick={handleClick}
       onFocusCapture={e => e.preventDefault()}
     >
-      <Image
-        unoptimized
-        className='size-full'
-        style={{ imageRendering: 'pixelated' }}
-        src={`/imgs/${imageSrc}`}
-        width={CURSOR_SIZE}
-        height={CURSOR_SIZE}
-        alt={`A pixel art of the ${name} tool.`}
+      <CursorImage
+        className={{ both: 'left-1/2 top-1/2 -translate-1/2' }}
+        size={IMAGE_SIZE}
+        {...cursor}
+        alt={`A pixel art of the ${cursor.name} tool.`}
       />
     </button>
   )

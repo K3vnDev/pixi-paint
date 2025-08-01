@@ -1,10 +1,9 @@
 'use client'
 
 import { CURSOR_SIZE, CURSORS } from '@consts'
-import Image from 'next/image'
 import { useMemo } from 'react'
 import { useCustomCursor } from '@/hooks/useCustomCursor'
-import { usePaintStore } from '@/store/usePaintStore'
+import { CursorImage } from './CursorImage'
 
 export const CustomCursor = () => {
   const { currentCursorIndex, cursorsContainerRef, isShowingCursor } = useCustomCursor()
@@ -30,16 +29,9 @@ type CursorProps = {
   show: boolean
 } & (typeof CURSORS)[number]
 
-const Cursor = ({
-  name,
-  imageUrl,
-  position: { x, y },
-  index,
-  selectedIndex,
-  show,
-  colorImageUrl
-}: CursorProps) => {
-  const selectedColor = usePaintStore(s => s.color)
+const Cursor = ({ index, selectedIndex, show, ...cursor }: CursorProps) => {
+  // biome-ignore format: <>
+  const { name, position: { x, y } } = cursor
   const SIZE = 96
 
   const style: React.CSSProperties = useMemo(
@@ -63,25 +55,7 @@ const Cursor = ({
       `}
       style={style}
     >
-      <Image
-        unoptimized
-        className='absolute size-full aspect-square left-0 top-0 '
-        width={CURSOR_SIZE}
-        height={CURSOR_SIZE}
-        src={imageUrl}
-        alt={`The custom cursor of the app, showing a ${name}.`}
-      />
-      {colorImageUrl && (
-        <div
-          style={{
-            backgroundColor: selectedColor,
-            WebkitMask: `url(${colorImageUrl}) no-repeat center / contain`,
-            mask: `url(${colorImageUrl}) no-repeat center / contain`,
-            width: SIZE,
-            height: SIZE
-          }}
-        />
-      )}
+      <CursorImage {...cursor} alt={`The custom cursor of the app, showing a ${name}.`} size={SIZE} />
     </div>
   )
 }

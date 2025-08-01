@@ -1,42 +1,38 @@
 'use client'
 
-import { TOOLS } from '@consts'
+import { CURSORS, TOOLS } from '@consts'
 import type { ToolbarTool as ToolbarToolType } from '@types'
 import { useSaveCanvases } from '@/hooks/useSaveCanvases'
 import { ToolbarTool } from './ToolbarTool'
 
 export const ToolBar = () => {
-  const items: ToolbarToolType[] = [
+  const tools: ToolbarToolType[] = [
     {
-      name: 'Brush',
+      cursor: CURSORS[1],
       tool: TOOLS.BRUSH,
-      shortcut: 'B',
-      imageSrc: 'tools/brush.png'
+      shortcut: 'B'
     },
     {
-      name: 'Eraser',
+      cursor: CURSORS[2],
       tool: TOOLS.ERASER,
-      shortcut: 'E',
-      imageSrc: 'tools/eraser.png'
+      shortcut: 'E'
     },
     {
-      name: 'Bucket',
+      cursor: CURSORS[3],
       tool: TOOLS.BUCKET,
-      shortcut: 'G',
-      imageSrc: 'tools/bucket.png'
+      shortcut: 'G'
     },
     {
-      name: 'Color Picker',
+      cursor: CURSORS[4],
       tool: TOOLS.COLOR_PICKER,
-      shortcut: 'I',
-      imageSrc: 'tools/color-picker.png'
+      shortcut: 'I'
     }
   ]
 
   return (
     <aside className='absolute flex flex-col left-8 gap-4'>
-      {items.map(item => (
-        <ToolbarTool {...item} key={item.tool} />
+      {tools.map(tool => (
+        <ToolbarTool {...tool} key={tool.tool} />
       ))}
       <SaveState />
     </aside>
