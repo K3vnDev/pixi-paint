@@ -1,4 +1,4 @@
-import type { Cursor } from '@types'
+import type { Cursor, SavedCanvas } from '@types'
 
 export enum TOOLS {
   NONE,
@@ -13,11 +13,11 @@ export const PIXEL_ART_RES = 8
 export const INITIAL_BG = '#FFF'
 
 // Store
-export const BLANK_CANVAS = Array.from({ length: PIXEL_ART_RES ** 2 }, () => INITIAL_BG)
-export const BLANK_DRAFT = { id: 'draft', pixels: BLANK_CANVAS }
+export const BLANK_PIXELS = Array.from({ length: PIXEL_ART_RES ** 2 }, () => INITIAL_BG)
+export const BLANK_DRAFT: SavedCanvas = { id: 'draft', pixels: BLANK_PIXELS }
 
 // LocalStorage keys
-export const LS_DRAFT_KEY = 'draft-canvas'
+export const LS_DRAFT_CANVAS_KEY = 'draft-canvas'
 export const LS_SAVED_CANVASES_KEY = 'saved-canvases'
 export const LS_EDITING_CANVAS_ID_KEY = 'editing-canvas-id'
 

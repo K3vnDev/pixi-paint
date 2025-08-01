@@ -1,4 +1,4 @@
-export const getLocalStorageItem = <T>(key: string, defaultValue: T) => {
+export const getLocalStorageItem = <T>(key: string, defaultValue: T): T => {
   if (typeof window === 'undefined') return defaultValue
 
   const item = window.localStorage.getItem(key)

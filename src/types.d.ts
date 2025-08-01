@@ -32,3 +32,11 @@ export interface Cursor {
   }
   colorImageUrl?: string
 }
+
+export interface StorageCanvas {
+  id: string
+  pixels: {
+    pixels: Record<string, number[]>
+    bg: string
+  }
+}

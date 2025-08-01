@@ -17,7 +17,7 @@ export const usePaintCanvas = () => {
   const tool = usePaintStore(s => s.tool)
   const setTool = usePaintStore(s => s.setTool)
 
-  const draft = useCanvasStore(s => s.draft)
+  const draft = useCanvasStore(s => s.draftCanvas)
   const hydrated = useCanvasStore(s => s.hydrated)
   const editingCanvasId = useCanvasStore(s => s.editingCanvasId)
   const savedCanvases = useCanvasStore(s => s.savedCanvases)
