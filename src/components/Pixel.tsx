@@ -46,7 +46,9 @@ export const Pixel = ({ color, index }: Props) => {
           ${innerRoundness} ${animClassName}
         `}
         style={{ background: color }}
-      />
+      >
+        {index}
+      </div>
     </div>
   )
 }

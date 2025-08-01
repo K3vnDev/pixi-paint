@@ -1,9 +1,9 @@
-import { PIXEL_ART_RES, TOOLS } from '@consts'
-import type { BucketPixel } from '@types'
+import { TOOLS } from '@consts'
 import { useEffect, useRef } from 'react'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { usePaintStore } from '@/store/usePaintStore'
 import { colorComparison } from '@/utils/colorComparison'
+import { findPixelsNeighbours } from '@/utils/findPixelNeighbours'
 
 export const usePaintCanvas = () => {
   const pixels = usePaintStore(s => s.pixels)
@@ -141,13 +141,41 @@ export const usePaintCanvas = () => {
         case TOOLS.BUCKET: {
           if (colorComparison(pixelColor, selectedColor)) break
 
-          const newPixels = structuredClone(pixels)
-          const indexes = getBucketPixels(newPixels, pixelIndex, pixelColor)
+          const bucketPixels = findPixelsNeighbours({
+            pixelsMap: pixels,
+            startIndex: pixelIndex,
+            zoneColor: pixelColor
+          })
 
-          for (const index of indexes) {
-            newPixels[index] = selectedColor
+          // Const group indexes
+          const groupedIndexes: number[][] = []
+          for (const { index, generation } of bucketPixels) {
+            const genIndex = generation - 1
+            groupedIndexes[genIndex] ??= []
+            groupedIndexes[genIndex].push(index)
           }
-          setPixels(newPixels)
+
+          if (!groupedIndexes.length) break
+          const newPixels = structuredClone(pixels)
+
+          // Paint per group
+          const paintGroup = (groupIndex: number) => {
+            groupedIndexes[groupIndex].forEach(i => {
+              newPixels[i] = selectedColor
+            })
+            setPixels([...newPixels])
+          }
+
+          let groupIndex = 0
+          paintGroup(groupIndex)
+
+          const interval = setInterval(() => {
+            if (++groupIndex < groupedIndexes.length) {
+              paintGroup(groupIndex)
+              return
+            }
+            clearInterval(interval)
+          }, 600 / bucketPixels.length)
           break
         }
         case TOOLS.COLOR_PICKER: {
@@ -179,44 +207,6 @@ export const usePaintCanvas = () => {
     if (!colorComparison(pixelColor, stateRefs.current.bgColor)) {
       setPixelsPixel(index, stateRefs.current.bgColor)
     }
-  }
-
-  const getBucketPixels = (originalPixels: string[], startIndex: number, zoneColor: string) => {
-    const bucketMap: BucketPixel[] = originalPixels.map((pixelColor, index) => ({
-      color: pixelColor,
-      index,
-      painted: false
-    }))
-
-    const handlePixel = (bucketPixel: BucketPixel) => {
-      const { index, color: pixelColor, painted } = bucketPixel
-
-      // If the color doesn't match or it was already painted, exit
-      if (!colorComparison(pixelColor, zoneColor) || painted) {
-        return
-      }
-
-      // Do paint
-      bucketMap[index].painted = true
-      paintIndexes.push(index)
-
-      // Handle neighbours
-      const rest = index % PIXEL_ART_RES
-
-      const up = index - PIXEL_ART_RES >= 0 ? index - PIXEL_ART_RES : null
-      const right = rest === PIXEL_ART_RES - 1 ? null : index + 1
-      const down = index + PIXEL_ART_RES < PIXEL_ART_RES ** 2 ? index + PIXEL_ART_RES : null
-      const left = rest === 0 ? null : index - 1
-
-      for (const neighbour of [up, right, down, left]) {
-        if (neighbour !== null) handlePixel(bucketMap[neighbour])
-      }
-    }
-
-    const paintIndexes: number[] = []
-    handlePixel(bucketMap[startIndex])
-
-    return paintIndexes
   }
 
   return { pixels, canvasRef }

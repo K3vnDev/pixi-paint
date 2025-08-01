@@ -4,6 +4,7 @@ export interface BucketPixel {
   index: number
   color: string
   painted: boolean
+  generation: number
 }
 
 export interface ToolbarTool {
