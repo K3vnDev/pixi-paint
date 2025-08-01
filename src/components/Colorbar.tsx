@@ -1,5 +1,6 @@
 import { COLOR_PALETTE, TOOLS } from '@consts'
 import { usePaintStore } from '@/store/usePaintStore'
+import { colorComparison } from '@/utils/colorComparison'
 
 export const Colorbar = () => {
   // Parse color palette into a string array
@@ -35,7 +36,7 @@ const Color = ({ color }: ColorProps) => {
     }
   }
 
-  const outline = selectedColor === color ? 'outline-4 outline-white' : ''
+  const outline = colorComparison(selectedColor, color) ? 'outline-4 outline-white' : ''
 
   return (
     <li

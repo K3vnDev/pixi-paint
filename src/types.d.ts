@@ -6,13 +6,37 @@ export interface BucketPixel {
   painted: boolean
 }
 
-export interface ToolbarItem {
-  name: string
+export interface ToolbarTool {
+  cursor: Cursor
   tool: TOOLS
   shortcut: string
+  onSelect?: () => void
 }
 
 export interface SavedCanvas {
   id: string
   pixels: string[]
+}
+
+export interface GalleryCanvas {
+  id: string
+  dataUrl: string
+}
+
+export interface Cursor {
+  name: string
+  imageUrl: string
+  position: {
+    x: number
+    y: number
+  }
+  colorImageUrl?: string
+}
+
+export interface StorageCanvas {
+  id: string
+  pixels: {
+    pixels: Record<string, number[]>
+    bg: string
+  }
 }

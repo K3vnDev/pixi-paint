@@ -12,6 +12,7 @@ export const PaintCanvas = () => {
       style={{ gridTemplateColumns }}
       draggable={false}
       ref={canvasRef}
+      id='paint-canvas'
     >
       {pixels.map((pixelColor, i) => (
         <Pixel color={pixelColor} index={i} key={i} />

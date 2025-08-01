@@ -17,7 +17,7 @@ interface PaintStore {
 }
 
 export const usePaintStore = create<PaintStore>(set => ({
-  tool: TOOLS.NONE,
+  tool: TOOLS.BRUSH,
   setTool: value => set(() => ({ tool: value })),
 
   color: COLOR_PALETTE.RED,

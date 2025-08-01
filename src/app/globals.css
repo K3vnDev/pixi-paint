@@ -1,5 +1,35 @@
 @import "tailwindcss";
 
+@theme {
+  --animate-appear: appear 200ms ease both;
+}
+
+* {
+  cursor: none;
+}
+
 .button {
-  @apply hover:brightness-125 transition-all active:scale-95 active:brightness-95 disabled:opacity-75 disabled:scale-100 disabled:brightness-75 disabled:pointer-events-none select-none cursor-pointer;
+  @apply hover:brightness-125 transition-all active:scale-95 active:brightness-95 disabled:opacity-75 disabled:scale-100 disabled:brightness-75 disabled:pointer-events-none select-none;
+}
+
+.pixel-anim {
+  animation: pixel-anim 200ms ease-in both;
+}
+
+@keyframes pixel-anim {
+  5% {
+    scale: 1.04;
+    filter: brightness(110%);
+  }
+}
+
+@keyframes appear {
+  from {
+    scale: 1.05;
+    opacity: 0;
+  }
+  to {
+    scale: 1;
+    opacity: 1;
+  }
 }
