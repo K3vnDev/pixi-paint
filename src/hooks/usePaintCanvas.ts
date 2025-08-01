@@ -160,12 +160,12 @@ export const usePaintCanvas = () => {
 
     canvas.addEventListener('pointerdown', handlePointerDown, { passive: false })
     canvas.addEventListener('pointermove', HandlePointerMove, { passive: false })
-    canvas.addEventListener('pointerup', handlePointerUp, { passive: false })
+    document.addEventListener('pointerup', handlePointerUp, { passive: false })
 
     return () => {
       canvas.removeEventListener('pointerdown', handlePointerDown)
       canvas.removeEventListener('pointermove', HandlePointerMove)
-      canvas.removeEventListener('pointerup', handlePointerUp)
+      document.removeEventListener('pointerup', handlePointerUp)
     }
   }, [])
 

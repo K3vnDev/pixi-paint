@@ -1,3 +1,5 @@
+import type { Cursor } from '@types'
+
 export enum TOOLS {
   NONE,
   BRUSH,
@@ -35,12 +37,34 @@ export const COLOR_PALETTE = {
   BLACK: '#000'
 } as const
 
-export const CURSORS = [
-  { name: 'pointer', url: '/imgs/tools/pointer.png', x: 32, y: 23 },
-  { name: 'brush', url: '/imgs/tools/brush.png', x: 19, y: 77 },
-  { name: 'eraser', url: '/imgs/tools/eraser.png', x: 34, y: 75 },
-  { name: 'bucket', url: '/imgs/tools/bucket.png', x: 18, y: 53 },
-  { name: 'colorPicker', url: '/imgs/tools/color-picker.png', x: 23, y: 72 }
+export const CURSORS: Cursor[] = [
+  {
+    name: 'pointer',
+    imageUrl: '/imgs/tools/pointer.png',
+    position: { x: 6, y: 3 }
+  },
+  {
+    name: 'brush',
+    imageUrl: '/imgs/tools/brush.png',
+    position: { x: 2, y: 14 },
+    colorImageUrl: '/imgs/tools/brush_color.png'
+  },
+  {
+    name: 'eraser',
+    imageUrl: '/imgs/tools/eraser.png',
+    position: { x: 5, y: 13 }
+  },
+  {
+    name: 'bucket',
+    imageUrl: '/imgs/tools/bucket.png',
+    position: { x: 3, y: 8 },
+    colorImageUrl: '/imgs/tools/bucket_color.png'
+  },
+  {
+    name: 'colorPicker',
+    imageUrl: '/imgs/tools/color-picker.png',
+    position: { x: 3, y: 12 }
+  }
 ]
 
-export const CURSOR_SIZE = 96
+export const CURSOR_SIZE = 16

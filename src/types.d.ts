@@ -23,3 +23,13 @@ export interface GalleryCanvas {
   id: string
   dataUrl: string
 }
+
+export interface Cursor {
+  name: string
+  imageUrl: string
+  position: {
+    x: number
+    y: number
+  }
+  colorImageUrl?: string
+}
