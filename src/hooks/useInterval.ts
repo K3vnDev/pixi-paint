@@ -17,19 +17,15 @@ export const useInterval = (dependencyList: any[] | null = []) => {
   }
 
   const stopInterval = (index?: number) => {
-    const stopIntervalIndex = (i: number) => {
-      intervalsRef.current[i] && clearInterval(intervalsRef.current[i])
-      intervalsRef.current[i] = null
-    }
-
-    // Stop specific index interval
     if (index !== undefined) {
-      stopIntervalIndex(index)
+      clearInterval(intervalsRef.current[index] ?? 0)
+      intervalsRef.current[index] = null
       return
     }
-
     // Stop all intervals
-    intervalsRef.current.forEach((_, i) => stopIntervalIndex(i))
+    intervalsRef.current.forEach((_, i) => {
+      stopInterval(i)
+    })
   }
 
   // Cleanup interval

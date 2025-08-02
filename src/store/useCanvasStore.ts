@@ -14,6 +14,9 @@ interface CanvasStore {
 
   editingCanvasId: string | null
   setEditingCanvasId: (value: string | null) => void
+
+  showGrid: boolean
+  setShowGrid: (value: boolean) => void
 }
 
 export const useCanvasStore = create<CanvasStore>(set => ({
@@ -27,5 +30,8 @@ export const useCanvasStore = create<CanvasStore>(set => ({
   setEditingCanvasId: value => set(() => ({ editingCanvasId: value })),
 
   hydrated: false,
-  setHydrated: value => set(() => ({ hydrated: value }))
+  setHydrated: value => set(() => ({ hydrated: value })),
+
+  showGrid: true,
+  setShowGrid: value => set(() => ({ showGrid: value }))
 }))

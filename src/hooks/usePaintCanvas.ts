@@ -146,7 +146,7 @@ export const usePaintCanvas = () => {
 
           const groupedGenerations = findBucketPixels({
             pixelsMap: pixels,
-            startIndex: pixelIndex,
+            startIndexes: [pixelIndex],
             zoneColor: pixelColor
           })
 
@@ -215,7 +215,7 @@ export const usePaintCanvas = () => {
   }
 
   const getBucketIntervalTime = (pixelCount: number, maxPixels: number) => {
-    const t = { min: 4, max: 66 }
+    const t = { min: 4, max: 75 }
     return t.min + (1 - pixelCount / maxPixels) * t.max - t.min
   }
 

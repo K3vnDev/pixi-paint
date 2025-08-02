@@ -7,7 +7,7 @@ export const Navbar = () => {
 
   const routes = [
     {
-      name: 'Free Paint',
+      name: 'Paint',
       route: '/paint'
     },
     {

@@ -1,21 +1,24 @@
 import { PIXEL_ART_RES } from '@consts'
 import { usePaintCanvas } from '@/hooks/usePaintCanvas'
+import { useCanvasPixelsAppearing } from '@/hooks/usePixelsAppearing'
 import { Pixel } from './Pixel'
 
 export const PaintCanvas = () => {
   const { pixels, canvasRef } = usePaintCanvas()
+  const { visiblePixelsMap } = useCanvasPixelsAppearing(pixels)
+
   const gridTemplateColumns = `repeat(${PIXEL_ART_RES}, minmax(0, 1fr))`
 
   return (
     <div
-      className='content-center size-[700px] grid'
+      className='content-center size-[700px] grid overflow-clip rounded-sm'
       style={{ gridTemplateColumns }}
       draggable={false}
       ref={canvasRef}
       id='paint-canvas'
     >
       {pixels.map((pixelColor, i) => (
-        <Pixel color={pixelColor} index={i} key={i} />
+        <Pixel isVisible={visiblePixelsMap[i]} color={pixelColor} index={i} key={i} />
       ))}
     </div>
   )

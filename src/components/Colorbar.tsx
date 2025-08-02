@@ -1,18 +1,25 @@
 import { COLOR_PALETTE, TOOLS } from '@consts'
+import { useCanvasStore } from '@/store/useCanvasStore'
 import { usePaintStore } from '@/store/usePaintStore'
 import { colorComparison } from '@/utils/colorComparison'
 
 export const Colorbar = () => {
-  // Parse color palette into a string array
   const colors = Object.entries(COLOR_PALETTE).map(([, col]) => col)
+  const showGrid = useCanvasStore(s => s.showGrid)
+  const setShowGrid = useCanvasStore(s => s.setShowGrid)
+
+  const toggleGrid = () => setShowGrid(!showGrid)
 
   return (
-    <aside className='flex flex-col gap-2 absolute right-8'>
+    <aside className='flex flex-col gap-8 absolute right-8'>
       <ul className='grid grid-cols-2 gap-2'>
         {colors.map(col => (
           <Color color={col} key={col} />
         ))}
       </ul>
+      <button className='bg-blue-400 h-24 rounded-xl' onClick={toggleGrid}>
+        {showGrid ? 'Hide grid' : 'Show Grid'}
+      </button>
     </aside>
   )
 }

@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
+import { useCanvasStore } from '@/store/useCanvasStore'
 import { colorComparison } from '@/utils/colorComparison'
 
 interface Props {
   color: string
   index: number
+  isVisible: boolean
 }
 
-export const Pixel = ({ color, index }: Props) => {
-  const [showGrid, setShowGrid] = useState(true)
+export const Pixel = ({ color, index, isVisible }: Props) => {
+  const showGrid = useCanvasStore(s => s.showGrid)
   const [outerPadding, innerRoundness] = showGrid ? ['p-[2px]', 'rounded-[1px]'] : ['', '']
 
   const prevColor = useRef(color)
@@ -34,9 +36,11 @@ export const Pixel = ({ color, index }: Props) => {
     prevColor.current = color
   }, [color])
 
+  const visibility = isVisible ? '' : 'scale-50 opacity-0 brightness-150'
+
   return (
     <div
-      className={`w-full aspect-square transition-all select-none ${outerPadding}`}
+      className={`w-full aspect-square transition-all select-none ${outerPadding} ${visibility}`}
       draggable={false}
       data-pixel-index={index}
     >

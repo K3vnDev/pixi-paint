@@ -3,12 +3,12 @@ import { PIXEL_ART_RES } from '@/consts'
 import { colorComparison } from './colorComparison'
 
 interface Params {
-  startIndex: number
+  startIndexes: number[]
   pixelsMap: string[]
   zoneColor?: string
 }
 
-export const findBucketPixels = ({ pixelsMap, startIndex, zoneColor }: Params) => {
+export const findBucketPixels = ({ pixelsMap, startIndexes, zoneColor }: Params) => {
   const bucketMap: BucketPixel[] = pixelsMap.map((pixelColor, index) => ({
     color: pixelColor,
     index,
@@ -29,8 +29,11 @@ export const findBucketPixels = ({ pixelsMap, startIndex, zoneColor }: Params) =
     return [bucketMap[up], bucketMap[right], bucketMap[down], bucketMap[left]].filter(n => !!n)
   }
 
-  const initialBucketPixel = { ...bucketMap[startIndex], painted: true }
-  const groupedGenerations: BucketPixel[][] = [[initialBucketPixel]]
+  const initialBucketPixels = startIndexes.map(i => {
+    bucketMap[i].painted = true
+    return { ...bucketMap[i], painted: true }
+  })
+  const groupedGenerations: BucketPixel[][] = [[...initialBucketPixels]]
   let currentGen = 0
 
   while (true) {
@@ -44,7 +47,7 @@ export const findBucketPixels = ({ pixelsMap, startIndex, zoneColor }: Params) =
 
       // Filter neighbours that match the zone color and haven't been painted yet
       const validatedNeighbours = neighbours.filter(n => {
-        const isValid = zoneColor && colorComparison(n.color, zoneColor) && !n.painted
+        const isValid = (!zoneColor || colorComparison(n.color, zoneColor)) && !n.painted
         if (isValid) n.painted = true
         return isValid
       })
