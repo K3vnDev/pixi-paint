@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { usePaintStore } from '@/store/usePaintStore'
 import { colorComparison } from '@/utils/colorComparison'
-import { findPixelsNeighbours } from '@/utils/findPixelNeighbours'
+import { findBucketPixels } from '@/utils/findBucketPixels'
 
 export const usePaintCanvas = () => {
   const pixels = usePaintStore(s => s.pixels)
@@ -29,6 +29,7 @@ export const usePaintCanvas = () => {
   const toolsHistory = useRef<TOOLS[]>([])
 
   const colorPickerHoldingColor = useRef<string | null>(null)
+  const bucketIntervalRef = useRef<ReturnType<typeof setInterval>>(null)
 
   // Set up state refs
   const stateRefs = useRef({ pixels, tool, selectedColor, bgColor })
@@ -141,41 +142,48 @@ export const usePaintCanvas = () => {
         case TOOLS.BUCKET: {
           if (colorComparison(pixelColor, selectedColor)) break
 
-          const bucketPixels = findPixelsNeighbours({
+          const groupedGenerations = findBucketPixels({
             pixelsMap: pixels,
             startIndex: pixelIndex,
             zoneColor: pixelColor
           })
 
-          // Const group indexes
-          const groupedIndexes: number[][] = []
-          for (const { index, generation } of bucketPixels) {
-            const genIndex = generation - 1
-            groupedIndexes[genIndex] ??= []
-            groupedIndexes[genIndex].push(index)
-          }
-
-          if (!groupedIndexes.length) break
+          if (!groupedGenerations.length) break
           const newPixels = structuredClone(pixels)
 
           // Paint per group
-          const paintGroup = (groupIndex: number) => {
-            groupedIndexes[groupIndex].forEach(i => {
-              newPixels[i] = selectedColor
+          const paintGeneration = (genIndex: number) => {
+            groupedGenerations[genIndex].forEach(i => {
+              newPixels[i.index] = selectedColor
             })
             setPixels([...newPixels])
           }
 
-          let groupIndex = 0
-          paintGroup(groupIndex)
+          const maxAnimPixels = 30
 
-          const interval = setInterval(() => {
-            if (++groupIndex < groupedIndexes.length) {
-              paintGroup(groupIndex)
-              return
+          if (groupedGenerations.length < maxAnimPixels) {
+            // Paint pixel groups with an interval
+            const intervalTime = getBucketIntervalTime(groupedGenerations.length, maxAnimPixels)
+
+            let currentGenIndex = 0
+            paintGeneration(currentGenIndex)
+
+            bucketIntervalRef.current = setInterval(() => {
+              if (++currentGenIndex < groupedGenerations.length) {
+                paintGeneration(currentGenIndex)
+                return
+              }
+              bucketIntervalRef.current && clearInterval(bucketIntervalRef.current)
+            }, intervalTime)
+          } else {
+            // Instant paint pixel groups
+            for (const generation of groupedGenerations) {
+              for (const pixel of generation) {
+                newPixels[pixel.index] = selectedColor
+              }
             }
-            clearInterval(interval)
-          }, 600 / bucketPixels.length)
+            setPixels([...newPixels])
+          }
           break
         }
         case TOOLS.COLOR_PICKER: {
@@ -194,6 +202,7 @@ export const usePaintCanvas = () => {
       canvas.removeEventListener('pointerdown', handlePointerDown)
       canvas.removeEventListener('pointermove', HandlePointerMove)
       document.removeEventListener('pointerup', handlePointerUp)
+      bucketIntervalRef.current && clearInterval(bucketIntervalRef.current)
     }
   }, [])
 
@@ -207,6 +216,11 @@ export const usePaintCanvas = () => {
     if (!colorComparison(pixelColor, stateRefs.current.bgColor)) {
       setPixelsPixel(index, stateRefs.current.bgColor)
     }
+  }
+
+  const getBucketIntervalTime = (pixelCount: number, maxPixels: number) => {
+    const t = { min: 4, max: 70 }
+    return t.min + (1 - pixelCount / maxPixels) * t.max - t.min
   }
 
   return { pixels, canvasRef }
