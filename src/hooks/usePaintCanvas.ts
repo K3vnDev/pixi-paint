@@ -1,14 +1,16 @@
 import { TOOLS } from '@consts'
+import type { PaintPixelData } from '@types'
 import { useEffect, useRef } from 'react'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { usePaintStore } from '@/store/usePaintStore'
 import { colorComparison } from '@/utils/colorComparison'
 import { findBucketPixels } from '@/utils/findBucketPixels'
+import { useInterval } from './useInterval'
 
 export const usePaintCanvas = () => {
   const pixels = usePaintStore(s => s.pixels)
   const setPixels = usePaintStore(s => s.setPixels)
-  const setPixelsPixel = usePaintStore(s => s.setPixelsPixel)
+  const paintPixels = usePaintStore(s => s.paintPixels)
 
   const selectedColor = usePaintStore(s => s.color)
   const setSelectedColor = usePaintStore(s => s.setColor)
@@ -29,7 +31,7 @@ export const usePaintCanvas = () => {
   const toolsHistory = useRef<TOOLS[]>([])
 
   const colorPickerHoldingColor = useRef<string | null>(null)
-  const bucketIntervalRef = useRef<ReturnType<typeof setInterval>>(null)
+  const { startInterval, stopInterval } = useInterval()
 
   // Set up state refs
   const stateRefs = useRef({ pixels, tool, selectedColor, bgColor })
@@ -149,40 +151,35 @@ export const usePaintCanvas = () => {
           })
 
           if (!groupedGenerations.length) break
-          const newPixels = structuredClone(pixels)
 
           // Paint per group
           const paintGeneration = (genIndex: number) => {
-            groupedGenerations[genIndex].forEach(i => {
-              newPixels[i.index] = selectedColor
-            })
-            setPixels([...newPixels])
+            paintPixels(...groupedGenerations[genIndex].map(({ index }) => ({ color: selectedColor, index })))
           }
 
-          const maxAnimPixels = 30
-
-          if (groupedGenerations.length < maxAnimPixels) {
+          const maxPixelsForAnim = 30
+          if (groupedGenerations.length < maxPixelsForAnim) {
             // Paint pixel groups with an interval
-            const intervalTime = getBucketIntervalTime(groupedGenerations.length, maxAnimPixels)
+            const intervalTime = getBucketIntervalTime(groupedGenerations.length, maxPixelsForAnim)
 
             let currentGenIndex = 0
             paintGeneration(currentGenIndex)
 
-            bucketIntervalRef.current = setInterval(() => {
+            // Start the interval
+            const intervalIndex = startInterval(() => {
               if (++currentGenIndex < groupedGenerations.length) {
                 paintGeneration(currentGenIndex)
                 return
               }
-              bucketIntervalRef.current && clearInterval(bucketIntervalRef.current)
+              stopInterval(intervalIndex)
             }, intervalTime)
           } else {
             // Instant paint pixel groups
+            const paintPixelsData: PaintPixelData[] = []
             for (const generation of groupedGenerations) {
-              for (const pixel of generation) {
-                newPixels[pixel.index] = selectedColor
-              }
+              paintPixelsData.push(...generation.map(({ index }) => ({ color: selectedColor, index })))
             }
-            setPixels([...newPixels])
+            paintPixels(...paintPixelsData)
           }
           break
         }
@@ -202,24 +199,23 @@ export const usePaintCanvas = () => {
       canvas.removeEventListener('pointerdown', handlePointerDown)
       canvas.removeEventListener('pointermove', HandlePointerMove)
       document.removeEventListener('pointerup', handlePointerUp)
-      bucketIntervalRef.current && clearInterval(bucketIntervalRef.current)
     }
   }, [])
 
   const paintPixel = (pixelColor: string, index: number) => {
     if (!colorComparison(pixelColor, stateRefs.current.selectedColor)) {
-      setPixelsPixel(index, stateRefs.current.selectedColor)
+      paintPixels({ index, color: stateRefs.current.selectedColor })
     }
   }
 
   const erasePixel = (pixelColor: string, index: number) => {
     if (!colorComparison(pixelColor, stateRefs.current.bgColor)) {
-      setPixelsPixel(index, stateRefs.current.bgColor)
+      paintPixels({ index, color: stateRefs.current.bgColor })
     }
   }
 
   const getBucketIntervalTime = (pixelCount: number, maxPixels: number) => {
-    const t = { min: 4, max: 70 }
+    const t = { min: 4, max: 66 }
     return t.min + (1 - pixelCount / maxPixels) * t.max - t.min
   }
 

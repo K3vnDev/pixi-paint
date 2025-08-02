@@ -1,5 +1,6 @@
 import { COLOR_PALETTE, INITIAL_BG, TOOLS } from '@consts'
 import { create } from 'zustand'
+import type { PaintPixelData } from '@/types'
 
 interface PaintStore {
   tool: TOOLS
@@ -13,7 +14,7 @@ interface PaintStore {
 
   pixels: string[]
   setPixels: (value: string[]) => void
-  setPixelsPixel: (index: number, value: string) => void
+  paintPixels: (...data: PaintPixelData[]) => void
 }
 
 export const usePaintStore = create<PaintStore>(set => ({
@@ -29,18 +30,20 @@ export const usePaintStore = create<PaintStore>(set => ({
   pixels: [],
   setPixels: value => set(() => ({ pixels: value })),
 
-  setPixelsPixel: (index, value) =>
-    set(({ pixels: canvas }) => {
-      const newPixels = structuredClone(canvas)
-      const floorIndex = Math.floor(index)
+  paintPixels: (...data) =>
+    set(({ pixels }) => {
+      const newPixels = structuredClone(pixels)
 
-      // Check if the index is within the range
-      if (floorIndex < 0 || floorIndex >= newPixels.length) {
-        console.warn(`Index out of range: ${floorIndex}`)
-        return {}
+      for (const { index, color } of data) {
+        const floorIndex = Math.floor(index)
+
+        // Check if the index is within the range
+        if (floorIndex < 0 || floorIndex >= newPixels.length) {
+          console.warn(`Index out of range: ${floorIndex}`)
+          continue
+        }
+        newPixels[floorIndex] = color
       }
-
-      newPixels[floorIndex] = value
       return { pixels: newPixels }
     })
 }))

@@ -47,7 +47,7 @@ export const Pixel = ({ color, index }: Props) => {
         `}
         style={{ background: color }}
       >
-        {index}
+        {/* {index} */}
       </div>
     </div>
   )

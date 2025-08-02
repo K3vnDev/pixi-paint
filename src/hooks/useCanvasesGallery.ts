@@ -1,6 +1,7 @@
 import type { GalleryCanvas, SavedCanvas } from '@types'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getPixelsDataUrl } from '@/utils/getPixelsDataUrl'
+import { useInterval } from './useInterval'
 
 interface Params {
   canvases: SavedCanvas[]
@@ -10,7 +11,7 @@ interface Params {
 
 export const useCanvasesGallery = ({ canvases, loaded, cooldown = 20 }: Params) => {
   const [canvasesGallery, setCanvasesGallery] = useState<GalleryCanvas[]>([])
-  const interval = useRef<ReturnType<typeof setInterval> | null>(null)
+  const { startInterval, stopInterval } = useInterval()
 
   useEffect(() => {
     if (!loaded || !canvases.length) {
@@ -21,7 +22,7 @@ export const useCanvasesGallery = ({ canvases, loaded, cooldown = 20 }: Params) 
     loadCanvas(0)
     let index = 1
 
-    interval.current = setInterval(() => {
+    startInterval(() => {
       if (index >= canvases.length) {
         stopInterval()
         return
@@ -36,11 +37,6 @@ export const useCanvasesGallery = ({ canvases, loaded, cooldown = 20 }: Params) 
     const { id, pixels } = canvases[index]
     const dataUrl = getPixelsDataUrl(pixels)
     setCanvasesGallery(c => [...c, { id, dataUrl }])
-  }
-
-  const stopInterval = () => {
-    interval.current && clearInterval(interval.current)
-    interval.current = null
   }
 
   return { canvasesGallery }

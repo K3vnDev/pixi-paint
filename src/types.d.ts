@@ -40,3 +40,8 @@ export interface StorageCanvas {
     bg: string
   }
 }
+
+export interface PaintPixelData {
+  index: number
+  color: string
+}
