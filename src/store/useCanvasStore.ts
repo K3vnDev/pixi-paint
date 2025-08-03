@@ -32,6 +32,6 @@ export const useCanvasStore = create<CanvasStore>(set => ({
   hydrated: false,
   setHydrated: value => set(() => ({ hydrated: value })),
 
-  showGrid: true,
+  showGrid: false,
   setShowGrid: value => set(() => ({ showGrid: value }))
 }))

@@ -1,8 +1,9 @@
 'use client'
 
 import { CURSOR_SIZE, CURSORS } from '@consts'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useCustomCursor } from '@/hooks/useCustomCursor'
+import { useTimeout } from '@/hooks/useTimeout'
 import { CursorImage } from './CursorImage'
 
 export const CustomCursor = () => {
@@ -33,6 +34,17 @@ const Cursor = ({ index, selectedIndex, show, ...cursor }: CursorProps) => {
   // biome-ignore format: <>
   const { name, position: { x, y } } = cursor
   const SIZE = 96
+  const isVisible = index === selectedIndex && show
+
+  const [animation, setAnimation] = useState('')
+  const { startTimeout } = useTimeout([])
+
+  useEffect(() => {
+    if (isVisible && !animation) {
+      setAnimation('animate-pop')
+      startTimeout(() => setAnimation(''), 400)
+    }
+  }, [isVisible])
 
   const style: React.CSSProperties = useMemo(
     () => ({
@@ -45,7 +57,7 @@ const Cursor = ({ index, selectedIndex, show, ...cursor }: CursorProps) => {
     [x, y]
   )
 
-  const visibility = index === selectedIndex && show ? 'opacity-100' : 'opacity-0'
+  const visibility = isVisible ? '' : 'opacity-0'
 
   return (
     <div
@@ -55,7 +67,12 @@ const Cursor = ({ index, selectedIndex, show, ...cursor }: CursorProps) => {
       `}
       style={style}
     >
-      <CursorImage {...cursor} alt={`The custom cursor of the app, showing a ${name}.`} size={SIZE} />
+      <CursorImage
+        className={{ both: animation }}
+        {...cursor}
+        alt={`The custom cursor of the app, showing a ${name}.`}
+        size={SIZE}
+      />
     </div>
   )
 }

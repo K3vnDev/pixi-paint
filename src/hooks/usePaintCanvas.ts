@@ -157,7 +157,7 @@ export const usePaintCanvas = () => {
             paintPixels(...groupedGenerations[genIndex].map(({ index }) => ({ color: selectedColor, index })))
           }
 
-          const maxPixelsForAnim = 30
+          const maxPixelsForAnim = 33
           if (groupedGenerations.length < maxPixelsForAnim) {
             // Paint pixel groups with an interval
             const intervalTime = getBucketIntervalTime(groupedGenerations.length, maxPixelsForAnim)
@@ -215,7 +215,7 @@ export const usePaintCanvas = () => {
   }
 
   const getBucketIntervalTime = (pixelCount: number, maxPixels: number) => {
-    const t = { min: 4, max: 75 }
+    const t = { min: 4, max: 70 }
     return t.min + (1 - pixelCount / maxPixels) * t.max - t.min
   }
 

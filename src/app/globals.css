@@ -2,6 +2,7 @@
 
 @theme {
   --animate-appear: appear 200ms ease both;
+  --animate-pop: pop 400ms ease both;
 }
 
 * {
@@ -31,5 +32,14 @@
   to {
     scale: 1;
     opacity: 1;
+  }
+}
+
+@keyframes pop {
+  5% {
+    scale: 1.075;
+  }
+  100% {
+    scale: 1;
   }
 }
