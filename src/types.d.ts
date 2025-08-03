@@ -21,6 +21,7 @@ export interface SavedCanvas {
 export interface GalleryCanvas {
   id: string
   dataUrl: string
+  isVisible: boolean
 }
 
 export interface Cursor {

@@ -15,29 +15,28 @@ export const useCanvasesGallery = ({ canvases, loaded, cooldown = 20 }: Params) 
 
   useEffect(() => {
     if (!loaded || !canvases.length) {
-      return stopInterval
+      return
     }
 
-    setCanvasesGallery([])
-    loadCanvas(0)
-    let index = 1
+    const newCanvasGallery: GalleryCanvas[] = []
+    for (const { id, pixels } of canvases) {
+      const dataUrl = getPixelsDataUrl(pixels)
+      newCanvasGallery.push({ id, dataUrl, isVisible: false })
+    }
+    setCanvasesGallery(newCanvasGallery)
 
+    let index = 0
     startInterval(() => {
       if (index >= canvases.length) {
         stopInterval()
         return
       }
-      loadCanvas(index++)
+      newCanvasGallery[index++].isVisible = true
+      setCanvasesGallery([...newCanvasGallery])
     }, cooldown)
 
     return stopInterval
   }, [loaded])
-
-  const loadCanvas = (index: number) => {
-    const { id, pixels } = canvases[index]
-    const dataUrl = getPixelsDataUrl(pixels)
-    setCanvasesGallery(c => [...c, { id, dataUrl }])
-  }
 
   return { canvasesGallery }
 }

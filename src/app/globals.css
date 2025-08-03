@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
 @theme {
-  --animate-appear: appear 200ms ease both;
   --animate-pop: pop 400ms ease both;
 }
 
@@ -21,17 +20,6 @@
   5% {
     scale: 1.04;
     filter: brightness(110%);
-  }
-}
-
-@keyframes appear {
-  from {
-    scale: 1.05;
-    opacity: 0;
-  }
-  to {
-    scale: 1;
-    opacity: 1;
   }
 }
 

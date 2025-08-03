@@ -1,6 +1,6 @@
 import { type DependencyList, type OnStop, useTimerHandler } from './useTimerHandler'
 
-export const useInterval = (dependencyList: DependencyList, onStop?: OnStop) => {
+export const useInterval = (dependencyList: DependencyList = [], onStop?: OnStop) => {
   const { start, stop } = useTimerHandler({
     attrs: { dependencyList, onStop },
     types: { setTimer: setInterval, clearTimer: clearInterval }

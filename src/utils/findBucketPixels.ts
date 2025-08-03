@@ -14,6 +14,7 @@ export const findBucketPixels = ({ pixelsMap, startIndexes, zoneColor }: Params)
     index,
     painted: false
   }))
+  const powPixelRes = PIXEL_ART_RES ** 2
 
   const getNeighbours = (bucketPixel: BucketPixel) => {
     const { index: i } = bucketPixel
@@ -22,7 +23,7 @@ export const findBucketPixels = ({ pixelsMap, startIndexes, zoneColor }: Params)
     // Calculate neighbours indexes
     const up = i - PIXEL_ART_RES >= 0 ? i - PIXEL_ART_RES : -1
     const right = rest === PIXEL_ART_RES - 1 ? -1 : i + 1
-    const down = i + PIXEL_ART_RES < PIXEL_ART_RES ** 2 ? i + PIXEL_ART_RES : -1
+    const down = i + PIXEL_ART_RES < powPixelRes ? i + PIXEL_ART_RES : -1
     const left = rest === 0 ? -1 : i - 1
 
     // Return filtered neighbours

@@ -22,6 +22,7 @@ export const usePaintCanvas = () => {
   const draft = useCanvasStore(s => s.draftCanvas)
   const hydrated = useCanvasStore(s => s.hydrated)
   const editingCanvasId = useCanvasStore(s => s.editingCanvasId)
+  const setEditingCanvasId = useCanvasStore(s => s.setEditingCanvasId)
   const savedCanvases = useCanvasStore(s => s.savedCanvases)
 
   const canvasRef = useRef<HTMLDivElement | null>(null)
@@ -49,7 +50,9 @@ export const usePaintCanvas = () => {
       setPixels(foundCanvas.pixels)
       return
     }
+
     // If not, load draft
+    setEditingCanvasId(null)
     setPixels(draft.pixels)
   }, [hydrated])
 
