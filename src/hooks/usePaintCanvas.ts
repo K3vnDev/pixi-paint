@@ -6,6 +6,7 @@ import { usePaintStore } from '@/store/usePaintStore'
 import { colorComparison } from '@/utils/colorComparison'
 import { findBucketPixels } from '@/utils/findBucketPixels'
 import { useInterval } from './useInterval'
+import { useTimeout } from './useTimeout'
 
 export const usePaintCanvas = () => {
   const pixels = usePaintStore(s => s.pixels)
@@ -26,13 +27,18 @@ export const usePaintCanvas = () => {
   const savedCanvases = useCanvasStore(s => s.savedCanvases)
 
   const canvasRef = useRef<HTMLDivElement | null>(null)
-  const usedSecondClickOnEraser = useRef(false)
+  const usingSecondClickOnEraser = useRef(false)
 
   const lastUsedPaintTool = useRef(TOOLS.BRUSH)
   const toolsHistory = useRef<TOOLS[]>([])
 
   const colorPickerHoldingColor = useRef<string | null>(null)
-  const { startInterval, stopInterval } = useInterval()
+  const { startInterval: startBucketInterval, stopInterval: stopBucketInterval } = useInterval()
+
+  const isOnWheelTimeout = useRef(false)
+  const { startTimeout: startWheelTimeout, stopTimeout: stopWheelTimeout } = useTimeout([], () => {
+    isOnWheelTimeout.current = false
+  })
 
   // Set up state refs
   const stateRefs = useRef({ pixels, tool, selectedColor, bgColor })
@@ -59,7 +65,7 @@ export const usePaintCanvas = () => {
   useEffect(() => {
     // Stop eraser behavior
     if (tool !== TOOLS.ERASER) {
-      usedSecondClickOnEraser.current = false
+      usingSecondClickOnEraser.current = false
     }
 
     // Handle tools history
@@ -86,7 +92,7 @@ export const usePaintCanvas = () => {
     }
 
     const handlePointerUp = () => {
-      if (usedSecondClickOnEraser.current) {
+      if (usingSecondClickOnEraser.current) {
         // Handle ceasing the use of eraser, switching back to the last used tool
         const [lastUsedTool] = toolsHistory.current
         setTool(lastUsedTool ?? TOOLS.BRUSH)
@@ -120,7 +126,7 @@ export const usePaintCanvas = () => {
       if (tool !== TOOLS.ERASER && clickButton === 2) {
         erasePixel(pixelColor, pixelIndex)
         setTool(TOOLS.ERASER)
-        usedSecondClickOnEraser.current = true
+        usingSecondClickOnEraser.current = true
         return
       }
 
@@ -136,7 +142,7 @@ export const usePaintCanvas = () => {
           erasePixel(pixelColor, pixelIndex)
 
           if (clickButton === 2) {
-            usedSecondClickOnEraser.current = true
+            usingSecondClickOnEraser.current = true
           }
           break
         }
@@ -169,12 +175,12 @@ export const usePaintCanvas = () => {
             paintGeneration(currentGenIndex)
 
             // Start the interval
-            const intervalIndex = startInterval(() => {
+            const intervalIndex = startBucketInterval(() => {
               if (++currentGenIndex < groupedGenerations.length) {
                 paintGeneration(currentGenIndex)
                 return
               }
-              stopInterval(intervalIndex)
+              stopBucketInterval(intervalIndex)
             }, intervalTime)
           } else {
             // Instant paint pixel groups
@@ -221,6 +227,31 @@ export const usePaintCanvas = () => {
     const t = { min: 4, max: 70 }
     return t.min + (1 - pixelCount / maxPixels) * t.max - t.min
   }
+
+  // Switch tools on mouse wheel
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      if (colorPickerHoldingColor.current || usingSecondClickOnEraser.current || isOnWheelTimeout.current) {
+        return
+      }
+      const add = e.deltaY < 0 ? -1 : 1
+      const selectedTool = +stateRefs.current.tool
+
+      const toolsLength = Object.keys(TOOLS).filter(k => Number.isNaN(+k)).length
+
+      let newSelectedTool = selectedTool + add
+      if (newSelectedTool >= toolsLength) newSelectedTool = 1
+      else if (newSelectedTool < 1) newSelectedTool = toolsLength - 1
+
+      isOnWheelTimeout.current = true
+      startWheelTimeout(stopWheelTimeout, 120)
+
+      setTool(newSelectedTool)
+    }
+
+    document.addEventListener('wheel', handleWheel)
+    return () => document.removeEventListener('wheel', handleWheel)
+  }, [])
 
   return { pixels, canvasRef }
 }

@@ -9,7 +9,7 @@ interface Params {
   cooldown?: number
 }
 
-export const useCanvasesGallery = ({ canvases, loaded, cooldown = 20 }: Params) => {
+export const useCanvasesGallery = ({ canvases, loaded, cooldown = 16 }: Params) => {
   const [canvasesGallery, setCanvasesGallery] = useState<GalleryCanvas[]>([])
   const { startInterval, stopInterval } = useInterval()
 

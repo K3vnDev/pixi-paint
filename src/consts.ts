@@ -3,8 +3,8 @@ import type { Cursor, SavedCanvas } from '@types'
 export enum TOOLS {
   NONE,
   BRUSH,
-  ERASER,
   BUCKET,
+  ERASER,
   COLOR_PICKER
 }
 
@@ -50,15 +50,15 @@ export const CURSORS: Cursor[] = [
     colorImageUrl: '/imgs/tools/brush_color.png'
   },
   {
-    name: 'eraser',
-    imageUrl: '/imgs/tools/eraser.png',
-    position: { x: 5, y: 13 }
-  },
-  {
     name: 'bucket',
     imageUrl: '/imgs/tools/bucket.png',
     position: { x: 3, y: 8 },
     colorImageUrl: '/imgs/tools/bucket_color.png'
+  },
+  {
+    name: 'eraser',
+    imageUrl: '/imgs/tools/eraser.png',
+    position: { x: 5, y: 13 }
   },
   {
     name: 'colorPicker',

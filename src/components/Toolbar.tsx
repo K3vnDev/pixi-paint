@@ -16,13 +16,13 @@ export const ToolBar = () => {
     },
     {
       cursor: CURSORS[2],
-      tool: TOOLS.ERASER,
-      shortcut: 'E'
+      tool: TOOLS.BUCKET,
+      shortcut: 'G'
     },
     {
       cursor: CURSORS[3],
-      tool: TOOLS.BUCKET,
-      shortcut: 'G'
+      tool: TOOLS.ERASER,
+      shortcut: 'E'
     },
     {
       cursor: CURSORS[4],
