@@ -12,6 +12,8 @@ export const PIXEL_ART_RES = 8
 
 export const INITIAL_BG = '#FFF'
 
+export const WHEEL_SWITCH_TOOL_COOLDOWN = 120
+
 // Store
 export const BLANK_PIXELS = Array.from({ length: PIXEL_ART_RES ** 2 }, () => INITIAL_BG)
 export const BLANK_DRAFT: SavedCanvas = { id: 'draft', pixels: BLANK_PIXELS }

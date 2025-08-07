@@ -1,5 +1,5 @@
+import { PIXEL_ART_RES } from '@consts'
 import type { BucketPixel } from '@types'
-import { PIXEL_ART_RES } from '@/consts'
 import { colorComparison } from './colorComparison'
 
 interface Params {

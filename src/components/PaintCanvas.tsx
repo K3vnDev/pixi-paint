@@ -11,7 +11,7 @@ export const PaintCanvas = () => {
 
   return (
     <div
-      className='content-center size-[700px] grid overflow-clip rounded-sm'
+      className='content-center size-[var(--canvas-size)] grid overflow-clip rounded-md'
       style={{ gridTemplateColumns }}
       draggable={false}
       ref={canvasRef}

@@ -2,6 +2,7 @@ import type { ToolbarTool as ToolbarToolType } from '@types'
 import { useEffect } from 'react'
 import { usePaintStore } from '@/store/usePaintStore'
 import { CursorImage } from './CursorImage'
+import { ZoneWrapper } from './ZoneWrapper'
 
 export const ToolbarTool = ({ cursor, tool, shortcut }: ToolbarToolType) => {
   const setSelectedTool = usePaintStore(s => s.setTool)
@@ -23,22 +24,24 @@ export const ToolbarTool = ({ cursor, tool, shortcut }: ToolbarToolType) => {
     setSelectedTool(tool)
   }
 
-  const outline = selectedTool === tool ? 'outline-4 outline-white' : ''
+  const outline = selectedTool === tool ? 'zone-wrapper-selected' : ''
   const title = `${cursor.name} (${shortcut})`
 
   return (
-    <button
-      title={title}
-      className={`bg-blue-500 rounded-md size-24 button relative ${outline}`}
-      onClick={handleClick}
-      onFocusCapture={e => e.preventDefault()}
+    <ZoneWrapper
+      className={`
+        h-26 w-29 relative button transition-all
+        outline-theme-10 ${outline}
+      `}
     >
-      <CursorImage
-        className={{ both: 'left-1/2 top-1/2 -translate-1/2' }}
-        size={IMAGE_SIZE}
-        {...cursor}
-        alt={`A pixel art of the ${cursor.name} tool.`}
-      />
-    </button>
+      <button title={title} onClick={handleClick} onFocusCapture={e => e.preventDefault()}>
+        <CursorImage
+          className={{ both: 'left-1/2 top-1/2 -translate-1/2' }}
+          size={IMAGE_SIZE}
+          {...cursor}
+          alt={`A pixel art of the ${cursor.name} tool.`}
+        />
+      </button>
+    </ZoneWrapper>
   )
 }

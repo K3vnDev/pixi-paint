@@ -1,7 +1,16 @@
 @import "tailwindcss";
 
+:root {
+  --canvas-size: 660px;
+  --sidebar-margin: 36px;
+}
+
 @theme {
   --animate-pop: pop 400ms ease both;
+
+  --color-theme-10: #a081ff;
+  --color-theme-20: #573da5;
+  --color-theme-50: #1a1337;
 }
 
 * {
@@ -9,7 +18,11 @@
 }
 
 .button {
-  @apply hover:brightness-125 transition-all active:scale-95 active:brightness-95 disabled:opacity-75 disabled:scale-100 disabled:brightness-75 disabled:pointer-events-none select-none;
+  @apply hover:brightness-[120%] transition-all active:scale-95 active:brightness-95 disabled:opacity-75 disabled:scale-100 disabled:brightness-75 disabled:pointer-events-none select-none;
+}
+
+.zone-wrapper-selected {
+  @apply outline-3 brightness-125;
 }
 
 .pixel-anim {

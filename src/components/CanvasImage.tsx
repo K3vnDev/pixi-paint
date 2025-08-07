@@ -1,11 +1,11 @@
 import { PIXEL_ART_RES } from '@consts'
+import type { ReusableComponent } from '@types'
 import Image from 'next/image'
 import { twMerge } from 'tailwind-merge'
 
-interface Props {
+type Props = {
   dataUrl: string
-  className?: string
-}
+} & ReusableComponent
 
 export const CanvasImage = ({ dataUrl, className = '' }: Props) => (
   <Image
