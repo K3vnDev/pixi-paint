@@ -1,4 +1,4 @@
-import { PIXEL_ART_RES } from '@consts'
+import { CANVAS_RESOLUTION } from '@consts'
 import { usePaintCanvas } from '@/hooks/usePaintCanvas'
 import { useCanvasPixelsAppearing } from '@/hooks/usePixelsAppearing'
 import { Pixel } from './Pixel'
@@ -7,7 +7,7 @@ export const PaintCanvas = () => {
   const { pixels, canvasRef } = usePaintCanvas()
   const { visiblePixelsMap } = useCanvasPixelsAppearing(pixels)
 
-  const gridTemplateColumns = `repeat(${PIXEL_ART_RES}, minmax(0, 1fr))`
+  const gridTemplateColumns = `repeat(${CANVAS_RESOLUTION}, minmax(0, 1fr))`
 
   return (
     <div

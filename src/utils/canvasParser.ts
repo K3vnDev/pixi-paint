@@ -1,9 +1,9 @@
-import { PIXEL_ART_RES } from '@consts'
+import { CANVAS_RESOLUTION } from '@consts'
 import type { SavedCanvas, StorageCanvas } from '@types'
 
 export const canvasParser = {
   fromStorage: ({ id, pixels: { pixels, bg } }: StorageCanvas): SavedCanvas => {
-    const pixelsArr = Array(PIXEL_ART_RES ** 2)
+    const pixelsArr = Array(CANVAS_RESOLUTION ** 2)
 
     for (const [pixelColor, indexes] of Object.entries(pixels)) {
       for (const index of indexes) {

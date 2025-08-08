@@ -1,6 +1,6 @@
 'use client'
 
-import { CURSOR_SIZE, CURSORS } from '@consts'
+import { CURSORS, SPRITES_RESOLUTION, SPRITES_SIZE } from '@consts'
 import { useEffect, useMemo, useState } from 'react'
 import { useCustomCursor } from '@/hooks/useCustomCursor'
 import { useTimeout } from '@/hooks/useTimeout'
@@ -33,7 +33,6 @@ type CursorProps = {
 const Cursor = ({ index, selectedIndex, show, ...cursor }: CursorProps) => {
   // biome-ignore format: <>
   const { name, position: { x, y } } = cursor
-  const SIZE = 96
   const isVisible = index === selectedIndex && show
 
   const [animation, setAnimation] = useState('')
@@ -49,10 +48,10 @@ const Cursor = ({ index, selectedIndex, show, ...cursor }: CursorProps) => {
   const style: React.CSSProperties = useMemo(
     () => ({
       imageRendering: 'pixelated',
-      top: `${(-y * SIZE) / CURSOR_SIZE}px`,
-      left: `${(-x * SIZE) / CURSOR_SIZE}px`,
-      width: `${SIZE}px`,
-      height: `${SIZE}px`
+      top: `${(-y * SPRITES_SIZE) / SPRITES_RESOLUTION}px`,
+      left: `${(-x * SPRITES_SIZE) / SPRITES_RESOLUTION}px`,
+      width: `${SPRITES_SIZE}px`,
+      height: `${SPRITES_SIZE}px`
     }),
     [x, y]
   )
@@ -71,7 +70,6 @@ const Cursor = ({ index, selectedIndex, show, ...cursor }: CursorProps) => {
         className={{ both: animation }}
         {...cursor}
         alt={`The custom cursor of the app, showing a ${name}.`}
-        size={SIZE}
       />
     </div>
   )

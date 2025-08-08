@@ -2,7 +2,7 @@
 
 import { Colorbar } from '@/components/Colorbar'
 import { PaintCanvas } from '@/components/PaintCanvas'
-import { ToolBar } from '@/components/Toolbar'
+import { ToolBar } from '@/components/Toolbar/Toolbar'
 import { useBasicPrevention } from '@/hooks/useBasicPrevention'
 import { useSaveCanvases } from '@/hooks/useSaveCanvases'
 

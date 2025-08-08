@@ -29,6 +29,10 @@
   animation: pixel-anim 200ms ease-in both;
 }
 
+.cursor-shadow {
+  filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.5));
+}
+
 @keyframes pixel-anim {
   5% {
     scale: 1.04;

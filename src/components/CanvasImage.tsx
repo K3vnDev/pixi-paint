@@ -1,4 +1,4 @@
-import { PIXEL_ART_RES } from '@consts'
+import { CANVAS_RESOLUTION } from '@consts'
 import type { ReusableComponent } from '@types'
 import Image from 'next/image'
 import { twMerge } from 'tailwind-merge'
@@ -9,10 +9,10 @@ type Props = {
 
 export const CanvasImage = ({ dataUrl, className = '' }: Props) => (
   <Image
-    width={PIXEL_ART_RES}
-    height={PIXEL_ART_RES}
+    width={CANVAS_RESOLUTION}
+    height={CANVAS_RESOLUTION}
     src={dataUrl}
-    alt={`A pixelated painting with a resolution of ${PIXEL_ART_RES}x${PIXEL_ART_RES}.`}
+    alt={`A pixelated painting with a resolution of ${CANVAS_RESOLUTION}x${CANVAS_RESOLUTION}.`}
     className={twMerge(`rounded-sm ${className}`)}
     style={{ imageRendering: 'pixelated' }}
   />
