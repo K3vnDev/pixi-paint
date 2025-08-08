@@ -1,10 +1,8 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { NavbarRoute } from './NavbarRoute'
 
 export const Navbar = () => {
-  const router = useRouter()
-
   const routes = [
     {
       name: 'Paint',
@@ -17,18 +15,15 @@ export const Navbar = () => {
   ]
 
   return (
-    <aside className='absolute left-1/2 -translate-1/2 top-8 flex gap-4 z-50'>
-      {routes.map(({ name, route }) => {
-        const handleClick = () => {
-          router.push(route)
-        }
-
-        return (
-          <button className='text-white py-2 px-6 bg-black/50 button' key={route} onClick={handleClick}>
-            {name}
-          </button>
-        )
-      })}
+    <aside
+      className={`
+        fixed top-0 left-0 h-[var(--navbar-height)] w-full z-50
+        bg-[#110C1F] border-b-4 border-b-theme-20 flex gap-6 justify-center items-end
+      `}
+    >
+      {routes.map(route => (
+        <NavbarRoute key={route.route} {...route} />
+      ))}
     </aside>
   )
 }

@@ -3,6 +3,7 @@
 :root {
   --canvas-size: 660px;
   --sidebar-margin: 36px;
+  --navbar-height: 90px;
 }
 
 @theme {
