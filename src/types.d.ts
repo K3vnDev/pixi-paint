@@ -46,3 +46,8 @@ export interface PaintPixelData {
   index: number
   color: string
 }
+
+export interface ReusableComponent {
+  className?: string
+  style?: React.CSSProperties
+}

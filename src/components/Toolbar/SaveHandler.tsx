@@ -1,47 +1,11 @@
-'use client'
-
-import { BLANK_DRAFT, CURSORS, TOOLS } from '@consts'
-import type { ToolbarTool as ToolbarToolType } from '@types'
+import { BLANK_DRAFT, SPRITES_RESOLUTION, SPRITES_SIZE } from '@consts'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { usePaintStore } from '@/store/usePaintStore'
 import { generateId } from '@/utils/generateId'
-import { ToolbarTool } from './ToolbarTool'
+import { PixelatedImage } from '../PixelatedImage'
+import { Item } from './Item'
 
-export const ToolBar = () => {
-  const tools: ToolbarToolType[] = [
-    {
-      cursor: CURSORS[1],
-      tool: TOOLS.BRUSH,
-      shortcut: 'B'
-    },
-    {
-      cursor: CURSORS[2],
-      tool: TOOLS.BUCKET,
-      shortcut: 'G'
-    },
-    {
-      cursor: CURSORS[3],
-      tool: TOOLS.ERASER,
-      shortcut: 'E'
-    },
-    {
-      cursor: CURSORS[4],
-      tool: TOOLS.COLOR_PICKER,
-      shortcut: 'I'
-    }
-  ]
-
-  return (
-    <aside className='absolute flex flex-col left-8 gap-4'>
-      {tools.map(tool => (
-        <ToolbarTool {...tool} key={tool.tool} />
-      ))}
-      <SaveHandler />
-    </aside>
-  )
-}
-
-const SaveHandler = () => {
+export const SaveHandler = () => {
   const editingCanvasId = useCanvasStore(s => s.editingCanvasId)
   const setEditingCanvasId = useCanvasStore(s => s.setEditingCanvasId)
   const savedCanvases = useCanvasStore(s => s.savedCanvases)
@@ -83,12 +47,20 @@ const SaveHandler = () => {
     }
   }
 
+  const [title, image] = isDraft
+    ? ['Draft. Click to save', 'save']
+    : ['Saved! Click to start a new draft', 'saved-check']
+
   return (
-    <button
-      className='bg-blue-300 size-24 flex items-center justify-center mt-8 button px-2'
-      onClick={handleClick}
-    >
-      {isDraft ? 'Draft. Click to save' : 'Saved! Click to start a new draft'}
-    </button>
+    <Item className='button flex items-center justify-center'>
+      <button className='px-2' onClick={handleClick} title={title}>
+        <PixelatedImage
+          resolution={SPRITES_RESOLUTION}
+          src={`/imgs/save/${image}.png`}
+          imageSize={SPRITES_SIZE}
+          alt='Save icon'
+        />
+      </button>
+    </Item>
   )
 }

@@ -1,4 +1,4 @@
-import { PIXEL_ART_RES } from '@consts'
+import { CANVAS_RESOLUTION } from '@consts'
 import { useEffect, useRef, useState } from 'react'
 import { findBucketPixels } from '@/utils/findBucketPixels'
 import { useInterval } from './useInterval'
@@ -6,17 +6,19 @@ import { useInterval } from './useInterval'
 export const useCanvasPixelsAppearing = (pixels: string[]) => {
   const { startInterval, stopInterval } = useInterval(null)
   const hasStarted = useRef(false)
-  const [visiblePixelsMap, setVisiblePixelsMap] = useState<boolean[]>(Array(PIXEL_ART_RES ** 2).fill(false))
+  const [visiblePixelsMap, setVisiblePixelsMap] = useState<boolean[]>(
+    Array(CANVAS_RESOLUTION ** 2).fill(false)
+  )
 
   useEffect(() => {
     if (!hasStarted.current && pixels.length) {
       hasStarted.current = true
-      const halfPixelArtRes = PIXEL_ART_RES / 2
+      const halfPixelArtRes = CANVAS_RESOLUTION / 2
 
       // Calculate start indexes
-      const leftTopIndex = halfPixelArtRes - 1 + PIXEL_ART_RES * (halfPixelArtRes - 1)
+      const leftTopIndex = halfPixelArtRes - 1 + CANVAS_RESOLUTION * (halfPixelArtRes - 1)
       const rightTopIndex = leftTopIndex + 1
-      const leftBottomIndex = leftTopIndex + PIXEL_ART_RES
+      const leftBottomIndex = leftTopIndex + CANVAS_RESOLUTION
       const rightBottomIndex = leftBottomIndex + 1
 
       // Calculate grouped generations
@@ -47,7 +49,7 @@ export const useCanvasPixelsAppearing = (pixels: string[]) => {
   useEffect(
     () => () => {
       hasStarted.current = false
-      setVisiblePixelsMap(Array(PIXEL_ART_RES ** 2).fill(false))
+      setVisiblePixelsMap(Array(CANVAS_RESOLUTION ** 2).fill(false))
       stopInterval()
     },
     []

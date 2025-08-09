@@ -1,4 +1,4 @@
-import { TOOLS } from '@consts'
+import { TOOLS, WHEEL_SWITCH_TOOL_COOLDOWN } from '@consts'
 import type { PaintPixelData } from '@types'
 import { useEffect, useRef } from 'react'
 import { useCanvasStore } from '@/store/useCanvasStore'
@@ -244,7 +244,7 @@ export const usePaintCanvas = () => {
       else if (newSelectedTool < 1) newSelectedTool = toolsLength - 1
 
       isOnWheelTimeout.current = true
-      startWheelTimeout(stopWheelTimeout, 120)
+      startWheelTimeout(stopWheelTimeout, WHEEL_SWITCH_TOOL_COOLDOWN)
 
       setTool(newSelectedTool)
     }

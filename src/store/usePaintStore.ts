@@ -1,6 +1,6 @@
 import { COLOR_PALETTE, INITIAL_BG, TOOLS } from '@consts'
+import type { PaintPixelData } from '@types'
 import { create } from 'zustand'
-import type { PaintPixelData } from '@/types'
 
 interface PaintStore {
   tool: TOOLS

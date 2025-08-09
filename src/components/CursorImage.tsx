@@ -1,11 +1,10 @@
-import { CURSOR_SIZE } from '@consts'
+import { SPRITES_RESOLUTION, SPRITES_SIZE } from '@consts'
 import type { Cursor as CursorType } from '@types'
-import Image from 'next/image'
 import { twMerge } from 'tailwind-merge'
 import { usePaintStore } from '@/store/usePaintStore'
+import { PixelatedImage } from './PixelatedImage'
 
 type Props = {
-  size: number
   alt: string
   className?: {
     both?: string
@@ -14,29 +13,24 @@ type Props = {
   }
 } & CursorType
 
-export const CursorImage = ({ alt, imageUrl, colorImageUrl, size, className }: Props) => {
+export const CursorImage = ({ alt, imageUrl, colorImageUrl, className }: Props) => {
   const selectedColor = usePaintStore(s => s.color)
 
   const globalStyle: React.CSSProperties = {
     imageRendering: 'pixelated',
-    width: size,
-    height: size
+    width: SPRITES_SIZE,
+    height: SPRITES_SIZE
   }
   const globalClass = `absolute aspect-square left-0 top-0 ${className?.both}`
 
   return (
     <>
-      <Image
-        className={twMerge(`${globalClass} ${className?.mainImg}`)}
-        unoptimized
-        width={CURSOR_SIZE}
-        height={CURSOR_SIZE}
+      <PixelatedImage
+        className={twMerge(`cursor-shadow ${globalClass} ${className?.mainImg}`)}
+        resolution={SPRITES_RESOLUTION}
         alt={alt}
         src={imageUrl}
-        style={{
-          ...globalStyle,
-          filter: 'drop-shadow(0 0 20px rgba(0, 0, 0, .5))'
-        }}
+        style={globalStyle}
       />
       {colorImageUrl && (
         <div

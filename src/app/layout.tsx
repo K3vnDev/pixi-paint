@@ -28,8 +28,8 @@ export default function RootLayout({
     <html lang='en'>
       <body
         className={`
-					${geistSans.variable} ${geistMono.variable} antialiased
-					bg-gray-900 overflow-x-hidden
+          ${geistSans.variable} ${geistMono.variable} antialiased
+					bg-theme-50 overflow-x-hidden
 				`}
       >
         <Navbar />

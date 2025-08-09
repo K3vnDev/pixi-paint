@@ -8,12 +8,14 @@ export enum TOOLS {
   COLOR_PICKER
 }
 
-export const PIXEL_ART_RES = 8
+export const CANVAS_RESOLUTION = 8
 
 export const INITIAL_BG = '#FFF'
 
+export const WHEEL_SWITCH_TOOL_COOLDOWN = 120
+
 // Store
-export const BLANK_PIXELS = Array.from({ length: PIXEL_ART_RES ** 2 }, () => INITIAL_BG)
+export const BLANK_PIXELS = Array.from({ length: CANVAS_RESOLUTION ** 2 }, () => INITIAL_BG)
 export const BLANK_DRAFT: SavedCanvas = { id: 'draft', pixels: BLANK_PIXELS }
 
 // LocalStorage keys
@@ -67,4 +69,5 @@ export const CURSORS: Cursor[] = [
   }
 ]
 
-export const CURSOR_SIZE = 16
+export const SPRITES_RESOLUTION = 16
+export const SPRITES_SIZE = 96
