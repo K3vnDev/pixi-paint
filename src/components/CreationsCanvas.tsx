@@ -1,20 +1,48 @@
 import type { GalleryCanvas } from '@types'
 import { useRouter } from 'next/navigation'
+import { useRef } from 'react'
 import { BLANK_DRAFT } from '@/consts'
+import { useContextMenu } from '@/hooks/useContextMenu'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { CanvasImage } from './CanvasImage'
 
 export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   const router = useRouter()
   const setEditingCanvasId = useCanvasStore(s => s.setEditingCanvasId)
+  const canvasRef = useRef<HTMLLIElement>(null)
 
-  const handleClick = () => {
+  const openCanvas = () => {
     const newEditingCanvasId = id === BLANK_DRAFT.id ? null : id
     setEditingCanvasId(newEditingCanvasId)
     router.push('/paint')
   }
-
   const visibility = !isVisible ? 'brightness-150 blur-[4px] scale-75 opacity-0' : ''
+
+  useContextMenu({
+    options: [
+      {
+        label: 'Edit',
+        icon: 'pencil',
+        action: openCanvas
+      },
+      {
+        label: 'Duplicate',
+        icon: 'clone',
+        action: () => {}
+      },
+      {
+        label: 'Download',
+        icon: 'download',
+        action: () => {}
+      },
+      {
+        label: 'Delete',
+        icon: 'trash',
+        action: () => {}
+      }
+    ],
+    ref: canvasRef
+  })
 
   return (
     <li
@@ -23,7 +51,8 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
         transition-all duration-300 ${visibility}
       `}
       key={id}
-      onClick={handleClick}
+      onClick={openCanvas}
+      ref={canvasRef}
     >
       {id === 'draft' && (
         <span

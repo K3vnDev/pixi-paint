@@ -71,3 +71,13 @@ export const CURSORS: Cursor[] = [
 
 export const SPRITES_RESOLUTION = 16
 export const SPRITES_SIZE = 96
+
+export const EVENTS = {
+  CONTEXT_MENU: '_contextmenu'
+} as const
+
+export const Z_INDEX = {
+  CUSTOM_CURSOR: 'z-9999',
+  CONTEXT_MENU: 'z-999',
+  NAVBAR: 'z-99'
+} as const
