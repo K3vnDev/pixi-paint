@@ -31,7 +31,7 @@ export const ToolBar = () => {
   ]
 
   return (
-    <aside className='absolute flex flex-col left-[var(--sidebar-margin)] gap-3'>
+    <aside className='absolute flex flex-col left-[var(--sidebar-margin)] gap-3 animate-slide-in-left'>
       {tools.map(tool => (
         <Tool {...tool} key={tool.tool} />
       ))}

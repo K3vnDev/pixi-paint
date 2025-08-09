@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useTimeout } from '@/hooks/useTimeout'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { colorComparison } from '@/utils/colorComparison'
 
@@ -15,23 +16,22 @@ export const Pixel = ({ color, index, isVisible }: Props) => {
   const prevColor = useRef(color)
   const [animClassName, setAnimClassName] = useState('')
 
-  const timeout = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const isOnAnimation = useRef(false)
+  const { startTimeout, stopTimeout } = useTimeout([], () => {
+    setAnimClassName('')
+    isOnAnimation.current = false
+  })
+
   const ANIM = {
     TIME: 200,
     NAME: 'pixel-anim'
   }
 
   useEffect(() => {
-    if (!colorComparison(prevColor.current, color) && !timeout.current) {
+    if (!colorComparison(prevColor.current, color) && !isOnAnimation.current) {
+      isOnAnimation.current = true
       setAnimClassName(ANIM.NAME)
-
-      timeout.current = setTimeout(() => {
-        if (timeout.current) {
-          clearTimeout(timeout.current)
-          timeout.current = null
-          setAnimClassName('')
-        }
-      }, ANIM.TIME)
+      startTimeout(stopTimeout, ANIM.TIME)
     }
     prevColor.current = color
   }, [color])

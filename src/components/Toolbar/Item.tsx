@@ -10,8 +10,7 @@ export const Item = ({ children, className, style }: Props) => {
   return (
     <ZoneWrapper
       className={twMerge(`
-        h-25 w-29 relative button transition-all
-        outline-theme-10 ${className}
+        h-25 w-29 relative button transition-all ${className}
       `)}
       style={style}
     >

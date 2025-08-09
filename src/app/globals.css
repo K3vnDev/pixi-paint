@@ -1,44 +1,39 @@
 @import "tailwindcss";
 
+* {
+  cursor: none;
+}
+
 :root {
   --canvas-size: 660px;
   --sidebar-margin: 36px;
   --navbar-height: 90px;
+
+  --slide-anim-timing: 800ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --slide-anim-blur: blur(6px);
 }
 
 @theme {
-  --animate-pop: pop 400ms ease both;
-
   --color-theme-10: #a081ff;
   --color-theme-20: #573da5;
   --color-theme-50: #1a1337;
-}
 
-* {
-  cursor: none;
+  --animate-pop: pop 400ms ease both;
+
+  --animate-slide-in-left: slide-in-left var(--slide-anim-timing);
+  --animate-slide-in-right: slide-in-right var(--slide-anim-timing);
 }
 
 .button {
   @apply hover:brightness-[120%] transition-all active:scale-95 active:brightness-95 disabled:opacity-75 disabled:scale-100 disabled:brightness-75 disabled:pointer-events-none select-none;
 }
 
-.zone-wrapper-selected {
-  @apply outline-3 brightness-125;
-}
-
-.pixel-anim {
-  animation: pixel-anim 200ms ease-in both;
+.brightness-selected {
+  @apply brightness-125 hover:brightness-125;
 }
 
 .cursor-shadow {
   filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.5));
-}
-
-@keyframes pixel-anim {
-  5% {
-    scale: 1.04;
-    filter: brightness(110%);
-  }
 }
 
 @keyframes pop {
@@ -47,5 +42,41 @@
   }
   100% {
     scale: 1;
+  }
+}
+
+.pixel-anim {
+  animation: pixel-anim 200ms ease-in both;
+}
+@keyframes pixel-anim {
+  5% {
+    scale: 1.04;
+    filter: brightness(115%);
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    filter: var(--slide-anim-blur);
+    translate: -32px;
+  }
+  to {
+    opacity: 1;
+    translate: 0;
+    filter: blur(0);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    filter: var(--slide-anim-blur);
+    translate: 32px;
+  }
+  to {
+    opacity: 1;
+    translate: 0;
+    filter: blur(0);
   }
 }

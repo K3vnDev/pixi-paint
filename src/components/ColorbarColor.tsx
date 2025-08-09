@@ -21,7 +21,7 @@ export const ColorbarColor = ({ color }: Props) => {
     }
   }
 
-  const outline = colorComparison(selectedColor, color) ? 'zone-wrapper-selected' : ''
+  const outline = colorComparison(selectedColor, color) ? 'outline-3 brightness-selected' : ''
 
   return (
     <li

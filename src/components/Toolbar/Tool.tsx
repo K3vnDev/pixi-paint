@@ -23,11 +23,11 @@ export const Tool = ({ cursor, tool, shortcut }: ToolbarTool) => {
     setSelectedTool(tool)
   }
 
-  const outline = selectedTool === tool ? 'zone-wrapper-selected' : ''
+  const selectedStyle = selectedTool === tool ? 'outline-5 brightness-selected translate-x-1.5' : ''
   const title = `${cursor.name} (${shortcut})`
 
   return (
-    <Item className={outline}>
+    <Item className={selectedStyle}>
       <button title={title} onClick={handleClick} onFocusCapture={e => e.preventDefault()}>
         <CursorImage
           className={{ both: 'left-1/2 top-1/2 -translate-1/2' }}
