@@ -16,7 +16,7 @@ export const Option = ({ label, icon: iconName, action, closeMenu }: Props) => {
     <button
       className={`
         flex items-center bg-transparent hover:bg-black/40 w-full 
-        pl-3 pr-5 py-1 gap-1.5 
+        pl-3 pr-5 py-1 gap-1.5 active:bg-black/20
       `}
       onClick={handleClick}
     >
