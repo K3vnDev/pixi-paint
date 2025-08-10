@@ -83,3 +83,9 @@ export const Z_INDEX = {
 } as const
 
 export const CONTEXT_MENU_FOCUSABLE = '-context-menu-focusable'
+
+export enum CLICK_BUTTON {
+  LEFT = 1,
+  RIGHT = 2,
+  MIDDLE = 4
+}

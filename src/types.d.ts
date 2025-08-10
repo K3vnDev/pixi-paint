@@ -55,6 +55,7 @@ export interface ReusableComponent {
 export type ContextMenuBuilder = {
   position: { x: number; y: number }
   options: ContextMenuOption[]
+  allowedClicks: CLICK_BUTTON[]
 }
 
 export interface ContextMenuOption {

@@ -1,26 +1,21 @@
 import type { ContextMenuBuilder, ContextMenuOption } from '@types'
 import { useEffect } from 'react'
-import { EVENTS } from '@/consts'
-
-enum CLICK_MODE {
-  LEFT,
-  RIGHT,
-  BOTH
-}
+import { CLICK_BUTTON, EVENTS } from '@/consts'
+import { clickIncludes } from '@/utils/clickIncludes'
 
 interface Params {
   options: ContextMenuOption[]
   ref: React.RefObject<HTMLElement | null>
-  clickMode?: CLICK_MODE
+  allowedClicks?: CLICK_BUTTON[]
 }
 
-export const useContextMenu = ({ options, ref, clickMode = CLICK_MODE.RIGHT }: Params) => {
+export const useContextMenu = ({ options, ref, allowedClicks = [CLICK_BUTTON.RIGHT] }: Params) => {
   useEffect(() => {
     const handlePointerDown = (e: PointerEvent) => {
       if (!ref.current) return
-      const button = e.buttons
+      const clickBtn = e.buttons
 
-      if ([1, 2].includes(button) && (clickMode === CLICK_MODE.BOTH || button === clickMode + 1)) {
+      if (clickIncludes(clickBtn, ...allowedClicks)) {
         openMenu(e.clientX, e.clientY)
       }
     }
@@ -32,7 +27,8 @@ export const useContextMenu = ({ options, ref, clickMode = CLICK_MODE.RIGHT }: P
   const openMenu = (x: number, y: number) => {
     const builder: ContextMenuBuilder = {
       options,
-      position: { x, y }
+      position: { x, y },
+      allowedClicks
     }
 
     const event = new CustomEvent(EVENTS.CONTEXT_MENU, { detail: builder })
