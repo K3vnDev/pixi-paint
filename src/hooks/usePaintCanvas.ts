@@ -6,6 +6,7 @@ import { usePaintStore } from '@/store/usePaintStore'
 import { clickIncludes } from '@/utils/clickIncludes'
 import { colorComparison } from '@/utils/colorComparison'
 import { findBucketPixels } from '@/utils/findBucketPixels'
+import { useFreshRef } from './useFreshRef'
 import { useInterval } from './useInterval'
 import { useTimeout } from './useTimeout'
 
@@ -44,10 +45,7 @@ export const usePaintCanvas = () => {
   const clickButton = useRef(-1)
 
   // Set up state refs
-  const stateRefs = useRef({ pixels, tool, selectedColor, bgColor })
-  useEffect(() => {
-    stateRefs.current = { pixels, tool, selectedColor, bgColor }
-  }, [pixels, tool, selectedColor, bgColor])
+  const stateRefs = useFreshRef({ pixels, tool, selectedColor, bgColor })
 
   // Load the correct painting on startup
   useEffect(() => {

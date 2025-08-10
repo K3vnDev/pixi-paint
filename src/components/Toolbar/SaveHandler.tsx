@@ -1,7 +1,6 @@
 import { BLANK_DRAFT, SPRITES_RESOLUTION, SPRITES_SIZE } from '@consts'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { usePaintStore } from '@/store/usePaintStore'
-import { generateId } from '@/utils/generateId'
 import { PixelatedImage } from '../PixelatedImage'
 import { Item } from './Item'
 
@@ -10,18 +9,14 @@ export const SaveHandler = () => {
   const setEditingCanvasId = useCanvasStore(s => s.setEditingCanvasId)
   const savedCanvases = useCanvasStore(s => s.savedCanvases)
   const setSavedCanvases = useCanvasStore(s => s.setSavedCanvases)
+  const getNewCanvasId = useCanvasStore(s => s.getNewCanvasId)
   const setDraft = useCanvasStore(s => s.setDraftCanvas)
 
   const editingPixels = usePaintStore(s => s.pixels)
   const isDraft = editingCanvasId === null
 
-  const generateNewCanvasId = (): string => {
-    const generatedId = generateId()
-    return savedCanvases.some(c => c.id === generatedId) ? generateNewCanvasId() : generatedId
-  }
-
   const createNewSave = () => {
-    const newCanvasId = generateNewCanvasId()
+    const newCanvasId = getNewCanvasId()
 
     const savingCanvas = {
       id: newCanvasId,

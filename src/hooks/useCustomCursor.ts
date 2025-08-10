@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { usePaintStore } from '@/store/usePaintStore'
+import { useFreshRef } from './useFreshRef'
 
 export const useCustomCursor = () => {
   const cursorsContainerRef = useRef<HTMLDivElement | null>(null)
 
   const tool = usePaintStore(s => s.tool)
-  const toolRef = useRef(tool)
+  const toolRef = useFreshRef(tool)
 
   const isHoveringPaintCanvas = useRef(false)
   const isPreservingHoveringState = useRef(false)
@@ -55,12 +56,6 @@ export const useCustomCursor = () => {
     }
     setCurrentCursorIndex(newCursorIndex)
   }
-
-  // Refresh tool ref
-  useEffect(() => {
-    toolRef.current = tool
-    refreshCursor()
-  }, [tool])
 
   // Handle pointer visibility
   useEffect(() => {

@@ -1,6 +1,7 @@
 import { BLANK_DRAFT } from '@consts'
 import type { SavedCanvas } from '@types'
 import { create } from 'zustand'
+import { generateId } from '@/utils/generateId'
 
 interface CanvasStore {
   savedCanvases: SavedCanvas[]
@@ -17,9 +18,11 @@ interface CanvasStore {
 
   showGrid: boolean
   setShowGrid: (value: boolean) => void
+
+  getNewCanvasId: () => string
 }
 
-export const useCanvasStore = create<CanvasStore>(set => ({
+export const useCanvasStore = create<CanvasStore>((set, get) => ({
   savedCanvases: [],
   setSavedCanvases: value => set(() => ({ savedCanvases: value })),
 
@@ -33,5 +36,11 @@ export const useCanvasStore = create<CanvasStore>(set => ({
   setHydrated: value => set(() => ({ hydrated: value })),
 
   showGrid: false,
-  setShowGrid: value => set(() => ({ showGrid: value }))
+  setShowGrid: value => set(() => ({ showGrid: value })),
+
+  getNewCanvasId: () => {
+    const { savedCanvases, getNewCanvasId } = get()
+    const generatedId = generateId()
+    return savedCanvases.some(c => c.id === generatedId) ? getNewCanvasId() : generatedId
+  }
 }))
