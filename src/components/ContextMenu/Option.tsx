@@ -1,4 +1,6 @@
+import { CLICK_BUTTON } from '@consts'
 import type { ContextMenuOption } from '@types'
+import { clickIncludes } from '@/utils/clickIncludes'
 
 type Props = {
   closeMenu: () => void
@@ -7,9 +9,11 @@ type Props = {
 export const Option = ({ label, icon: iconName, action, closeMenu }: Props) => {
   const imageUrl = `/imgs/icons/${iconName}.png`
 
-  const handleClick = () => {
-    action()
-    closeMenu()
+  const handleClick = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (clickIncludes(e.button, CLICK_BUTTON.LEFT, CLICK_BUTTON.RIGHT)) {
+      action()
+      closeMenu()
+    }
   }
 
   return (
@@ -18,7 +22,7 @@ export const Option = ({ label, icon: iconName, action, closeMenu }: Props) => {
         flex items-center bg-transparent hover:bg-black/40 w-full 
         pl-3 pr-5 py-1 gap-1.5 active:bg-black/20
       `}
-      onClick={handleClick}
+      onPointerDown={handleClick}
     >
       <div
         className='bg-theme-10 size-12'

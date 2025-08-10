@@ -12,7 +12,7 @@ export const CANVAS_RESOLUTION = 8
 
 export const INITIAL_BG = '#FFF'
 
-export const WHEEL_SWITCH_TOOL_COOLDOWN = 120
+export const WHEEL_SWITCH_TOOL_COOLDOWN = 110
 
 // Store
 export const BLANK_PIXELS = Array.from({ length: CANVAS_RESOLUTION ** 2 }, () => INITIAL_BG)
@@ -73,7 +73,8 @@ export const SPRITES_RESOLUTION = 16
 export const SPRITES_SIZE = 96
 
 export const EVENTS = {
-  CONTEXT_MENU: '_contextmenu'
+  OPEN_CONTEXT_MENU: '$open-context-menu',
+  CLOSE_CONTEXT_MENU: '$close-context-menu'
 } as const
 
 export const Z_INDEX = {
@@ -82,10 +83,8 @@ export const Z_INDEX = {
   NAVBAR: 'z-99'
 } as const
 
-export const CONTEXT_MENU_FOCUSABLE = '-context-menu-focusable'
-
 export enum CLICK_BUTTON {
-  LEFT = 1,
-  RIGHT = 2,
-  MIDDLE = 4
+  LEFT,
+  MIDDLE,
+  RIGHT
 }

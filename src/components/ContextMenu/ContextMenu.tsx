@@ -1,6 +1,6 @@
 'use client'
 
-import { CONTEXT_MENU_FOCUSABLE, EVENTS, Z_INDEX } from '@consts'
+import { EVENTS, Z_INDEX } from '@consts'
 import type { ContextMenuBuilder } from '@types'
 import { useEffect, useRef, useState } from 'react'
 import { useTimeout } from '@/hooks/useTimeout'
@@ -8,12 +8,14 @@ import { Option } from './Option'
 
 export const ContextMenu = () => {
   const [animation, setAnimation] = useState<string>(ANIMATION_VALUES.NONE)
+  const [menuData, setMenuData] = useState<ContextMenuBuilder | null>(null)
   const isOpen = useRef(false)
   const isClosing = useRef(false)
-  const ELEMENT_ID = 'CONTEXT_MENU'
+  const CLOSE_DISTANCE = 350
 
-  const [menuData, setMenuData] = useState<ContextMenuBuilder | null>(null)
   const { startTimeout, stopTimeout } = useTimeout()
+  const ELEMENT_ID = 'CONTEXT_MENU'
+  const elementRef = useRef<HTMLDialogElement>(null)
 
   useEffect(() => {
     const handleOpenMenu = (e: Event) => {
@@ -22,31 +24,42 @@ export const ContextMenu = () => {
     }
 
     const handlePointerMove = (e: PointerEvent) => {
-      // if (isOpen.current) {
-      //   console.log(e.clientX, e.clientY)
-      // }
+      if (isOpen.current && elementRef.current) {
+        const { top, left, width, height } = elementRef.current.getBoundingClientRect()
+
+        const center = { x: left + width / 2, y: top + height / 2 }
+        const { clientX, clientY } = e
+
+        const distance = Math.sqrt(Math.abs(clientX - center.x) ** 2 + Math.abs(clientY - center.y) ** 2)
+        if (distance > CLOSE_DISTANCE) {
+          closeMenu()
+        }
+      }
     }
 
-    const handlePointerDown = (e: PointerEvent) => {
-      if (!isOpen.current) return
-      const validClick = !!(e.target as HTMLElement).closest(`#${ELEMENT_ID}, .${CONTEXT_MENU_FOCUSABLE}`)
-      if (!validClick) closeMenu()
+    const handlePointerDown = ({ target }: PointerEvent) => {
+      if (isOpen.current) {
+        const clickedInside = !!(target as HTMLElement).closest(`#${ELEMENT_ID}`)
+        if (!clickedInside) closeMenu()
+      }
     }
 
-    const handlePointerLeave = (_: PointerEvent) => {
+    const handleCloseMenu = () => {
       closeMenu()
     }
 
     document.addEventListener('pointermove', handlePointerMove, { capture: true })
     document.addEventListener('pointerdown', handlePointerDown, { capture: true })
-    document.addEventListener('pointerleave', handlePointerLeave)
-    document.addEventListener(EVENTS.CONTEXT_MENU, handleOpenMenu)
+    document.addEventListener('pointerleave', handleCloseMenu)
+    document.addEventListener(EVENTS.OPEN_CONTEXT_MENU, handleOpenMenu)
+    document.addEventListener(EVENTS.CLOSE_CONTEXT_MENU, handleCloseMenu)
 
     return () => {
       document.removeEventListener('pointermove', handlePointerMove)
       document.removeEventListener('pointerdown', handlePointerDown)
-      document.removeEventListener('pointerleave', handlePointerLeave)
-      document.removeEventListener(EVENTS.CONTEXT_MENU, handleOpenMenu)
+      document.removeEventListener('pointerleave', handleCloseMenu)
+      document.removeEventListener(EVENTS.OPEN_CONTEXT_MENU, handleOpenMenu)
+      document.removeEventListener(EVENTS.CLOSE_CONTEXT_MENU, handleCloseMenu)
     }
   }, [])
 
@@ -56,6 +69,9 @@ export const ContextMenu = () => {
     isOpen.current = true
     setMenuData(builder)
     setAnimation(ANIMATION_VALUES.SHOW)
+
+    stopTimeout()
+    isClosing.current = false
 
     startTimeout(() => {
       setAnimation(ANIMATION_VALUES.NONE)
@@ -94,6 +110,7 @@ export const ContextMenu = () => {
       style={{ left: `${position.x}px`, top: `${position.y}px`, animation }}
       id={ELEMENT_ID}
       open
+      ref={elementRef}
     >
       {options.map((option, i) => (
         <Option closeMenu={closeMenu} key={i} {...option} />
@@ -103,7 +120,7 @@ export const ContextMenu = () => {
 }
 
 const ANIMATION_TIMES = {
-  SHOW: 150,
+  SHOW: 130,
   HIDE: 70
 } as const
 

@@ -1,7 +1,7 @@
+import { BLANK_DRAFT } from '@consts'
 import type { GalleryCanvas } from '@types'
 import { useRouter } from 'next/navigation'
 import { useRef } from 'react'
-import { BLANK_DRAFT, CONTEXT_MENU_FOCUSABLE } from '@/consts'
 import { useContextMenu } from '@/hooks/useContextMenu'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { CanvasImage } from './CanvasImage'
@@ -10,6 +10,7 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   const router = useRouter()
   const setEditingCanvasId = useCanvasStore(s => s.setEditingCanvasId)
   const canvasRef = useRef<HTMLLIElement>(null)
+  const isDraft = id === 'draft'
 
   const openCanvas = () => {
     const newEditingCanvasId = id === BLANK_DRAFT.id ? null : id
@@ -41,20 +42,20 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
         action: () => {}
       }
     ],
-    ref: canvasRef
+    ref: canvasRef,
+    showWhen: !isDraft
   })
 
   return (
     <li
       className={`
-       button relative w-full aspect-square
-        transition-all duration-300 ${visibility} ${CONTEXT_MENU_FOCUSABLE}
+        button relative w-full aspect-square transition-all duration-300 ${visibility}
       `}
       key={id}
       onClick={openCanvas}
       ref={canvasRef}
     >
-      {id === 'draft' && (
+      {isDraft && (
         <span
           className={`
             absolute text-black font-bold bg-white px-5 py-1 rounded-sm text-3xl 

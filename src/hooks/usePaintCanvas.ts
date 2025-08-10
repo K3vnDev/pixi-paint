@@ -41,6 +41,8 @@ export const usePaintCanvas = () => {
     isOnWheelTimeout.current = false
   })
 
+  const clickButton = useRef(-1)
+
   // Set up state refs
   const stateRefs = useRef({ pixels, tool, selectedColor, bgColor })
   useEffect(() => {
@@ -84,10 +86,16 @@ export const usePaintCanvas = () => {
     const canvas = canvasRef.current
     if (!canvas) return
 
-    const handlePointerDown = (e: PointerEvent) => handlePointer(e)
+    const handlePointerDown = (e: PointerEvent) => {
+      clickButton.current = e.button
+      handlePointer(e)
+    }
+
     const HandlePointerMove = (e: PointerEvent) => handlePointer(e)
 
-    const handlePointerUp = () => {
+    const handlePointerStop = () => {
+      clickButton.current = -1
+
       if (usingSecondClickOnEraser.current) {
         // Handle ceasing the use of eraser, switching back to the last used tool
         const [lastUsedTool] = toolsHistory.current
@@ -106,7 +114,7 @@ export const usePaintCanvas = () => {
       e.stopPropagation()
 
       // Dont proceed if it wasn't a valid click
-      const clickBtn = e.buttons
+      const clickBtn = clickButton.current
       if (!clickIncludes(clickBtn, CB.LEFT, CB.RIGHT, CB.MIDDLE)) return
 
       // Extract pixel index and don't proceed if its not valid
@@ -197,12 +205,14 @@ export const usePaintCanvas = () => {
 
     canvas.addEventListener('pointerdown', handlePointerDown, { passive: false })
     canvas.addEventListener('pointermove', HandlePointerMove, { passive: false })
-    document.addEventListener('pointerup', handlePointerUp, { passive: false })
+    document.addEventListener('pointerup', handlePointerStop, { passive: false })
+    document.addEventListener('pointerleave', handlePointerStop, { passive: false })
 
     return () => {
       canvas.removeEventListener('pointerdown', handlePointerDown)
       canvas.removeEventListener('pointermove', HandlePointerMove)
-      document.removeEventListener('pointerup', handlePointerUp)
+      document.removeEventListener('pointerup', handlePointerStop)
+      document.removeEventListener('pointerleave', handlePointerStop)
     }
   }, [])
 
