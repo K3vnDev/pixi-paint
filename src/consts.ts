@@ -81,3 +81,5 @@ export const Z_INDEX = {
   CONTEXT_MENU: 'z-999',
   NAVBAR: 'z-99'
 } as const
+
+export const CONTEXT_MENU_FOCUSABLE = '-context-menu-focusable'

@@ -1,7 +1,7 @@
 import type { GalleryCanvas } from '@types'
 import { useRouter } from 'next/navigation'
 import { useRef } from 'react'
-import { BLANK_DRAFT } from '@/consts'
+import { BLANK_DRAFT, CONTEXT_MENU_FOCUSABLE } from '@/consts'
 import { useContextMenu } from '@/hooks/useContextMenu'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { CanvasImage } from './CanvasImage'
@@ -48,7 +48,7 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
     <li
       className={`
        button relative w-full aspect-square
-        transition-all duration-300 ${visibility}
+        transition-all duration-300 ${visibility} ${CONTEXT_MENU_FOCUSABLE}
       `}
       key={id}
       onClick={openCanvas}

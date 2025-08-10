@@ -1,6 +1,6 @@
 'use client'
 
-import { EVENTS, Z_INDEX } from '@consts'
+import { CONTEXT_MENU_FOCUSABLE, EVENTS, Z_INDEX } from '@consts'
 import type { ContextMenuBuilder } from '@types'
 import { useEffect, useRef, useState } from 'react'
 import { useTimeout } from '@/hooks/useTimeout'
@@ -10,6 +10,7 @@ export const ContextMenu = () => {
   const [animation, setAnimation] = useState<string>(ANIMATION_VALUES.NONE)
   const isOpen = useRef(false)
   const isClosing = useRef(false)
+  const ELEMENT_ID = 'CONTEXT_MENU'
 
   const [menuData, setMenuData] = useState<ContextMenuBuilder | null>(null)
   const { startTimeout, stopTimeout } = useTimeout()
@@ -20,16 +21,31 @@ export const ContextMenu = () => {
       openMenu(menuBuilder)
     }
 
-    const handlePointerMove = (_: PointerEvent) => {}
-    const handlePointerDown = (_: PointerEvent) => {}
+    const handlePointerMove = (e: PointerEvent) => {
+      // if (isOpen.current) {
+      //   console.log(e.clientX, e.clientY)
+      // }
+    }
+
+    const handlePointerDown = (e: PointerEvent) => {
+      if (!isOpen.current) return
+      const validClick = !!(e.target as HTMLElement).closest(`#${ELEMENT_ID}, .${CONTEXT_MENU_FOCUSABLE}`)
+      if (!validClick) closeMenu()
+    }
+
+    const handlePointerLeave = (_: PointerEvent) => {
+      closeMenu()
+    }
 
     document.addEventListener('pointermove', handlePointerMove, { capture: true })
     document.addEventListener('pointerdown', handlePointerDown, { capture: true })
+    document.addEventListener('pointerleave', handlePointerLeave)
     document.addEventListener(EVENTS.CONTEXT_MENU, handleOpenMenu)
 
     return () => {
       document.removeEventListener('pointermove', handlePointerMove)
       document.removeEventListener('pointerdown', handlePointerDown)
+      document.removeEventListener('pointerleave', handlePointerLeave)
       document.removeEventListener(EVENTS.CONTEXT_MENU, handleOpenMenu)
     }
   }, [])
@@ -75,11 +91,8 @@ export const ContextMenu = () => {
         absolute top-0 left-0 ${Z_INDEX.CONTEXT_MENU} py-1 rounded-xl origin-top-left
         bg-theme-50 border-2 border-theme-20 shadow-lg shadow-black/50
       `}
-      style={{
-        left: `${position.x}px`,
-        top: `${position.y}px`,
-        animation
-      }}
+      style={{ left: `${position.x}px`, top: `${position.y}px`, animation }}
+      id={ELEMENT_ID}
       open
     >
       {options.map((option, i) => (
