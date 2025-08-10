@@ -1,6 +1,6 @@
 'use client'
 
-import { CURSORS, SPRITES_RESOLUTION, SPRITES_SIZE } from '@consts'
+import { CURSORS, SPRITES_RESOLUTION, SPRITES_SIZE, Z_INDEX } from '@consts'
 import { useEffect, useMemo, useState } from 'react'
 import { useCustomCursor } from '@/hooks/useCustomCursor'
 import { useTimeout } from '@/hooks/useTimeout'
@@ -61,7 +61,7 @@ const Cursor = ({ index, selectedIndex, show, ...cursor }: CursorProps) => {
   return (
     <div
       className={`
-        fixed z-[9999] pointer-events-none 
+        fixed ${Z_INDEX.CUSTOM_CURSOR} pointer-events-none 
         transition-opacity duration-75 ${visibility}
       `}
       style={style}

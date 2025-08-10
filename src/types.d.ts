@@ -51,3 +51,15 @@ export interface ReusableComponent {
   className?: string
   style?: React.CSSProperties
 }
+
+export type ContextMenuBuilder = {
+  position: { x: number; y: number }
+  options: ContextMenuOption[]
+  allowedClicks: CLICK_BUTTON[]
+}
+
+export interface ContextMenuOption {
+  label: string
+  icon: 'check' | 'clone' | 'cross' | 'download' | 'pencil' | 'trash'
+  action: () => void
+}

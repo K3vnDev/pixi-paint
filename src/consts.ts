@@ -12,7 +12,7 @@ export const CANVAS_RESOLUTION = 8
 
 export const INITIAL_BG = '#FFF'
 
-export const WHEEL_SWITCH_TOOL_COOLDOWN = 120
+export const WHEEL_SWITCH_TOOL_COOLDOWN = 110
 
 // Store
 export const BLANK_PIXELS = Array.from({ length: CANVAS_RESOLUTION ** 2 }, () => INITIAL_BG)
@@ -71,3 +71,20 @@ export const CURSORS: Cursor[] = [
 
 export const SPRITES_RESOLUTION = 16
 export const SPRITES_SIZE = 96
+
+export const EVENTS = {
+  OPEN_CONTEXT_MENU: '$open-context-menu',
+  CLOSE_CONTEXT_MENU: '$close-context-menu'
+} as const
+
+export const Z_INDEX = {
+  CUSTOM_CURSOR: 'z-9999',
+  CONTEXT_MENU: 'z-999',
+  NAVBAR: 'z-99'
+} as const
+
+export enum CLICK_BUTTON {
+  LEFT,
+  MIDDLE,
+  RIGHT
+}

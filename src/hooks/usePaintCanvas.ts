@@ -1,8 +1,9 @@
-import { TOOLS, WHEEL_SWITCH_TOOL_COOLDOWN } from '@consts'
+import { CLICK_BUTTON as CB, TOOLS, WHEEL_SWITCH_TOOL_COOLDOWN } from '@consts'
 import type { PaintPixelData } from '@types'
 import { useEffect, useRef } from 'react'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { usePaintStore } from '@/store/usePaintStore'
+import { clickIncludes } from '@/utils/clickIncludes'
 import { colorComparison } from '@/utils/colorComparison'
 import { findBucketPixels } from '@/utils/findBucketPixels'
 import { useInterval } from './useInterval'
@@ -39,6 +40,8 @@ export const usePaintCanvas = () => {
   const { startTimeout: startWheelTimeout, stopTimeout: stopWheelTimeout } = useTimeout([], () => {
     isOnWheelTimeout.current = false
   })
+
+  const clickButton = useRef(-1)
 
   // Set up state refs
   const stateRefs = useRef({ pixels, tool, selectedColor, bgColor })
@@ -84,14 +87,15 @@ export const usePaintCanvas = () => {
     if (!canvas) return
 
     const handlePointerDown = (e: PointerEvent) => {
+      clickButton.current = e.button
       handlePointer(e)
     }
 
-    const HandlePointerMove = (e: PointerEvent) => {
-      handlePointer(e)
-    }
+    const HandlePointerMove = (e: PointerEvent) => handlePointer(e)
 
-    const handlePointerUp = () => {
+    const handlePointerStop = () => {
+      clickButton.current = -1
+
       if (usingSecondClickOnEraser.current) {
         // Handle ceasing the use of eraser, switching back to the last used tool
         const [lastUsedTool] = toolsHistory.current
@@ -110,9 +114,8 @@ export const usePaintCanvas = () => {
       e.stopPropagation()
 
       // Dont proceed if it wasn't a valid click
-      const clickButton = e.buttons
-
-      if (![1, 2, 4].includes(clickButton)) return
+      const clickBtn = clickButton.current
+      if (!clickIncludes(clickBtn, CB.LEFT, CB.RIGHT, CB.MIDDLE)) return
 
       // Extract pixel index and don't proceed if its not valid
       const element = e.target as HTMLDivElement
@@ -123,14 +126,14 @@ export const usePaintCanvas = () => {
       const pixelColor = structuredClone(pixels[pixelIndex])
 
       // Switch to the eraser automatically on right click
-      if (tool !== TOOLS.ERASER && clickButton === 2) {
+      if (tool !== TOOLS.ERASER && clickIncludes(clickBtn, CB.RIGHT)) {
         erasePixel(pixelColor, pixelIndex)
         setTool(TOOLS.ERASER)
         usingSecondClickOnEraser.current = true
         return
       }
 
-      if (clickButton === 4) {
+      if (clickIncludes(clickBtn, CB.MIDDLE)) {
         // Switch to the color picker automaticallly on middle click
         setTool(TOOLS.COLOR_PICKER)
         colorPickerHoldingColor.current = pixelColor
@@ -141,7 +144,7 @@ export const usePaintCanvas = () => {
         case TOOLS.ERASER: {
           erasePixel(pixelColor, pixelIndex)
 
-          if (clickButton === 2) {
+          if (clickIncludes(clickBtn, CB.RIGHT)) {
             usingSecondClickOnEraser.current = true
           }
           break
@@ -202,12 +205,14 @@ export const usePaintCanvas = () => {
 
     canvas.addEventListener('pointerdown', handlePointerDown, { passive: false })
     canvas.addEventListener('pointermove', HandlePointerMove, { passive: false })
-    document.addEventListener('pointerup', handlePointerUp, { passive: false })
+    document.addEventListener('pointerup', handlePointerStop, { passive: false })
+    document.addEventListener('pointerleave', handlePointerStop, { passive: false })
 
     return () => {
       canvas.removeEventListener('pointerdown', handlePointerDown)
       canvas.removeEventListener('pointermove', HandlePointerMove)
-      document.removeEventListener('pointerup', handlePointerUp)
+      document.removeEventListener('pointerup', handlePointerStop)
+      document.removeEventListener('pointerleave', handlePointerStop)
     }
   }, [])
 

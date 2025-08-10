@@ -1,6 +1,7 @@
 'use client'
 
 import { CreationsCanvas } from '@/components/CreationsCanvas'
+import { Z_INDEX } from '@/consts'
 import { useBasicPrevention } from '@/hooks/useBasicPrevention'
 import { useCanvasesGallery } from '@/hooks/useCanvasesGallery'
 import { useSaveCanvases } from '@/hooks/useSaveCanvases'
@@ -17,7 +18,7 @@ export default function Home() {
     <main className='mt-48 w-screen flex flex-col gap-8 justify-center items-center relative'>
       <header
         className={`
-          fixed w-full left-0 top-[var(--navbar-height)] backdrop-blur-md h-20 z-40
+          fixed w-full left-0 top-[var(--navbar-height)] backdrop-blur-md h-20 ${Z_INDEX.NAVBAR}
           bg-gradient-to-b from-25% from-theme-50 to-theme-50/60
         `}
       >
