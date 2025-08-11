@@ -47,13 +47,11 @@ export const SaveHandler = () => {
 
   const createNewSave = () => {
     const newCanvasId = getNewCanvasId()
+    const savingCanvas = { id: newCanvasId, pixels: editingPixels }
 
-    const savingCanvas = {
-      id: newCanvasId,
-      pixels: editingPixels
-    }
     setSavedCanvases([...savedCanvases, savingCanvas])
     setEditingCanvasId(newCanvasId)
+    setDraft({ ...BLANK_DRAFT })
   }
 
   const handleClick = () => {
