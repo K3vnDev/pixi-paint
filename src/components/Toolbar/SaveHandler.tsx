@@ -1,4 +1,7 @@
-import { BLANK_DRAFT, SPRITES_RESOLUTION, SPRITES_SIZE } from '@consts'
+import { BLANK_DRAFT, CLICK_BUTTON, SPRITES_RESOLUTION, SPRITES_SIZE } from '@consts'
+import { useRef, useState } from 'react'
+import { useContextMenu } from '@/hooks/useContextMenu'
+import { useTimeout } from '@/hooks/useTimeout'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { usePaintStore } from '@/store/usePaintStore'
 import { PixelatedImage } from '../PixelatedImage'
@@ -11,9 +14,36 @@ export const SaveHandler = () => {
   const setSavedCanvases = useCanvasStore(s => s.setSavedCanvases)
   const getNewCanvasId = useCanvasStore(s => s.getNewCanvasId)
   const setDraft = useCanvasStore(s => s.setDraftCanvas)
+  const setPixels = usePaintStore(s => s.setPixels)
 
   const editingPixels = usePaintStore(s => s.pixels)
   const isDraft = editingCanvasId === null
+  const elementRef = useRef<HTMLElement>(null)
+
+  const { startTimeout, stopTimeout } = useTimeout()
+  const [hasRecentlySaved, setHasRecentlySaved] = useState(false)
+  const RECENTLY_SAVED_TIME = 500
+
+  const cloneToNewDraft = () => {
+    setEditingCanvasId(null)
+    setDraft({ ...BLANK_DRAFT, pixels: editingPixels })
+  }
+
+  const newBlankDraft = () => {
+    setEditingCanvasId(null)
+    setDraft({ ...BLANK_DRAFT })
+    setPixels([...BLANK_DRAFT.pixels])
+  }
+
+  useContextMenu({
+    options: [
+      { label: 'Clone to new draft', icon: 'clone', action: cloneToNewDraft },
+      { label: 'New blank draft', icon: 'pencil', action: newBlankDraft }
+    ],
+    allowedClicks: [CLICK_BUTTON.LEFT, CLICK_BUTTON.RIGHT],
+    ref: elementRef,
+    showWhen: !isDraft && !hasRecentlySaved
+  })
 
   const createNewSave = () => {
     const newCanvasId = getNewCanvasId()
@@ -26,29 +56,23 @@ export const SaveHandler = () => {
     setEditingCanvasId(newCanvasId)
   }
 
-  const createNewDraft = () => {
-    setEditingCanvasId(null)
-    setDraft({
-      ...BLANK_DRAFT,
-      pixels: editingPixels
-    })
-  }
-
   const handleClick = () => {
     if (isDraft) {
+      setHasRecentlySaved(true)
       createNewSave()
-    } else {
-      createNewDraft()
+
+      startTimeout(() => {
+        setHasRecentlySaved(false)
+        stopTimeout()
+      }, RECENTLY_SAVED_TIME)
     }
   }
 
-  const [title, image] = isDraft
-    ? ['Draft. Click to save', 'save']
-    : ['Saved! Click to start a new draft', 'saved-check']
+  const [image, colorOverride] = isDraft ? ['save', ''] : ['saved-check', 'bg-theme-20/40 outline-theme-20']
 
   return (
-    <Item className='button flex items-center justify-center'>
-      <button className='px-2' onClick={handleClick} title={title}>
+    <Item className={`flex items-center justify-center ${colorOverride}`} ref={elementRef}>
+      <button className='px-2' onClick={handleClick}>
         <PixelatedImage
           resolution={SPRITES_RESOLUTION}
           src={`/imgs/save/${image}.png`}

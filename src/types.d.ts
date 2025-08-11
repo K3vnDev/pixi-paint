@@ -47,9 +47,10 @@ export interface PaintPixelData {
   color: string
 }
 
-export interface ReusableComponent {
+export type ReusableComponent = {
   className?: string
   style?: React.CSSProperties
+  ref?: React.RefObject<any | null>
 }
 
 export type ContextMenuBuilder = {

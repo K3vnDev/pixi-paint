@@ -2,6 +2,7 @@ import type { ContextMenuBuilder, ContextMenuOption } from '@types'
 import { useEffect } from 'react'
 import { CLICK_BUTTON, EVENTS } from '@/consts'
 import { clickIncludes } from '@/utils/clickIncludes'
+import { useFreshRef } from './useFreshRef'
 
 interface Params {
   options: ContextMenuOption[]
@@ -16,7 +17,8 @@ export const useContextMenu = ({
   allowedClicks = [CLICK_BUTTON.RIGHT],
   showWhen = true
 }: Params) => {
-  const OPEN_WAIT = 30
+  const OPEN_WAIT = 50
+  const refs = useFreshRef({ options, showWhen })
 
   // Listen and handle pointer
   useEffect(() => {
@@ -39,6 +41,7 @@ export const useContextMenu = ({
   }, [])
 
   const openMenu = (x: number, y: number) => {
+    const { options, showWhen } = refs.current
     if (!options.length || !showWhen) return
 
     const builder: ContextMenuBuilder = {
