@@ -19,16 +19,14 @@ export const CanvasOutline = ({ children, className = '' }: Props) => {
   return (
     <div
       className={twMerge(`
-        overflow-clip rounded-2xl relative
-        flex justify-center items-center p-[8px]
-        size-[calc(var(--canvas-size)+44px)]
-        ${className} 
+        overflow-clip rounded-2xl relative size-[calc(var(--canvas-size)+44px)]
+        flex justify-center items-center p-[8px] ${className} 
       `)}
     >
       <div
         className={`
           bg-gradient-to-r from-theme-10 to-theme-20 ${backgroundSize}
-          -z-10 absolute rounded-full blur-sm [transition:all_ease-out_1.5s]
+          -z-10 absolute rounded-full blur-sm [transition:all_ease-out_1.75s]
           top-1/2 left-1/2 -translate-1/2 animate-spin pointer-events-none
         `}
       />
@@ -45,6 +43,6 @@ export const CanvasOutline = ({ children, className = '' }: Props) => {
 }
 
 const BG_SIZES = {
-  HIDDEN: 'size-[33%]',
+  HIDDEN: 'size-[50%]',
   SHOWN: 'size-[200%]'
 }

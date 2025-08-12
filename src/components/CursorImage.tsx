@@ -2,6 +2,7 @@ import { SPRITES_RESOLUTION, SPRITES_SIZE } from '@consts'
 import type { Cursor as CursorType } from '@types'
 import { twMerge } from 'tailwind-merge'
 import { usePaintStore } from '@/store/usePaintStore'
+import { ColoredPixelatedImage } from './ColoredPixelatedImage'
 import { PixelatedImage } from './PixelatedImage'
 
 type Props = {
@@ -33,12 +34,11 @@ export const CursorImage = ({ alt, imageUrl, colorImageUrl, className }: Props) 
         style={globalStyle}
       />
       {colorImageUrl && (
-        <div
+        <ColoredPixelatedImage
+          src={colorImageUrl}
           className={twMerge(`${globalClass} ${className?.colorImg}`)}
           style={{
             backgroundColor: selectedColor,
-            WebkitMask: `url(${colorImageUrl}) no-repeat center / contain`,
-            mask: `url(${colorImageUrl}) no-repeat center / contain`,
             ...globalStyle
           }}
         />

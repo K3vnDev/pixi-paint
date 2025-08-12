@@ -1,59 +1,49 @@
-import { CANVAS_RESOLUTION } from '@consts'
+import { BUCKET_INTERVAL_TIME, CANVAS_RESOLUTION } from '@consts'
 import { useEffect, useRef, useState } from 'react'
+import { calcMiddlePixelsIndexes } from '@/utils/calcMiddlePixels'
 import { findBucketPixels } from '@/utils/findBucketPixels'
-import { useInterval } from './useInterval'
+import { usePaintBucketPixels } from './usePaintBucketPixels'
 
 export const useCanvasPixelsAppearing = (pixels: string[]) => {
-  const { startInterval, stopInterval } = useInterval(null)
   const hasStarted = useRef(false)
   const [visiblePixelsMap, setVisiblePixelsMap] = useState<boolean[]>(
     Array(CANVAS_RESOLUTION ** 2).fill(false)
   )
+  const { paintBucketPixels } = usePaintBucketPixels()
 
   useEffect(() => {
     if (!hasStarted.current && pixels.length) {
       hasStarted.current = true
-      const halfPixelArtRes = CANVAS_RESOLUTION / 2
-
-      // Calculate start indexes
-      const leftTopIndex = halfPixelArtRes - 1 + CANVAS_RESOLUTION * (halfPixelArtRes - 1)
-      const rightTopIndex = leftTopIndex + 1
-      const leftBottomIndex = leftTopIndex + CANVAS_RESOLUTION
-      const rightBottomIndex = leftBottomIndex + 1
 
       // Calculate grouped generations
-      const groupedGenerationsIndexes = findBucketPixels({
+      const groupedGenerations = findBucketPixels({
         pixelsMap: pixels,
-        startIndexes: [leftTopIndex, rightTopIndex, leftBottomIndex, rightBottomIndex]
-      }).map(g => g.map(p => p.index))
+        startIndexes: calcMiddlePixelsIndexes()
+      })
 
-      let currentGenIndex = -1
-
-      startInterval(() => {
-        if (++currentGenIndex >= groupedGenerationsIndexes.length) {
-          stopInterval()
-          return
+      paintBucketPixels({
+        groupedGens: groupedGenerations,
+        intervalTime: BUCKET_INTERVAL_TIME,
+        instantPaintFirstGen: false,
+        paintGenAction: generation => {
+          setVisiblePixelsMap(prev => {
+            const newPixels = structuredClone(prev)
+            for (const bucketPixel of generation) {
+              newPixels[bucketPixel.index] = true
+            }
+            return newPixels
+          })
         }
-
-        setVisiblePixelsMap(prev => {
-          const newPixels = structuredClone(prev)
-          for (const index of groupedGenerationsIndexes[currentGenIndex]) {
-            newPixels[index] = true
-          }
-          return newPixels
-        })
-      }, 50)
+      })
     }
   }, [pixels])
 
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    return () => {
       hasStarted.current = false
       setVisiblePixelsMap(Array(CANVAS_RESOLUTION ** 2).fill(false))
-      stopInterval()
-    },
-    []
-  )
+    }
+  }, [])
 
   return { visiblePixelsMap }
 }
