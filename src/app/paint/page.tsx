@@ -1,6 +1,6 @@
 'use client'
 
-import { Colorbar } from '@/components/Colorbar'
+import { Colorbar } from '@/components/Colorbar/Colorbar'
 import { PaintCanvas } from '@/components/PaintCanvas'
 import { ToolBar } from '@/components/Toolbar/Toolbar'
 import { useBasicPrevention } from '@/hooks/useBasicPrevention'

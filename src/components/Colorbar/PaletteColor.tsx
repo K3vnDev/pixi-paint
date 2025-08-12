@@ -6,7 +6,7 @@ interface Props {
   color: string
 }
 
-export const ColorbarColor = ({ color }: Props) => {
+export const PaletteColor = ({ color }: Props) => {
   const setSelectedColor = usePaintStore(s => s.setColor)
   const selectedColor = usePaintStore(s => s.color)
 
