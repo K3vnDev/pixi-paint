@@ -14,6 +14,8 @@ export const INITIAL_BG = '#FFF'
 
 export const WHEEL_SWITCH_TOOL_COOLDOWN = 110
 
+export const BUCKET_INTERVAL_TIME = 55
+
 // Store
 export const BLANK_PIXELS = Array.from({ length: CANVAS_RESOLUTION ** 2 }, () => INITIAL_BG)
 export const BLANK_DRAFT: SavedCanvas = { id: 'draft', pixels: BLANK_PIXELS }

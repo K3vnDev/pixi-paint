@@ -1,9 +1,20 @@
-import { BLANK_DRAFT, CLICK_BUTTON, SPRITES_RESOLUTION, SPRITES_SIZE } from '@consts'
+import {
+  BLANK_DRAFT,
+  BUCKET_INTERVAL_TIME,
+  CLICK_BUTTON,
+  COLOR_PALETTE,
+  SPRITES_RESOLUTION,
+  SPRITES_SIZE
+} from '@consts'
+
 import { useRef, useState } from 'react'
 import { useContextMenu } from '@/hooks/useContextMenu'
+import { usePaintBucketPixels } from '@/hooks/usePaintBucketPixels'
 import { useTimeout } from '@/hooks/useTimeout'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { usePaintStore } from '@/store/usePaintStore'
+import { calcMiddlePixelsIndexes } from '@/utils/calcMiddlePixels'
+import { findBucketPixels } from '@/utils/findBucketPixels'
 import { PixelatedImage } from '../PixelatedImage'
 import { Item } from './Item'
 
@@ -14,11 +25,13 @@ export const SaveHandler = () => {
   const setSavedCanvases = useCanvasStore(s => s.setSavedCanvases)
   const getNewCanvasId = useCanvasStore(s => s.getNewCanvasId)
   const setDraft = useCanvasStore(s => s.setDraftCanvas)
-  const setPixels = usePaintStore(s => s.setPixels)
+  const draftCanvas = useCanvasStore(s => s.draftCanvas)
+  const paintPixels = usePaintStore(s => s.paintPixels)
 
   const editingPixels = usePaintStore(s => s.pixels)
   const isDraft = editingCanvasId === null
   const elementRef = useRef<HTMLElement>(null)
+  const { paintBucketPixels } = usePaintBucketPixels()
 
   const { startTimeout, stopTimeout } = useTimeout()
   const [hasRecentlySaved, setHasRecentlySaved] = useState(false)
@@ -32,7 +45,20 @@ export const SaveHandler = () => {
   const newBlankDraft = () => {
     setEditingCanvasId(null)
     setDraft({ ...BLANK_DRAFT })
-    setPixels([...BLANK_DRAFT.pixels])
+
+    const groupedGens = findBucketPixels({
+      pixelsMap: draftCanvas.pixels,
+      startIndexes: calcMiddlePixelsIndexes()
+    })
+
+    paintBucketPixels({
+      groupedGens,
+      intervalTime: BUCKET_INTERVAL_TIME,
+      instantPaintFirstGen: true,
+      paintGenAction: generation => {
+        paintPixels(...generation.map(({ index }) => ({ color: COLOR_PALETTE.WHITE, index })))
+      }
+    })
   }
 
   useContextMenu({

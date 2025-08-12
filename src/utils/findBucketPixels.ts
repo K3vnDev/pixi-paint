@@ -2,7 +2,7 @@ import { CANVAS_RESOLUTION } from '@consts'
 import type { BucketPixel } from '@types'
 import { colorComparison } from './colorComparison'
 
-interface Params {
+export interface Params {
   startIndexes: number[]
   pixelsMap: string[]
   zoneColor?: string

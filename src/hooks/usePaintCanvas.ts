@@ -7,7 +7,7 @@ import { clickIncludes } from '@/utils/clickIncludes'
 import { colorComparison } from '@/utils/colorComparison'
 import { findBucketPixels } from '@/utils/findBucketPixels'
 import { useFreshRef } from './useFreshRef'
-import { useInterval } from './useInterval'
+import { usePaintBucketPixels } from './usePaintBucketPixels'
 import { useTimeout } from './useTimeout'
 
 export const usePaintCanvas = () => {
@@ -35,7 +35,7 @@ export const usePaintCanvas = () => {
   const toolsHistory = useRef<TOOLS[]>([])
 
   const colorPickerHoldingColor = useRef<string | null>(null)
-  const { startInterval: startBucketInterval, stopInterval: stopBucketInterval } = useInterval()
+  const { paintBucketPixels } = usePaintBucketPixels()
 
   const isOnWheelTimeout = useRef(false)
   const { startTimeout: startWheelTimeout, stopTimeout: stopWheelTimeout } = useTimeout([], () => {
@@ -160,29 +160,20 @@ export const usePaintCanvas = () => {
             zoneColor: pixelColor
           })
 
-          if (!groupedGenerations.length) break
-
-          // Paint per group
-          const paintGeneration = (genIndex: number) => {
-            paintPixels(...groupedGenerations[genIndex].map(({ index }) => ({ color: selectedColor, index })))
-          }
+          // Don't proceed if there are no generations
+          if (groupedGenerations.length === 0) break
 
           const maxPixelsForAnim = 33
           if (groupedGenerations.length < maxPixelsForAnim) {
             // Paint pixel groups with an interval
             const intervalTime = getBucketIntervalTime(groupedGenerations.length, maxPixelsForAnim)
-
-            let currentGenIndex = 0
-            paintGeneration(currentGenIndex)
-
-            // Start the interval
-            const intervalIndex = startBucketInterval(() => {
-              if (++currentGenIndex < groupedGenerations.length) {
-                paintGeneration(currentGenIndex)
-                return
+            paintBucketPixels({
+              groupedGens: groupedGenerations,
+              intervalTime,
+              paintGenAction: currentGeneration => {
+                paintPixels(...currentGeneration.map(({ index }) => ({ color: selectedColor, index })))
               }
-              stopBucketInterval(intervalIndex)
-            }, intervalTime)
+            })
           } else {
             // Instant paint pixel groups
             const paintPixelsData: PaintPixelData[] = []
