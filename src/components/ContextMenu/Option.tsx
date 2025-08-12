@@ -1,6 +1,7 @@
 import { CLICK_BUTTON } from '@consts'
 import type { ContextMenuOption } from '@types'
 import { clickIncludes } from '@/utils/clickIncludes'
+import { ColoredPixelatedImage } from '../ColoredPixelatedImage'
 
 type Props = {
   closeMenu: () => void
@@ -24,14 +25,7 @@ export const Option = ({ label, icon: iconName, action, closeMenu }: Props) => {
       `}
       onPointerDown={handleClick}
     >
-      <div
-        className='bg-theme-10 size-12'
-        style={{
-          WebkitMask: `url(${imageUrl}) no-repeat center / contain`,
-          mask: `url(${imageUrl}) no-repeat center / contain`,
-          imageRendering: 'pixelated'
-        }}
-      />
+      <ColoredPixelatedImage src={imageUrl} className='bg-theme-10 size-12' />
       <span className='text-theme-10 text-xl font-semibold'>{label}</span>
     </button>
   )

@@ -57,6 +57,9 @@ export const useCustomCursor = () => {
     setCurrentCursorIndex(newCursorIndex)
   }
 
+  // Refresh cursor on tool change
+  useEffect(refreshCursor, [tool])
+
   // Handle pointer visibility
   useEffect(() => {
     const handlePointerLeave = (e: PointerEvent) => {
