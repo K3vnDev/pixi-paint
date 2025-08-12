@@ -6,11 +6,11 @@ interface PaintStore {
   tool: TOOLS
   setTool: (value: TOOLS) => void
 
-  color: string
-  setColor: (value: string) => void
+  primaryColor: string
+  setPrimaryColor: (value: string) => void
 
-  bgColor: string
-  setBgColor: (value: string) => void
+  secondaryColor: string
+  setSecondaryColor: (value: string) => void
 
   pixels: string[]
   setPixels: (value: string[]) => void
@@ -21,11 +21,11 @@ export const usePaintStore = create<PaintStore>(set => ({
   tool: TOOLS.BRUSH,
   setTool: value => set(() => ({ tool: value })),
 
-  color: COLOR_PALETTE.RED,
-  setColor: value => set(() => ({ color: value })),
+  primaryColor: COLOR_PALETTE.RED,
+  setPrimaryColor: value => set(() => ({ primaryColor: value })),
 
-  bgColor: INITIAL_BG,
-  setBgColor: value => set(() => ({ bgColor: value })),
+  secondaryColor: INITIAL_BG,
+  setSecondaryColor: value => set(() => ({ secondaryColor: value })),
 
   pixels: [],
   setPixels: value => set(() => ({ pixels: value })),

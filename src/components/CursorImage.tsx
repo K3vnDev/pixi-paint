@@ -15,7 +15,7 @@ type Props = {
 } & CursorType
 
 export const CursorImage = ({ alt, imageUrl, colorImageUrl, className }: Props) => {
-  const selectedColor = usePaintStore(s => s.color)
+  const selectedColor = usePaintStore(s => s.primaryColor)
 
   const globalStyle: React.CSSProperties = {
     imageRendering: 'pixelated',

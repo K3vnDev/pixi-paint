@@ -5,10 +5,10 @@ export const Palette = () => {
   const colors = Object.entries(COLOR_PALETTE).map(([, col]) => col)
 
   return (
-    <ul className='grid grid-cols-2 gap-3'>
+    <section className='grid grid-cols-2 gap-3'>
       {colors.map(col => (
         <PaletteColor color={col} key={col} />
       ))}
-    </ul>
+    </section>
   )
 }
