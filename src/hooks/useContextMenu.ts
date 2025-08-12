@@ -1,5 +1,5 @@
 import type { ContextMenuBuilder, ContextMenuOption } from '@types'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { CLICK_BUTTON, EVENTS } from '@/consts'
 import { clickIncludes } from '@/utils/clickIncludes'
 import { useFreshRef } from './useFreshRef'
@@ -20,6 +20,8 @@ export const useContextMenu = ({
   const OPEN_WAIT = 50
   const refs = useFreshRef({ options, showWhen })
 
+  const [menuIsOpen, setMenuIsOpen] = useState(false)
+
   // Listen and handle pointer
   useEffect(() => {
     const handlePointerDown = (e: PointerEvent) => {
@@ -33,9 +35,16 @@ export const useContextMenu = ({
       }, OPEN_WAIT)
     }
 
+    const handleContextMenuClosed = () => {
+      setMenuIsOpen(false)
+    }
+
     ref.current?.addEventListener('pointerup', handlePointerDown, { capture: true })
+    document.addEventListener(EVENTS.CONTEXT_MENU_CLOSED, handleContextMenuClosed)
+
     return () => {
       ref.current?.removeEventListener('pointerup', handlePointerDown)
+      document.removeEventListener(EVENTS.CONTEXT_MENU_CLOSED, handleContextMenuClosed)
       closeMenu()
     }
   }, [])
@@ -52,6 +61,7 @@ export const useContextMenu = ({
 
     const event = new CustomEvent(EVENTS.OPEN_CONTEXT_MENU, { detail: builder })
     document.dispatchEvent(event)
+    setMenuIsOpen(true)
   }
 
   const closeMenu = () => {
@@ -59,5 +69,5 @@ export const useContextMenu = ({
     document.dispatchEvent(event)
   }
 
-  return { openMenu }
+  return { openMenu, menuIsOpen }
 }

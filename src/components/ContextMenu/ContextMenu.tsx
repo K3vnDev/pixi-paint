@@ -87,6 +87,7 @@ export const ContextMenu = () => {
 
       setAnimation(ANIM_VALUES.HIDE)
       isClosing.current = true
+      document.dispatchEvent(new Event(EVENTS.CONTEXT_MENU_CLOSED))
 
       stopTimeout()
       startTimeout(() => {
@@ -107,7 +108,7 @@ export const ContextMenu = () => {
     <dialog
       className={`
         fixed top-0 left-0 ${Z_INDEX.CONTEXT_MENU} py-1 rounded-xl origin-top-left
-        bg-theme-50 border-2 border-theme-20 shadow-lg shadow-black/50
+        bg-theme-50 border-2 border-theme-20 shadow-card
       `}
       style={{ left: `${position.x}px`, top: `${position.y}px`, animation }}
       id={ELEMENT_ID}

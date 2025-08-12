@@ -11,6 +11,7 @@ import { useRef, useState } from 'react'
 import { useContextMenu } from '@/hooks/useContextMenu'
 import { usePaintBucketPixels } from '@/hooks/usePaintBucketPixels'
 import { useTimeout } from '@/hooks/useTimeout'
+import { useTooltip } from '@/hooks/useTooltip'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { usePaintStore } from '@/store/usePaintStore'
 import { calcMiddlePixelsIndexes } from '@/utils/calcMiddlePixels'
@@ -62,7 +63,7 @@ export const SaveHandler = () => {
     })
   }
 
-  useContextMenu({
+  const { menuIsOpen } = useContextMenu({
     options: [
       { label: 'Clone to new draft', icon: 'clone', action: cloneToNewDraft },
       { label: 'New blank draft', icon: 'pencil', action: newBlankDraft }
@@ -71,6 +72,9 @@ export const SaveHandler = () => {
     ref: elementRef,
     showWhen: !isDraft && !hasRecentlySaved
   })
+
+  const tooltipText = isDraft ? 'Click to save...' : 'Painting saved!'
+  useTooltip({ ref: elementRef, text: tooltipText, showWhen: !menuIsOpen })
 
   const createNewSave = () => {
     const newCanvasId = getNewCanvasId()

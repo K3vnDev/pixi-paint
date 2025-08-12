@@ -4,6 +4,7 @@ import { ContextMenu } from '@/components/ContextMenu/ContextMenu'
 import { CustomCursor } from '@/components/CustomCursor'
 import { Navbar } from '@/components/Navbar'
 import './globals.css'
+import { Tooltip } from '@/components/Tooltip'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -38,6 +39,7 @@ export default function RootLayout({
 
         <CustomCursor />
         <ContextMenu />
+        <Tooltip />
       </body>
     </html>
   )

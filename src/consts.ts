@@ -76,12 +76,16 @@ export const SPRITES_SIZE = 96
 
 export const EVENTS = {
   OPEN_CONTEXT_MENU: '$open-context-menu',
-  CLOSE_CONTEXT_MENU: '$close-context-menu'
+  CLOSE_CONTEXT_MENU: '$close-context-menu',
+  CONTEXT_MENU_CLOSED: '$context-menu-closed',
+  SHOW_TOOLTIP: '$show-tooltip',
+  HIDE_TOOLTIP: '$hide-tooltip'
 } as const
 
 export const Z_INDEX = {
-  CUSTOM_CURSOR: 'z-9999',
-  CONTEXT_MENU: 'z-999',
+  CUSTOM_CURSOR: 'z-99999',
+  CONTEXT_MENU: 'z-9999',
+  TOOLTIP: 'z-999',
   NAVBAR: 'z-99'
 } as const
 
