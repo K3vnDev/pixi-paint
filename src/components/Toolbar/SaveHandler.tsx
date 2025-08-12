@@ -6,7 +6,7 @@ import {
   SPRITES_RESOLUTION,
   SPRITES_SIZE
 } from '@consts'
-
+import confetti from 'canvas-confetti'
 import { useRef, useState } from 'react'
 import { useContextMenu } from '@/hooks/useContextMenu'
 import { usePaintBucketPixels } from '@/hooks/usePaintBucketPixels'
@@ -15,6 +15,7 @@ import { useCanvasStore } from '@/store/useCanvasStore'
 import { usePaintStore } from '@/store/usePaintStore'
 import { calcMiddlePixelsIndexes } from '@/utils/calcMiddlePixels'
 import { findBucketPixels } from '@/utils/findBucketPixels'
+import { ColoredPixelatedImage } from '../ColoredPixelatedImage'
 import { PixelatedImage } from '../PixelatedImage'
 import { Item } from './Item'
 
@@ -89,19 +90,37 @@ export const SaveHandler = () => {
         setHasRecentlySaved(false)
         stopTimeout()
       }, RECENTLY_SAVED_TIME)
+
+      if (elementRef.current) {
+        const { top, left, width, height } = elementRef.current.getBoundingClientRect()
+        const origin = {
+          x: (left + width / 2) / window.innerWidth,
+          y: (top + height / 2) / window.innerHeight
+        }
+        confetti({ origin, particleCount: 13, startVelocity: 15, spread: 70, ticks: 70 })
+      }
     }
   }
 
-  const [image, colorOverride] = isDraft ? ['save', ''] : ['saved-check', 'bg-theme-20/40 outline-theme-20']
+  const [colorOverride, checkOverride] = isDraft
+    ? ['', 'opacity-0 scale-60']
+    : ['bg-theme-20/40 outline-theme-20', '']
 
   return (
-    <Item className={`flex items-center justify-center ${colorOverride}`} ref={elementRef}>
+    <Item className={`flex items-center justify-center relative ${colorOverride}`} ref={elementRef}>
       <button className='px-2' onClick={handleClick}>
         <PixelatedImage
           resolution={SPRITES_RESOLUTION}
-          src={`/imgs/save/${image}.png`}
+          src='/imgs/save.png'
           imageSize={SPRITES_SIZE}
           alt='Save icon'
+        />
+        <ColoredPixelatedImage
+          icon='check'
+          className={`
+            absolute size-20 bg-theme-10 left-1/2 top-1/2 -translate-1/3
+            transition-all duration-200 ${checkOverride}
+          `}
         />
       </button>
     </Item>

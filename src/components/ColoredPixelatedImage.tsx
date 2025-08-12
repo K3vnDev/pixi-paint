@@ -1,18 +1,23 @@
-import type { ReusableComponent } from '@/types'
+import type { IconName, ReusableComponent } from '@/types'
 
 type Props = {
-  src: string
+  src?: string
+  icon?: IconName
 } & ReusableComponent
 
-export const ColoredPixelatedImage = ({ src, className = '', ref, style }: Props) => (
-  <div
-    ref={ref}
-    className={className}
-    style={{
-      WebkitMask: `url(${src}) no-repeat center / contain`,
-      mask: `url(${src}) no-repeat center / contain`,
-      imageRendering: 'pixelated',
-      ...style
-    }}
-  />
-)
+export const ColoredPixelatedImage = ({ src, icon, className = '', ref, style }: Props) => {
+  const imageUrl = src || icon ? (src ?? `/imgs/icons/${icon}.png`) : ''
+
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        WebkitMask: `url(${imageUrl}) no-repeat center / contain`,
+        mask: `url(${imageUrl}) no-repeat center / contain`,
+        imageRendering: 'pixelated',
+        ...style
+      }}
+    />
+  )
+}

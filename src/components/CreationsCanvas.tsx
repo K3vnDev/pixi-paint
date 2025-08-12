@@ -93,7 +93,7 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
       >
         {isDraft && <span className='h-10 px-3 flex items-center text-2xl font-bold'>DRAFT</span>}
         <span className={`ml-auto ${editingIndicatorVisibility} transition delay-1000`}>
-          <ColoredPixelatedImage src='/imgs/icons/pencil.png' className='bg-theme-10 size-10 ' />
+          <ColoredPixelatedImage icon='pencil' className='bg-theme-10 size-10 ' />
         </span>
       </div>
       <CanvasImage className='size-full rounded-xl border-4 border-theme-10' dataUrl={dataUrl} />
