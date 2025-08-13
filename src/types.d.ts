@@ -25,13 +25,12 @@ export interface GalleryCanvas {
 }
 
 export interface Cursor {
-  name: string
-  imageUrl: string
-  position: {
+  imageName: string
+  origin: {
     x: number
     y: number
   }
-  colorImageUrl?: string
+  colorize?: 'primary' | 'secondary'
 }
 
 export interface StorageCanvas {

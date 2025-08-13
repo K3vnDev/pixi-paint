@@ -43,31 +43,27 @@ export const COLOR_PALETTE = {
 
 export const CURSORS: Cursor[] = [
   {
-    name: 'pointer',
-    imageUrl: '/imgs/tools/pointer.png',
-    position: { x: 6, y: 3 }
+    imageName: 'pointer',
+    origin: { x: 6, y: 3 }
   },
   {
-    name: 'brush',
-    imageUrl: '/imgs/tools/brush.png',
-    position: { x: 2, y: 14 },
-    colorImageUrl: '/imgs/tools/brush_color.png'
+    imageName: 'brush',
+    origin: { x: 2, y: 14 },
+    colorize: 'primary'
   },
   {
-    name: 'bucket',
-    imageUrl: '/imgs/tools/bucket.png',
-    position: { x: 3, y: 8 },
-    colorImageUrl: '/imgs/tools/bucket_color.png'
+    imageName: 'bucket',
+    origin: { x: 3, y: 8 },
+    colorize: 'primary'
   },
   {
-    name: 'eraser',
-    imageUrl: '/imgs/tools/eraser.png',
-    position: { x: 5, y: 13 }
+    imageName: 'eraser',
+    origin: { x: 5, y: 13 },
+    colorize: 'secondary'
   },
   {
-    name: 'colorPicker',
-    imageUrl: '/imgs/tools/color-picker.png',
-    position: { x: 3, y: 12 }
+    imageName: 'color-picker',
+    origin: { x: 3, y: 12 }
   }
 ]
 

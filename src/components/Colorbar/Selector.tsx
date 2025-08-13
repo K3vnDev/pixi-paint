@@ -1,3 +1,4 @@
+import { useActionOnKey } from '@/hooks/useActionOnKey'
 import { usePaintStore } from '@/store/usePaintStore'
 import { ColorBase } from './ColorBase'
 
@@ -6,6 +7,10 @@ export const Selector = () => {
   const setPrimaryColor = usePaintStore(s => s.setPrimaryColor)
   const secondaryColor = usePaintStore(s => s.secondaryColor)
   const setSecondaryColor = usePaintStore(s => s.setSecondaryColor)
+
+  useActionOnKey('S', () => {
+    swapColors()
+  }, [primaryColor, secondaryColor])
 
   const swapColors = () => {
     const [primary, secondary] = [primaryColor, secondaryColor]

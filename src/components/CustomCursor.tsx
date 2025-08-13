@@ -4,6 +4,7 @@ import { CURSORS, SPRITES_RESOLUTION, SPRITES_SIZE, Z_INDEX } from '@consts'
 import { useEffect, useMemo, useState } from 'react'
 import { useCustomCursor } from '@/hooks/useCustomCursor'
 import { useTimeout } from '@/hooks/useTimeout'
+import type { Cursor as CursorType } from '@/types'
 import { CursorImage } from './CursorImage'
 
 export const CustomCursor = () => {
@@ -15,7 +16,7 @@ export const CustomCursor = () => {
         <Cursor
           {...cursor}
           selectedIndex={currentCursorIndex}
-          key={cursor.name}
+          key={cursor.imageName}
           show={isShowingCursor}
           index={i}
         />
@@ -28,20 +29,23 @@ type CursorProps = {
   index: number
   selectedIndex: number
   show: boolean
-} & (typeof CURSORS)[number]
+} & CursorType
 
 const Cursor = ({ index, selectedIndex, show, ...cursor }: CursorProps) => {
   // biome-ignore format: <>
-  const { name, position: { x, y } } = cursor
+  const {  origin: { x, y } } = cursor
   const isVisible = index === selectedIndex && show
 
   const [animation, setAnimation] = useState('')
-  const { startTimeout } = useTimeout([])
+  const { startTimeout, stopTimeout } = useTimeout([])
 
   useEffect(() => {
     if (isVisible && !animation) {
       setAnimation('animate-pop')
-      startTimeout(() => setAnimation(''), 400)
+      startTimeout(() => {
+        setAnimation('')
+        stopTimeout()
+      }, 400)
     }
   }, [isVisible])
 
@@ -66,11 +70,7 @@ const Cursor = ({ index, selectedIndex, show, ...cursor }: CursorProps) => {
       `}
       style={style}
     >
-      <CursorImage
-        className={{ both: animation }}
-        {...cursor}
-        alt={`The custom cursor of the app, showing a ${name}.`}
-      />
+      <CursorImage className={{ both: animation }} {...cursor} alt={`The custom cursor of the app.`} />
     </div>
   )
 }
