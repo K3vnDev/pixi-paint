@@ -1,4 +1,4 @@
-import { COLOR_PALETTE, INITIAL_BG, TOOLS } from '@consts'
+import { DEFAULT_COLOR, INITIAL_BG, TOOLS } from '@consts'
 import type { PaintPixelData } from '@types'
 import { create } from 'zustand'
 
@@ -21,7 +21,7 @@ export const usePaintStore = create<PaintStore>(set => ({
   tool: TOOLS.BRUSH,
   setTool: value => set(() => ({ tool: value })),
 
-  primaryColor: COLOR_PALETTE.RED,
+  primaryColor: DEFAULT_COLOR,
   setPrimaryColor: value => set(() => ({ primaryColor: value })),
 
   secondaryColor: INITIAL_BG,

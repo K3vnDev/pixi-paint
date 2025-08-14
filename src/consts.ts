@@ -41,6 +41,8 @@ export const COLOR_PALETTE = {
   BLACK: '#000000'
 } as const
 
+export const DEFAULT_COLOR = COLOR_PALETTE.RED
+
 export const CURSORS: Cursor[] = [
   {
     imageName: 'pointer',

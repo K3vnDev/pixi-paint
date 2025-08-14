@@ -1,11 +1,13 @@
 import type { ReusableComponent } from '@types'
-import { useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { HexColorPicker } from 'react-colorful'
-import { ColoredPixelatedImage } from '@/components/ColoredPixelatedImage'
+import { ColorSelectorContext } from '@/context/ColorSelectorContext'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useFreshRef } from '@/hooks/useFreshRef'
+import { useGeneralStore } from '@/store/useGeneralStore'
 import { usePaintStore } from '@/store/usePaintStore'
 import { validateColor } from '@/utils/validateColor'
+import { TextInput } from './TextInput'
 
 interface Props {
   parentRef: ReusableComponent['ref']
@@ -14,15 +16,16 @@ interface Props {
 export const Picker = ({ parentRef }: Props) => {
   const primaryColor = usePaintStore(s => s.primaryColor)
   const setPrimaryColor = usePaintStore(s => s.setPrimaryColor)
-  const [colorPickerColor, setColorPickerColor] = useState(primaryColor)
+  const { pickerColor, setPickerColor, lastValidColor } = useContext(ColorSelectorContext)
 
   const elementRef = useRef<HTMLSpanElement>(null)
+  const setIsUsingInput = useGeneralStore(s => s.setIsUsingInput)
   const [isOpen, setIsOpen] = useState(false)
   const [position, setPosition] = useState({ left: '0px', top: '0px' })
 
   const refs = useFreshRef({ isOpen, primaryColor })
   const COLOR_DELAY = 75
-  const debouncedColorPickerColor = useDebounce(colorPickerColor, COLOR_DELAY, true)
+  const debouncedPickerColor = useDebounce(pickerColor, COLOR_DELAY, true)
 
   // Handle pointer events
   useEffect(() => {
@@ -53,8 +56,13 @@ export const Picker = ({ parentRef }: Props) => {
 
   // Refresh primary color
   useEffect(() => {
-    setPrimaryColor(validateColor(debouncedColorPickerColor))
-  }, [debouncedColorPickerColor])
+    const { value, isValid } = validateColor(debouncedPickerColor)
+
+    if (isValid) {
+      lastValidColor.current = value
+      setPrimaryColor(value)
+    }
+  }, [debouncedPickerColor])
 
   const open = () => {
     if (!parentRef?.current || !elementRef.current) return
@@ -68,25 +76,13 @@ export const Picker = ({ parentRef }: Props) => {
 
     setPosition({ left: `${left}px`, top: `${top}px` })
     setIsOpen(true)
-    setColorPickerColor(refs.current.primaryColor)
+    setIsUsingInput(true)
+    setPickerColor(refs.current.primaryColor)
   }
 
   const close = () => {
     setIsOpen(false)
-  }
-
-  const handleColorTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target
-    setColorPickerColor(value)
-  }
-
-  const handleColorTextBlur = (e: React.FocusEvent<HTMLInputElement, Element>) => {
-    const { value } = e.target
-    setColorPickerColor(validateColor(value))
-  }
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(colorPickerColor)
+    setIsUsingInput(false)
   }
 
   const style = isOpen ? '' : 'opacity-0'
@@ -100,25 +96,8 @@ export const Picker = ({ parentRef }: Props) => {
       ref={elementRef}
       style={{ ...position }}
     >
-      <HexColorPicker color={colorPickerColor} onChange={setColorPickerColor} />
-      <label
-        className={`
-          bg-black/50 rounded-md border-2 border-theme-20/50 outline-none 
-          focus-within:border-theme-20 focus-within:shadow-md focus-within:shadow-theme-20/30
-          flex justify-between w-full
-        `}
-      >
-        <input
-          className='outline-none text-xl text-theme-10 w-full px-3 py-1 '
-          value={colorPickerColor}
-          onBlur={handleColorTextBlur}
-          onChange={handleColorTextChange}
-        />
-        <button className='w-fit h-full flex items-center px-2 py-1 button' onClick={copyToClipboard}>
-          <ColoredPixelatedImage icon='clone' className='bg-theme-10 size-8 scale-110' />
-        </button>
-      </label>
-
+      <HexColorPicker color={pickerColor} onChange={setPickerColor} />
+      <TextInput />
       <div
         className={`
           absolute top-1/2 right-0 -translate-y-1/2 translate-x-[calc(50%+1px)] rotate-45 size-8 rounded-tr-sm

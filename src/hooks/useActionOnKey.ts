@@ -1,8 +1,11 @@
 import { useEffect } from 'react'
+import { useGeneralStore } from '@/store/useGeneralStore'
+import { useFreshRef } from './useFreshRef'
 
 interface Options {
   allowShiftKey?: boolean
   allowCtrlKey?: boolean
+  allowOnInput?: boolean
 }
 
 export const useActionOnKey = (
@@ -11,8 +14,11 @@ export const useActionOnKey = (
   dependencies: unknown[] = [],
   options: Options = {}
 ) => {
+  const isUsingInput = useGeneralStore(s => s.isUsingInput)
+  const isUsingInputRef = useFreshRef(isUsingInput)
+
   useEffect(() => {
-    const { allowShiftKey, allowCtrlKey } = options
+    const { allowShiftKey, allowCtrlKey, allowOnInput } = options
 
     const handleKeyDown = (e: KeyboardEvent) => {
       const { ctrlKey, shiftKey, key: pressedKey } = e
@@ -21,7 +27,8 @@ export const useActionOnKey = (
       if (
         !!allowCtrlKey === ctrlKey &&
         !!allowShiftKey === shiftKey &&
-        keys.some(k => k.toUpperCase() === pressedKey.toUpperCase())
+        keys.some(k => k.toUpperCase() === pressedKey.toUpperCase()) &&
+        !(!allowOnInput && isUsingInputRef.current)
       ) {
         e.preventDefault()
         e.stopPropagation()

@@ -6,8 +6,8 @@ import {
   SPRITES_RESOLUTION,
   SPRITES_SIZE
 } from '@consts'
-import confetti from 'canvas-confetti'
 import { useRef, useState } from 'react'
+import { useConfetti } from '@/hooks/useConfetti'
 import { useContextMenu } from '@/hooks/useContextMenu'
 import { usePaintBucketPixels } from '@/hooks/usePaintBucketPixels'
 import { useTimeout } from '@/hooks/useTimeout'
@@ -38,6 +38,11 @@ export const SaveHandler = () => {
   const { startTimeout, stopTimeout } = useTimeout()
   const [hasRecentlySaved, setHasRecentlySaved] = useState(false)
   const RECENTLY_SAVED_TIME = 500
+
+  const { throwConfetti } = useConfetti({
+    ref: elementRef,
+    options: { particleCount: 13, startVelocity: 15, spread: 70, ticks: 70 }
+  })
 
   const cloneToNewDraft = () => {
     setEditingCanvasId(null)
@@ -95,14 +100,7 @@ export const SaveHandler = () => {
         stopTimeout()
       }, RECENTLY_SAVED_TIME)
 
-      if (elementRef.current) {
-        const { top, left, width, height } = elementRef.current.getBoundingClientRect()
-        const origin = {
-          x: (left + width / 2) / window.innerWidth,
-          y: (top + height / 2) / window.innerHeight
-        }
-        confetti({ origin, particleCount: 13, startVelocity: 15, spread: 70, ticks: 70 })
-      }
+      throwConfetti()
     }
   }
 
