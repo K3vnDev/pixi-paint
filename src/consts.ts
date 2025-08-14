@@ -37,8 +37,8 @@ export const COLOR_PALETTE = {
   DARK_BLUE: '#3d63fc',
   PURPLE: '#8b26eb',
   PINK: '#fc72da',
-  WHITE: '#fff',
-  BLACK: '#000'
+  WHITE: '#ffffff',
+  BLACK: '#000000'
 } as const
 
 export const CURSORS: Cursor[] = [

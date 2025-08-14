@@ -2,28 +2,34 @@ import type { ReusableComponent } from '@types'
 import { useEffect, useRef, useState } from 'react'
 import { HexColorPicker } from 'react-colorful'
 import { ColoredPixelatedImage } from '@/components/ColoredPixelatedImage'
+import { useDebounce } from '@/hooks/useDebounce'
 import { useFreshRef } from '@/hooks/useFreshRef'
+import { usePaintStore } from '@/store/usePaintStore'
+import { validateColor } from '@/utils/validateColor'
 
 interface Props {
-  initialColor: string
   parentRef: ReusableComponent['ref']
 }
 
-export const Picker = ({ initialColor, parentRef }: Props) => {
-  const [colorPickerColor, setColorPickerColor] = useState(initialColor)
+export const Picker = ({ parentRef }: Props) => {
+  const primaryColor = usePaintStore(s => s.primaryColor)
+  const setPrimaryColor = usePaintStore(s => s.setPrimaryColor)
+  const [colorPickerColor, setColorPickerColor] = useState(primaryColor)
+
   const elementRef = useRef<HTMLSpanElement>(null)
   const [isOpen, setIsOpen] = useState(false)
   const [position, setPosition] = useState({ left: '0px', top: '0px' })
 
-  const isOpenRef = useFreshRef(isOpen)
+  const refs = useFreshRef({ isOpen, primaryColor })
+  const COLOR_DELAY = 75
+  const debouncedColorPickerColor = useDebounce(colorPickerColor, COLOR_DELAY, true)
 
+  // Handle pointer events
   useEffect(() => {
     const parent: HTMLElement = parentRef?.current
 
     const handlePointerUp = (e: PointerEvent) => {
-      if (clickedInside(e) && !isOpenRef.current) {
-        open()
-      }
+      if (clickedInside(e) && !refs.current.isOpen) open()
     }
 
     const handlePointerDown = (e: PointerEvent) => {
@@ -45,6 +51,11 @@ export const Picker = ({ initialColor, parentRef }: Props) => {
     }
   }, [])
 
+  // Refresh primary color
+  useEffect(() => {
+    setPrimaryColor(validateColor(debouncedColorPickerColor))
+  }, [debouncedColorPickerColor])
+
   const open = () => {
     if (!parentRef?.current || !elementRef.current) return
 
@@ -56,12 +67,26 @@ export const Picker = ({ initialColor, parentRef }: Props) => {
     const top = parentRect.height / 2 - elementRect.height / 2
 
     setPosition({ left: `${left}px`, top: `${top}px` })
-    console.log({ left, top })
     setIsOpen(true)
+    setColorPickerColor(refs.current.primaryColor)
   }
 
   const close = () => {
     setIsOpen(false)
+  }
+
+  const handleColorTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target
+    setColorPickerColor(value)
+  }
+
+  const handleColorTextBlur = (e: React.FocusEvent<HTMLInputElement, Element>) => {
+    const { value } = e.target
+    setColorPickerColor(validateColor(value))
+  }
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(colorPickerColor)
   }
 
   const style = isOpen ? '' : 'opacity-0'
@@ -83,8 +108,13 @@ export const Picker = ({ initialColor, parentRef }: Props) => {
           flex justify-between w-full
         `}
       >
-        <input value={colorPickerColor} className='outline-none text-xl text-theme-10 w-full px-3 py-1 ' />
-        <button className='w-fit h-full flex items-center px-2 py-1 button'>
+        <input
+          className='outline-none text-xl text-theme-10 w-full px-3 py-1 '
+          value={colorPickerColor}
+          onBlur={handleColorTextBlur}
+          onChange={handleColorTextChange}
+        />
+        <button className='w-fit h-full flex items-center px-2 py-1 button' onClick={copyToClipboard}>
           <ColoredPixelatedImage icon='clone' className='bg-theme-10 size-8 scale-110' />
         </button>
       </label>
