@@ -3,9 +3,9 @@ import { ColorSelectorContext } from '@/context/ColorSelectorContext'
 import { useActionOnKey } from '@/hooks/useActionOnKey'
 import { usePaintStore } from '@/store/usePaintStore'
 import { ColorBase } from '../ColorBase'
-import { Picker } from './Picker'
+import { PickerMenu } from './PickerMenu'
 
-export const SelectorMenu = () => {
+export const Selector = () => {
   const primaryColor = usePaintStore(s => s.primaryColor)
   const setPrimaryColor = usePaintStore(s => s.setPrimaryColor)
   const secondaryColor = usePaintStore(s => s.secondaryColor)
@@ -33,7 +33,7 @@ export const SelectorMenu = () => {
           className='absolute top-0 left-0 size-2/3 z-10 transition'
           color={primaryColor}
         >
-          <Picker parentRef={pickerRef} />
+          <PickerMenu parentRef={pickerRef} />
         </ColorBase>
         <ColorBase
           className='absolute bottom-0 right-0 size-1/2 transition'

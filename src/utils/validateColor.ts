@@ -6,7 +6,7 @@ interface ValidateColorReturnType {
 }
 
 export const validateColor = (color: string): ValidateColorReturnType => {
-  let cleaned = color.replaceAll('#', '').slice(0, 6).toLowerCase()
+  let cleaned = color.replaceAll('#', '').trim().slice(0, 6).toLowerCase()
   const { BLACK } = COLOR_PALETTE
 
   // Return black if theres no input but keep it valid

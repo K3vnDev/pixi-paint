@@ -43,7 +43,7 @@ export const useContextMenu = ({
     document.addEventListener(EVENTS.CONTEXT_MENU_CLOSED, handleContextMenuClosed)
 
     return () => {
-      ref.current?.removeEventListener('pointerup', handlePointerDown)
+      ref.current?.removeEventListener('pointerup', handlePointerDown, { capture: true })
       document.removeEventListener(EVENTS.CONTEXT_MENU_CLOSED, handleContextMenuClosed)
       closeMenu()
     }

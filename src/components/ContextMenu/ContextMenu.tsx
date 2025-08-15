@@ -56,8 +56,8 @@ export const ContextMenu = () => {
     document.addEventListener(EVENTS.CLOSE_CONTEXT_MENU, handleCloseMenu)
 
     return () => {
-      document.removeEventListener('pointermove', handlePointerMove)
-      document.removeEventListener('pointerdown', handlePointerDown)
+      document.removeEventListener('pointermove', handlePointerMove, { capture: true })
+      document.removeEventListener('pointerdown', handlePointerDown, { capture: true })
       document.removeEventListener('pointerleave', handleCloseMenu)
       document.removeEventListener('scroll', handleCloseMenu)
       document.removeEventListener(EVENTS.OPEN_CONTEXT_MENU, handleOpenMenu)

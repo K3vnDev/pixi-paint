@@ -13,7 +13,7 @@ interface Props {
   parentRef: ReusableComponent['ref']
 }
 
-export const Picker = ({ parentRef }: Props) => {
+export const PickerMenu = ({ parentRef }: Props) => {
   const primaryColor = usePaintStore(s => s.primaryColor)
   const setPrimaryColor = usePaintStore(s => s.setPrimaryColor)
   const { pickerColor, setPickerColor, lastValidColor } = useContext(ColorSelectorContext)
@@ -26,6 +26,10 @@ export const Picker = ({ parentRef }: Props) => {
   const refs = useFreshRef({ isOpen, primaryColor })
   const COLOR_DELAY = 75
   const debouncedPickerColor = useDebounce(pickerColor, COLOR_DELAY, true)
+
+  useEffect(() => {
+    setIsUsingInput(isOpen)
+  }, [isOpen])
 
   // Handle pointer events
   useEffect(() => {
@@ -49,8 +53,8 @@ export const Picker = ({ parentRef }: Props) => {
     document.addEventListener('pointerdown', handlePointerDown, { capture: true })
 
     return () => {
-      document.removeEventListener('pointerup', handlePointerUp)
-      document.removeEventListener('pointerdown', handlePointerDown)
+      document.removeEventListener('pointerup', handlePointerUp, { capture: true })
+      document.removeEventListener('pointerdown', handlePointerDown, { capture: true })
     }
   }, [])
 
@@ -76,13 +80,11 @@ export const Picker = ({ parentRef }: Props) => {
 
     setPosition({ left: `${left}px`, top: `${top}px` })
     setIsOpen(true)
-    setIsUsingInput(true)
     setPickerColor(refs.current.primaryColor)
   }
 
   const close = () => {
     setIsOpen(false)
-    setIsUsingInput(false)
   }
 
   const style = isOpen ? '' : 'opacity-0'
@@ -97,7 +99,7 @@ export const Picker = ({ parentRef }: Props) => {
       style={{ ...position }}
     >
       <HexColorPicker color={pickerColor} onChange={setPickerColor} />
-      <TextInput />
+      <TextInput menuIsOpen={isOpen} closeMenu={close} />
       <div
         className={`
           absolute top-1/2 right-0 -translate-y-1/2 translate-x-[calc(50%+1px)] rotate-45 size-8 rounded-tr-sm
