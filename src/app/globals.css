@@ -34,9 +34,6 @@
 
   --animate-slide-in-left: slide-in-left var(--slide-anim-timing);
   --animate-slide-in-right: slide-in-right var(--slide-anim-timing);
-
-  --animate-context-menu-show: context-menu-show 150ms ease-out both;
-  --animate-context-menu-hide: context-menu-show 50ms ease-in both reverse;
 }
 
 .button {
@@ -97,8 +94,8 @@
   }
 }
 
-/* Context menu animations */
-@keyframes context-menu-show {
+/* Menu animations */
+@keyframes menu-show-vertical {
   0% {
     scale: 0;
     opacity: 0.5;
@@ -111,13 +108,37 @@
     opacity: 1;
   }
 }
-@keyframes context-menu-hide {
+@keyframes menu-hide-vertical {
   0% {
     scale: 1;
     opacity: 1;
   }
   100% {
     scale: 0.8 0.5;
+    opacity: 0;
+  }
+}
+
+@keyframes menu-show-horizontal {
+  0% {
+    scale: 0;
+    opacity: 0.5;
+  }
+  50% {
+    scale: 0.4 0.75;
+  }
+  100% {
+    scale: 1;
+    opacity: 1;
+  }
+}
+@keyframes menu-hide-horizontal {
+  0% {
+    scale: 1;
+    opacity: 1;
+  }
+  100% {
+    scale: 0.5 0.8;
     opacity: 0;
   }
 }

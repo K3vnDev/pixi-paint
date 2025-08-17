@@ -58,7 +58,7 @@ export type ContextMenuBuilder = {
   allowedClicks: CLICK_BUTTON[]
 }
 
-export type IconName = 'check' | 'clone' | 'cross' | 'download' | 'pencil' | 'trash'
+export type IconName = 'check' | 'clone' | 'cross' | 'download' | 'pencil' | 'trash' | 'arrows-corner'
 
 export interface ContextMenuOption {
   label: string
