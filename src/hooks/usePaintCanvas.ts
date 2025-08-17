@@ -15,10 +15,10 @@ export const usePaintCanvas = () => {
   const setPixels = usePaintStore(s => s.setPixels)
   const paintPixels = usePaintStore(s => s.paintPixels)
 
-  const selectedColor = usePaintStore(s => s.color)
-  const setSelectedColor = usePaintStore(s => s.setColor)
+  const selectedColor = usePaintStore(s => s.primaryColor)
+  const setSelectedColor = usePaintStore(s => s.setPrimaryColor)
 
-  const bgColor = usePaintStore(s => s.bgColor)
+  const secondaryColor = usePaintStore(s => s.secondaryColor)
   const tool = usePaintStore(s => s.tool)
   const setTool = usePaintStore(s => s.setTool)
 
@@ -45,7 +45,7 @@ export const usePaintCanvas = () => {
   const clickButton = useRef(-1)
 
   // Set up state refs
-  const stateRefs = useFreshRef({ pixels, tool, selectedColor, bgColor })
+  const stateRefs = useFreshRef({ pixels, tool, selectedColor, secondaryColor })
 
   // Load the correct painting on startup
   useEffect(() => {
@@ -206,14 +206,16 @@ export const usePaintCanvas = () => {
   }, [])
 
   const paintPixel = (pixelColor: string, index: number) => {
-    if (!colorComparison(pixelColor, stateRefs.current.selectedColor)) {
-      paintPixels({ index, color: stateRefs.current.selectedColor })
+    const { selectedColor } = stateRefs.current
+    if (!colorComparison(pixelColor, selectedColor)) {
+      paintPixels({ index, color: selectedColor })
     }
   }
 
   const erasePixel = (pixelColor: string, index: number) => {
-    if (!colorComparison(pixelColor, stateRefs.current.bgColor)) {
-      paintPixels({ index, color: stateRefs.current.bgColor })
+    const { secondaryColor } = stateRefs.current
+    if (!colorComparison(pixelColor, secondaryColor)) {
+      paintPixels({ index, color: secondaryColor })
     }
   }
 

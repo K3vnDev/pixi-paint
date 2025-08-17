@@ -37,37 +37,35 @@ export const COLOR_PALETTE = {
   DARK_BLUE: '#3d63fc',
   PURPLE: '#8b26eb',
   PINK: '#fc72da',
-  WHITE: '#fff',
-  BLACK: '#000'
+  WHITE: '#ffffff',
+  BLACK: '#000000'
 } as const
+
+export const DEFAULT_COLOR = COLOR_PALETTE.RED
 
 export const CURSORS: Cursor[] = [
   {
-    name: 'pointer',
-    imageUrl: '/imgs/tools/pointer.png',
-    position: { x: 6, y: 3 }
+    imageName: 'pointer',
+    origin: { x: 6, y: 3 }
   },
   {
-    name: 'brush',
-    imageUrl: '/imgs/tools/brush.png',
-    position: { x: 2, y: 14 },
-    colorImageUrl: '/imgs/tools/brush_color.png'
+    imageName: 'brush',
+    origin: { x: 2, y: 14 },
+    colorize: 'primary'
   },
   {
-    name: 'bucket',
-    imageUrl: '/imgs/tools/bucket.png',
-    position: { x: 3, y: 8 },
-    colorImageUrl: '/imgs/tools/bucket_color.png'
+    imageName: 'bucket',
+    origin: { x: 3, y: 8 },
+    colorize: 'primary'
   },
   {
-    name: 'eraser',
-    imageUrl: '/imgs/tools/eraser.png',
-    position: { x: 5, y: 13 }
+    imageName: 'eraser',
+    origin: { x: 5, y: 13 },
+    colorize: 'secondary'
   },
   {
-    name: 'colorPicker',
-    imageUrl: '/imgs/tools/color-picker.png',
-    position: { x: 3, y: 12 }
+    imageName: 'color-picker',
+    origin: { x: 3, y: 12 }
   }
 ]
 

@@ -14,8 +14,11 @@ type Props = {
   }
 } & CursorType
 
-export const CursorImage = ({ alt, imageUrl, colorImageUrl, className }: Props) => {
-  const selectedColor = usePaintStore(s => s.color)
+export const CursorImage = ({ alt, imageName, colorize, className }: Props) => {
+  const colors = {
+    primary: usePaintStore(s => s.primaryColor),
+    secondary: usePaintStore(s => s.secondaryColor)
+  }
 
   const globalStyle: React.CSSProperties = {
     imageRendering: 'pixelated',
@@ -23,6 +26,7 @@ export const CursorImage = ({ alt, imageUrl, colorImageUrl, className }: Props) 
     height: SPRITES_SIZE
   }
   const globalClass = `absolute aspect-square left-0 top-0 ${className?.both}`
+  const getImageUrl = (name: string) => `/imgs/tools/${name}.png`
 
   return (
     <>
@@ -30,15 +34,15 @@ export const CursorImage = ({ alt, imageUrl, colorImageUrl, className }: Props) 
         className={twMerge(`cursor-shadow ${globalClass} ${className?.mainImg}`)}
         resolution={SPRITES_RESOLUTION}
         alt={alt}
-        src={imageUrl}
+        src={getImageUrl(imageName)}
         style={globalStyle}
       />
-      {colorImageUrl && (
+      {colorize && (
         <ColoredPixelatedImage
-          src={colorImageUrl}
-          className={twMerge(`${globalClass} ${className?.colorImg}`)}
+          src={getImageUrl(`${imageName}_color`)}
+          className={twMerge(`transition-colors ${globalClass} ${className?.colorImg}`)}
           style={{
-            backgroundColor: selectedColor,
+            backgroundColor: colors[colorize],
             ...globalStyle
           }}
         />

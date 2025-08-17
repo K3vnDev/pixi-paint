@@ -19,7 +19,7 @@ export const Navbar = () => {
     <aside
       className={`
         fixed top-0 left-0 h-[var(--navbar-height)] w-full ${Z_INDEX.NAVBAR}
-        bg-[#110C1F] border-b-4 border-b-theme-20 flex gap-6 justify-center items-end
+        bg-black/30 border-b-4 border-b-theme-20 flex gap-6 justify-center items-end
       `}
     >
       {routes.map(route => (

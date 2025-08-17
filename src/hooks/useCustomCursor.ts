@@ -40,8 +40,8 @@ export const useCustomCursor = () => {
     window.addEventListener('pointerup', handlePointerUp, { capture: true })
 
     return () => {
-      window.removeEventListener('pointermove', handlePointerMove)
-      window.removeEventListener('pointerup', handlePointerUp)
+      window.removeEventListener('pointermove', handlePointerMove, { capture: true })
+      window.removeEventListener('pointerup', handlePointerUp, { capture: true })
     }
   }, [])
 

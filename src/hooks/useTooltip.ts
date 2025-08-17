@@ -20,8 +20,8 @@ export const useTooltip = ({ ref, text, showWhen = true }: Params) => {
     element.addEventListener('pointerleave', hide, { capture: true })
 
     return () => {
-      element.removeEventListener('pointerenter', show)
-      element.removeEventListener('pointerleave', hide)
+      element.removeEventListener('pointerenter', show, { capture: true })
+      element.removeEventListener('pointerleave', hide, { capture: true })
     }
   }, [])
 

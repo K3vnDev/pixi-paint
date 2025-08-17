@@ -1,14 +1,15 @@
 import { TOOLS } from '@consts'
 import { usePaintStore } from '@/store/usePaintStore'
 import { colorComparison } from '@/utils/colorComparison'
+import { ColorBase } from './ColorBase'
 
 interface Props {
   color: string
 }
 
-export const ColorbarColor = ({ color }: Props) => {
-  const setSelectedColor = usePaintStore(s => s.setColor)
-  const selectedColor = usePaintStore(s => s.color)
+export const PaletteColor = ({ color }: Props) => {
+  const setSelectedColor = usePaintStore(s => s.setPrimaryColor)
+  const selectedColor = usePaintStore(s => s.primaryColor)
 
   const setSelectedTool = usePaintStore(s => s.setTool)
   const selectedTool = usePaintStore(s => s.tool)
@@ -23,11 +24,5 @@ export const ColorbarColor = ({ color }: Props) => {
 
   const outline = colorComparison(selectedColor, color) ? 'outline-3 brightness-selected' : ''
 
-  return (
-    <li
-      className={`size-16 button rounded-md outline-2 outline-theme-10 ${outline}`}
-      style={{ background: color }}
-      onClick={handleClick}
-    />
-  )
+  return <ColorBase className={`size-16 button ${outline}`} color={color} onClick={handleClick} />
 }

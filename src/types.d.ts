@@ -25,13 +25,12 @@ export interface GalleryCanvas {
 }
 
 export interface Cursor {
-  name: string
-  imageUrl: string
-  position: {
+  imageName: string
+  origin: {
     x: number
     y: number
   }
-  colorImageUrl?: string
+  colorize?: 'primary' | 'secondary'
 }
 
 export interface StorageCanvas {
@@ -59,7 +58,7 @@ export type ContextMenuBuilder = {
   allowedClicks: CLICK_BUTTON[]
 }
 
-export type IconName = 'check' | 'clone' | 'cross' | 'download' | 'pencil' | 'trash'
+export type IconName = 'check' | 'clone' | 'cross' | 'download' | 'pencil' | 'trash' | 'arrows-corner'
 
 export interface ContextMenuOption {
   label: string

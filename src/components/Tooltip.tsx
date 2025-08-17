@@ -24,7 +24,7 @@ export const Tooltip = () => {
     }
 
     document.addEventListener('pointermove', handlePointer, { capture: true })
-    return () => document.removeEventListener('pointermove', handlePointer)
+    return () => document.removeEventListener('pointermove', handlePointer, { capture: true })
   }, [])
 
   const show = () => setIsVisible(true)

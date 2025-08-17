@@ -3,19 +3,25 @@
 import { EVENTS, Z_INDEX } from '@consts'
 import type { ContextMenuBuilder } from '@types'
 import { useEffect, useRef, useState } from 'react'
-import { useTimeout } from '@/hooks/useTimeout'
+import { useAnimations } from '@/hooks/useAnimations'
+import { animationData } from '@/utils/animationData'
 import { Option } from './Option'
 
 export const ContextMenu = () => {
-  const [animation, setAnimation] = useState<string>(ANIM_VALUES.NONE)
   const [menuData, setMenuData] = useState<ContextMenuBuilder | null>(null)
   const isOpen = useRef(false)
   const isClosing = useRef(false)
   const CLOSE_DISTANCE = 350
 
-  const { startTimeout, stopTimeout } = useTimeout()
   const ELEMENT_ID = 'CONTEXT_MENU'
   const elementRef = useRef<HTMLDialogElement>(null)
+
+  const { animation, anims, startAnimation } = useAnimations({
+    animations: {
+      show: animationData.menuShowVertical(),
+      hide: animationData.menuHideVertical()
+    }
+  })
 
   useEffect(() => {
     const handleOpenMenu = (e: Event) => {
@@ -56,8 +62,8 @@ export const ContextMenu = () => {
     document.addEventListener(EVENTS.CLOSE_CONTEXT_MENU, handleCloseMenu)
 
     return () => {
-      document.removeEventListener('pointermove', handlePointerMove)
-      document.removeEventListener('pointerdown', handlePointerDown)
+      document.removeEventListener('pointermove', handlePointerMove, { capture: true })
+      document.removeEventListener('pointerdown', handlePointerDown, { capture: true })
       document.removeEventListener('pointerleave', handleCloseMenu)
       document.removeEventListener('scroll', handleCloseMenu)
       document.removeEventListener(EVENTS.OPEN_CONTEXT_MENU, handleOpenMenu)
@@ -66,39 +72,27 @@ export const ContextMenu = () => {
   }, [])
 
   const openMenu = async (builder: ContextMenuBuilder) => {
-    await closeMenu(false)
+    await closeMenu()
 
     isOpen.current = true
     setMenuData(builder)
-    setAnimation(ANIM_VALUES.SHOW)
-
-    stopTimeout()
+    startAnimation(anims.show)
     isClosing.current = false
-
-    startTimeout(() => {
-      setAnimation(ANIM_VALUES.NONE)
-      stopTimeout()
-    }, ANIM_TIMES.SHOW)
   }
 
-  const closeMenu = (resetAnimation = true) =>
+  const closeMenu = () =>
     new Promise<void>(res => {
       if (isClosing.current || !isOpen.current) return res()
 
-      setAnimation(ANIM_VALUES.HIDE)
-      isClosing.current = true
-      document.dispatchEvent(new Event(EVENTS.CONTEXT_MENU_CLOSED))
-
-      stopTimeout()
-      startTimeout(() => {
-        resetAnimation && setAnimation(ANIM_VALUES.NONE)
+      startAnimation(anims.hide, () => {
         setMenuData(null)
         isClosing.current = false
         isOpen.current = false
 
-        stopTimeout()
         res()
-      }, ANIM_TIMES.HIDE)
+      })
+      isClosing.current = true
+      document.dispatchEvent(new Event(EVENTS.CONTEXT_MENU_CLOSED))
     })
 
   if (!menuData) return null
@@ -121,14 +115,3 @@ export const ContextMenu = () => {
     </dialog>
   )
 }
-
-const ANIM_TIMES = {
-  SHOW: 130,
-  HIDE: 70
-} as const
-
-const ANIM_VALUES = {
-  SHOW: `context-menu-show ${ANIM_TIMES.SHOW}ms ease-out both`,
-  HIDE: `context-menu-hide ${ANIM_TIMES.HIDE}ms ease-in both`,
-  NONE: 'none'
-} as const
