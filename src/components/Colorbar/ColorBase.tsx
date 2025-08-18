@@ -12,10 +12,7 @@ export const ColorBase = ({ className = '', ref, style, onClick, color, children
     className={twMerge(`
       rounded-md outline-2 outline-theme-10 ${className}
     `)}
-    style={{
-      backgroundColor: color,
-      ...style
-    }}
+    style={{ backgroundColor: color, ...style }}
     {...{ ref, onClick }}
   >
     {children}

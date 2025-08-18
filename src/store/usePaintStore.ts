@@ -1,4 +1,4 @@
-import { DEFAULT_COLOR, INITIAL_BG, TOOLS } from '@consts'
+import { DEFAULT_PRI_COLOR, DEFAULT_SEC_COLOR, TOOLS } from '@consts'
 import type { PaintPixelData } from '@types'
 import { create } from 'zustand'
 
@@ -21,10 +21,10 @@ export const usePaintStore = create<PaintStore>(set => ({
   tool: TOOLS.BRUSH,
   setTool: value => set(() => ({ tool: value })),
 
-  primaryColor: DEFAULT_COLOR,
+  primaryColor: DEFAULT_PRI_COLOR,
   setPrimaryColor: value => set(() => ({ primaryColor: value })),
 
-  secondaryColor: INITIAL_BG,
+  secondaryColor: DEFAULT_SEC_COLOR,
   setSecondaryColor: value => set(() => ({ secondaryColor: value })),
 
   pixels: [],

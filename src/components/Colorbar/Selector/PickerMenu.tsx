@@ -16,17 +16,17 @@ interface Props {
 }
 
 export const PickerMenu = ({ parentRef }: Props) => {
+  const { pickerColor, setPickerColor, lastValidColor, menuIsOpen, setMenuIsOpen } =
+    useContext(ColorSelectorContext)
+
   const primaryColor = usePaintStore(s => s.primaryColor)
   const setPrimaryColor = usePaintStore(s => s.setPrimaryColor)
-  const { pickerColor, setPickerColor, lastValidColor } = useContext(ColorSelectorContext)
-
   const elementRef = useRef<HTMLDialogElement>(null)
   const setIsUsingInput = useGeneralStore(s => s.setIsUsingInput)
-  const [isOpen, setIsOpen] = useState(false)
   const [position, setPosition] = useState<React.CSSProperties>()
   const isClosing = useRef(false)
 
-  const refs = useFreshRef({ isOpen, primaryColor, position })
+  const refs = useFreshRef({ menuIsOpen, primaryColor, position })
   const COLOR_DELAY = 75
   const debouncedPickerColor = useDebounce(pickerColor, COLOR_DELAY, true)
 
@@ -39,28 +39,28 @@ export const PickerMenu = ({ parentRef }: Props) => {
   })
 
   useEffect(() => {
-    if (!position && isOpen && elementRef.current && parentRef?.current) {
+    if (!position && menuIsOpen && elementRef.current && parentRef?.current) {
       // Calculate position
       const elementRect = elementRef.current.getBoundingClientRect()
       const parentRect = (parentRef.current as HTMLElement).getBoundingClientRect()
 
-      const margin = 28
-      const left = -elementRect.width - margin
+      const MARGIN = 32
+      const left = -elementRect.width - MARGIN
       const top = parentRect.height / 2 - elementRect.height / 2
 
       setPosition({ left: `${left}px`, top: `${top}px` })
     }
 
     // Pair state input value
-    setIsUsingInput(isOpen)
-  }, [isOpen])
+    setIsUsingInput(menuIsOpen)
+  }, [menuIsOpen])
 
   // Handle pointer events
   useEffect(() => {
     const parent: HTMLElement = parentRef?.current
 
     const handlePointerUp = (e: PointerEvent) => {
-      if (clickedInside(e) && !refs.current.isOpen) open()
+      if (clickedInside(e) && !refs.current.menuIsOpen) open()
     }
 
     const handlePointerDown = (e: PointerEvent) => {
@@ -93,11 +93,13 @@ export const PickerMenu = ({ parentRef }: Props) => {
   }, [debouncedPickerColor])
 
   const open = () => {
-    if (refs.current.isOpen && isClosing.current) return
-    setIsOpen(true)
-    setPickerColor(refs.current.primaryColor)
+    const { menuIsOpen, position, primaryColor } = refs.current
 
-    if (!refs.current.position) {
+    if (menuIsOpen && isClosing.current) return
+    setMenuIsOpen(true)
+    setPickerColor(primaryColor)
+
+    if (!position) {
       setTimeout(() => startAnimation(anims.show))
     } else {
       startAnimation(anims.show)
@@ -105,16 +107,16 @@ export const PickerMenu = ({ parentRef }: Props) => {
   }
 
   const close = () => {
-    if (!refs.current.isOpen || isClosing.current) return
+    if (!refs.current.menuIsOpen || isClosing.current) return
     isClosing.current = true
 
     startAnimation(anims.hide, () => {
-      setIsOpen(false)
+      setMenuIsOpen(false)
       isClosing.current = false
     })
   }
 
-  if (!isOpen) return null
+  if (!menuIsOpen) return null
   const opacity = !animation ? 'opacity-0' : ''
 
   return (
@@ -128,7 +130,7 @@ export const PickerMenu = ({ parentRef }: Props) => {
       style={{ ...position, animation }}
     >
       <HexColorPicker color={pickerColor} onChange={setPickerColor} />
-      <TextInput menuIsOpen={isOpen} closeMenu={close} />
+      <TextInput menuIsOpen={menuIsOpen} closeMenu={close} />
       <div
         className={`
           absolute top-1/2 right-0 -translate-y-1/2 translate-x-[calc(50%+1px)] rotate-45 size-8 rounded-tr-sm
