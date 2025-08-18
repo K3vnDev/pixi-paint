@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
+import { HTML_IDS } from '@/consts'
 import { usePaintStore } from '@/store/usePaintStore'
+import { wasInsideElement } from '@/utils/wasInsideElement'
 import { useFreshRef } from './useFreshRef'
 
 export const useCustomCursor = () => {
@@ -9,6 +11,7 @@ export const useCustomCursor = () => {
   const toolRef = useFreshRef(tool)
 
   const isHoveringPaintCanvas = useRef(false)
+  const lastPointerDownWasCanvas = useRef(false)
   const isPreservingHoveringState = useRef(false)
 
   const pointerPosition = useRef({ x: 0, y: 0 })
@@ -20,8 +23,13 @@ export const useCustomCursor = () => {
   useEffect(() => {
     const handlePointerMove = (e: PointerEvent) => {
       // Check if its hovering paint canvas and preseve its state when moving out while holding the button
-      const newIsHoveingPaintCanvas = !!(e.target as Element).closest('#paint-canvas')
-      if (!newIsHoveingPaintCanvas && isHoveringPaintCanvas.current && e.buttons) {
+      const newIsHoveingPaintCanvas = isAtPaintCanvas(e)
+      if (
+        !newIsHoveingPaintCanvas &&
+        isHoveringPaintCanvas.current &&
+        lastPointerDownWasCanvas.current &&
+        e.buttons
+      ) {
         isPreservingHoveringState.current = true
       }
       isHoveringPaintCanvas.current = isPreservingHoveringState.current || newIsHoveingPaintCanvas
@@ -36,14 +44,22 @@ export const useCustomCursor = () => {
       isPreservingHoveringState.current = false
     }
 
+    const handlePointerDown = (e: PointerEvent) => {
+      lastPointerDownWasCanvas.current = isAtPaintCanvas(e)
+    }
+
     window.addEventListener('pointermove', handlePointerMove, { capture: true })
+    window.addEventListener('pointerdown', handlePointerDown, { capture: true })
     window.addEventListener('pointerup', handlePointerUp, { capture: true })
 
     return () => {
       window.removeEventListener('pointermove', handlePointerMove, { capture: true })
+      window.removeEventListener('pointerdown', handlePointerDown, { capture: true })
       window.removeEventListener('pointerup', handlePointerUp, { capture: true })
     }
   }, [])
+
+  const isAtPaintCanvas = (e: PointerEvent) => wasInsideElement(e.target).id(HTML_IDS.PAINT_CANVAS)
 
   const refreshCursor = () => {
     if (!cursorsContainerRef.current) return

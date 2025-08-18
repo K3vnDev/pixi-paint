@@ -90,3 +90,8 @@ export enum CLICK_BUTTON {
   MIDDLE,
   RIGHT
 }
+
+export const HTML_IDS = {
+  PAINT_CANVAS: 'paint-canvas',
+  CONTEXT_MENU: 'context-menu'
+} as const

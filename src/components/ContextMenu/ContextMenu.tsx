@@ -1,10 +1,11 @@
 'use client'
 
-import { EVENTS, Z_INDEX } from '@consts'
+import { EVENTS, HTML_IDS, Z_INDEX } from '@consts'
 import type { ContextMenuBuilder } from '@types'
 import { useEffect, useRef, useState } from 'react'
 import { useAnimations } from '@/hooks/useAnimations'
 import { animationData } from '@/utils/animationData'
+import { wasInsideElement } from '@/utils/wasInsideElement'
 import { Option } from './Option'
 
 export const ContextMenu = () => {
@@ -13,7 +14,6 @@ export const ContextMenu = () => {
   const isClosing = useRef(false)
   const CLOSE_DISTANCE = 350
 
-  const ELEMENT_ID = 'CONTEXT_MENU'
   const elementRef = useRef<HTMLDialogElement>(null)
 
   const { animation, anims, startAnimation } = useAnimations({
@@ -45,8 +45,7 @@ export const ContextMenu = () => {
 
     const handlePointerDown = ({ target }: PointerEvent) => {
       if (isOpen.current) {
-        const clickedInside = !!(target as HTMLElement).closest(`#${ELEMENT_ID}`)
-        if (!clickedInside) closeMenu()
+        if (!wasInsideElement(target).id(HTML_IDS.CONTEXT_MENU)) closeMenu()
       }
     }
 
@@ -105,7 +104,7 @@ export const ContextMenu = () => {
         bg-theme-50 border-2 border-theme-20 shadow-card
       `}
       style={{ left: `${position.x}px`, top: `${position.y}px`, animation }}
-      id={ELEMENT_ID}
+      id={HTML_IDS.CONTEXT_MENU}
       open
       ref={elementRef}
     >
