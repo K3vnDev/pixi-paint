@@ -88,7 +88,7 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
       <div
         className={`
           absolute w-full left-0 bottom-0 p-3.5 text-theme-10 flex 
-          *:bg-theme-50/80 *:backdrop-blur-xs *:rounded-md
+          *:bg-theme-bg/80 *:backdrop-blur-xs *:rounded-md
         `}
       >
         {isDraft && <span className='h-10 px-3 flex items-center text-2xl font-bold'>DRAFT</span>}

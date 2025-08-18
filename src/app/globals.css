@@ -24,7 +24,7 @@
   /* Colors */
   --color-theme-10: #a081ff;
   --color-theme-20: #573da5;
-  --color-theme-50: #1a1337;
+  --color-theme-bg: #1a1337;
 
   /* Shadows */
   --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.33);

@@ -1,8 +1,8 @@
 'use client'
 
-import { Colorbar } from '@/components/Colorbar/Colorbar'
-import { PaintCanvas } from '@/components/PaintCanvas'
-import { ToolBar } from '@/components/Toolbar/Toolbar'
+import { Colorbar } from '@@/Colorbar/Colorbar'
+import { PaintCanvas } from '@@/PaintCanvas'
+import { ToolBar } from '@@/Toolbar/Toolbar'
 import { useBasicPrevention } from '@/hooks/useBasicPrevention'
 import { useBodyClassName } from '@/hooks/useBodyClassName'
 import { useSaveCanvases } from '@/hooks/useSaveCanvases'

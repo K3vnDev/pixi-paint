@@ -101,7 +101,7 @@ export const ContextMenu = () => {
     <dialog
       className={`
         fixed top-0 left-0 ${Z_INDEX.CONTEXT_MENU} py-1 rounded-xl origin-top-left
-        bg-theme-50 border-2 border-theme-20 shadow-card
+        bg-theme-bg border-2 border-theme-20 shadow-card
       `}
       style={{ left: `${position.x}px`, top: `${position.y}px`, animation }}
       id={HTML_IDS.CONTEXT_MENU}

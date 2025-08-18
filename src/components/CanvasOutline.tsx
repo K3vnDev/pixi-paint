@@ -33,7 +33,7 @@ export const CanvasOutline = ({ children, className = '' }: Props) => {
       <div
         className={`
           size-full flex justify-center items-center 
-          bg-theme-50 rounded-xl
+          bg-theme-bg rounded-xl
         `}
       >
         {children}

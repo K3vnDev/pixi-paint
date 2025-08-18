@@ -122,7 +122,7 @@ export const PickerMenu = ({ parentRef }: Props) => {
   return (
     <dialog
       className={`
-        fixed px-5 py-6 bg-theme-50 border-2 border-theme-20 rounded-xl shadow-card
+        fixed px-5 py-6 bg-theme-bg border-2 border-theme-20 rounded-xl shadow-card
         origin-right z-50 flex flex-col gap-4 w-min ${opacity}
       `}
       open
@@ -134,7 +134,7 @@ export const PickerMenu = ({ parentRef }: Props) => {
       <div
         className={`
           absolute top-1/2 right-0 -translate-y-1/2 translate-x-[calc(50%+1px)] rotate-45 size-8 rounded-tr-sm
-          bg-theme-50 border-t-2 border-r-2 border-theme-20 -z-10
+          bg-theme-bg border-t-2 border-r-2 border-theme-20 -z-10
         `}
       />
     </dialog>

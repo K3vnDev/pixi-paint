@@ -52,7 +52,7 @@ export const Tooltip = () => {
     <span
       className={`
         fixed ${Z_INDEX.TOOLTIP}
-        bg-theme-50 text-theme-10 border-2 border-theme-10
+        bg-theme-bg text-theme-10 border-2 border-theme-10
         px-4 py-1.5 rounded-xl shadow-card text-xl origin-left 
         ${style} transition duration-100 pointer-events-none
       `}
@@ -60,7 +60,7 @@ export const Tooltip = () => {
     >
       <div
         className={`
-          size-[21px] bg-theme-50 border-b-2 border-l-2 border-theme-10 rotate-45 absolute
+          size-[21px] bg-theme-bg border-b-2 border-l-2 border-theme-10 rotate-45 absolute
           top-1/2 -translate-y-1/2 left-0 -translate-x-[calc(50%+1px)]
         `}
       />

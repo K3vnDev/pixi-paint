@@ -1,6 +1,6 @@
+import { ColoredPixelatedImage } from '@@/ColoredPixelatedImage'
 import type { IconName } from '@types'
 import { useContext, useEffect, useRef, useState } from 'react'
-import { ColoredPixelatedImage } from '@/components/ColoredPixelatedImage'
 import { ColorSelectorContext } from '@/context/ColorSelectorContext'
 import { useActionOnKey } from '@/hooks/useActionOnKey'
 import { useFreshRef } from '@/hooks/useFreshRef'

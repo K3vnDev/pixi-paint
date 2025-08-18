@@ -1,5 +1,5 @@
+import { ColoredPixelatedImage } from '@@/ColoredPixelatedImage'
 import { useRef, useState } from 'react'
-import { ColoredPixelatedImage } from '@/components/ColoredPixelatedImage'
 import { ColorSelectorContext } from '@/context/ColorSelectorContext'
 import { useActionOnKey } from '@/hooks/useActionOnKey'
 import { usePaintStore } from '@/store/usePaintStore'
