@@ -2,13 +2,13 @@
 
 import { EVENTS, Z_INDEX } from '@consts'
 import { useEffect, useRef, useState } from 'react'
-import { useFreshRef } from '@/hooks/useFreshRef'
+import { useFreshRefs } from '@/hooks/useFreshRefs'
 
 export const Tooltip = () => {
   const [text, setText] = useState('')
   const elementRef = useRef<HTMLSpanElement>(null)
   const [isVisible, setIsVisible] = useState(false)
-  const isVisibleRef = useFreshRef(isVisible)
+  const isVisibleRef = useFreshRefs(isVisible)
 
   const OFFSET = { X: 45, Y: 10 }
 

@@ -2,7 +2,7 @@ import type { ContextMenuBuilder, ContextMenuOption } from '@types'
 import { useEffect, useState } from 'react'
 import { CLICK_BUTTON, EVENTS } from '@/consts'
 import { clickIncludes } from '@/utils/clickIncludes'
-import { useFreshRef } from './useFreshRef'
+import { useFreshRefs } from './useFreshRefs'
 
 interface Params {
   options: ContextMenuOption[]
@@ -18,7 +18,7 @@ export const useContextMenu = ({
   showWhen = true
 }: Params) => {
   const OPEN_WAIT = 50
-  const refs = useFreshRef({ options, showWhen })
+  const refs = useFreshRefs({ options, showWhen })
 
   const [menuIsOpen, setMenuIsOpen] = useState(false)
 

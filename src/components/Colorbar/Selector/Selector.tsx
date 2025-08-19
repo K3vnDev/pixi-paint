@@ -1,5 +1,6 @@
 import { ColoredPixelatedImage } from '@@/ColoredPixelatedImage'
 import { useRef, useState } from 'react'
+import { HTML_IDS } from '@/consts'
 import { ColorSelectorContext } from '@/context/ColorSelectorContext'
 import { useActionOnKey } from '@/hooks/useActionOnKey'
 import { usePaintStore } from '@/store/usePaintStore'
@@ -36,6 +37,7 @@ export const Selector = () => {
     >
       <section className='w-full aspect-square relative translate-0 group'>
         <ColorBase
+          id={HTML_IDS.PICKER_MENU}
           ref={pickerRef}
           className={`absolute top-0 left-0 size-2/3 z-10 transition ${pickerButtonStyle}`}
           color={primaryColor}

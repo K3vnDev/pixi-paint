@@ -3,7 +3,7 @@ import type { GalleryCanvas } from '@types'
 import { useRouter } from 'next/navigation'
 import { useRef } from 'react'
 import { useContextMenu } from '@/hooks/useContextMenu'
-import { useFreshRef } from '@/hooks/useFreshRef'
+import { useFreshRefs } from '@/hooks/useFreshRefs'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { CanvasImage } from './CanvasImage'
 import { ColoredPixelatedImage } from './ColoredPixelatedImage'
@@ -20,7 +20,7 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   const savedCanvases = useCanvasStore(s => s.savedCanvases)
   const setSavedCanvases = useCanvasStore(s => s.setSavedCanvases)
   const getNewCanvasId = useCanvasStore(s => s.getNewCanvasId)
-  const savedCanvasesRef = useFreshRef(savedCanvases)
+  const savedCanvasesRef = useFreshRefs(savedCanvases)
 
   const openCanvas = () => {
     const newEditingCanvasId = id === BLANK_DRAFT.id ? null : id

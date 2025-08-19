@@ -5,15 +5,16 @@ type Props = {
   onClick?: () => void
   color: string
   children?: React.ReactNode
-} & ReusableComponent
+} & ReusableComponent &
+  React.ComponentPropsWithoutRef<'span'>
 
-export const ColorBase = ({ className = '', ref, style, onClick, color, children }: Props) => (
+export const ColorBase = ({ className = '', ref, style, onClick, color, children, ...props }: Props) => (
   <span
     className={twMerge(`
       rounded-md outline-2 outline-theme-10 ${className}
     `)}
     style={{ backgroundColor: color, ...style }}
-    {...{ ref, onClick }}
+    {...{ ref, onClick, ...props }}
   >
     {children}
   </span>

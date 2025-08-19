@@ -52,8 +52,20 @@ export type ReusableComponent = {
   ref?: React.RefObject<any | null>
 }
 
+export interface Origin {
+  x: number
+  y: number
+}
+
+export interface Position {
+  left?: string
+  right?: string
+  top?: string
+  bottom?: string
+}
+
 export type ContextMenuBuilder = {
-  position: { x: number; y: number }
+  position: Origin
   options: ContextMenuOption[]
   allowedClicks: CLICK_BUTTON[]
 }

@@ -2,13 +2,13 @@ import { useEffect, useRef, useState } from 'react'
 import { HTML_IDS } from '@/consts'
 import { usePaintStore } from '@/store/usePaintStore'
 import { wasInsideElement } from '@/utils/wasInsideElement'
-import { useFreshRef } from './useFreshRef'
+import { useFreshRefs } from './useFreshRefs'
 
 export const useCustomCursor = () => {
   const cursorsContainerRef = useRef<HTMLDivElement | null>(null)
 
   const tool = usePaintStore(s => s.tool)
-  const toolRef = useFreshRef(tool)
+  const toolRef = useFreshRefs(tool)
 
   const isHoveringPaintCanvas = useRef(false)
   const lastPointerDownWasCanvas = useRef(false)

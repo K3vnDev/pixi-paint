@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { EVENTS } from '@/consts'
-import { useFreshRef } from './useFreshRef'
+import { useFreshRefs } from './useFreshRefs'
 
 interface Params {
   ref: React.RefObject<HTMLElement | null>
@@ -10,7 +10,7 @@ interface Params {
 
 export const useTooltip = ({ ref, text, showWhen = true }: Params) => {
   const [isBeingShown, setIsBeingShown] = useState(false)
-  const refs = useFreshRef({ showWhen, text })
+  const refs = useFreshRefs({ showWhen, text })
 
   useEffect(() => {
     if (!ref.current) return
