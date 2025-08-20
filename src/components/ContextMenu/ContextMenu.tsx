@@ -21,12 +21,10 @@ export const ContextMenu = () => {
     },
     elementSelector: `#${HTML_IDS.CONTEXT_MENU}`,
     horizontal: false,
+    hideWhen: menuData === null,
     events: {
       onCloseMenu: () => {
         document.dispatchEvent(new Event(EVENTS.CONTEXT_MENU_CLOSED))
-      },
-      afterCloseMenuAnim: () => {
-        setMenuData(null)
       }
     }
   })
@@ -35,7 +33,6 @@ export const ContextMenu = () => {
     const handleOpenContextMenu = (e: Event) => {
       const menuBuilder: ContextMenuBuilder = (e as CustomEvent).detail
       setMenuData(menuBuilder)
-      openMenu(menuBuilder.position)
     }
 
     document.addEventListener(EVENTS.OPEN_CONTEXT_MENU, handleOpenContextMenu)
@@ -46,6 +43,13 @@ export const ContextMenu = () => {
       document.removeEventListener(EVENTS.CLOSE_CONTEXT_MENU, closeMenu)
     }
   }, [])
+
+  useEffect(() => {
+    if (menuData) {
+      const { position } = menuData
+      setTimeout(() => openMenu(position), 0)
+    }
+  }, [menuData])
 
   useEffect(() => {
     if (isOpen && !menuData?.options.length) {

@@ -23,9 +23,9 @@ export const useAnimations = <T extends Record<string, AnimationData>>({
 
     startTimeout(() => {
       if (!preserve) setAnimation('')
-      onFinish?.()
       setIsOnAnimation(false)
       stopTimeout()
+      onFinish?.()
     }, duration)
   }
 

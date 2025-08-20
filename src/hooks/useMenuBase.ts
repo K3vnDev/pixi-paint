@@ -21,6 +21,7 @@ interface Params {
   }
   elementSelector?: string
   horizontal?: boolean
+  hideWhen?: boolean
 }
 
 interface Position extends PositionType {
@@ -37,19 +38,21 @@ export const useMenuBase = ({
     distance: closeAtDistance = -1
   } = {},
   elementSelector,
-  horizontal = false
+  horizontal = false,
+  hideWhen = false
 }: Params) => {
   const [isOpen, setIsOpen] = useState(false)
   const [position, setPosition] = useState<Position>()
 
-  const refs = useFreshRefs({ isOpen })
   const isClosing = useRef(false)
+  const onCloseQueuedAction = useRef<() => void>(null)
 
   const [show, hide] = horizontal
     ? [animData.menuShowHorizontal(), animData.menuHideHorizontal()]
     : [animData.menuShowVertical(), animData.menuHideVertical()]
 
   const { animation, anims, startAnimation } = useAnimations({ animations: { show, hide } })
+  const refs = useFreshRefs({ isOpen, animation })
 
   useEffect(() => {
     const handlePointerMove = (e: PointerEvent) => {
@@ -93,22 +96,26 @@ export const useMenuBase = ({
     }
   }, [])
 
-  const openMenu = async (origin?: Origin) => {
-    if (isClosing.current) return
-    await closeMenu()
+  const openMenu = (origin?: Origin) => {
+    const tryOpen = () => {
+      requestAnimationFrame(() => {
+        onOpenMenu?.()
+        origin && refreshPosition(origin)
+        setIsOpen(true)
+        startAnimation(anims.show, afterOpenMenuAnim)
+      })
+    }
 
-    onOpenMenu?.()
-    requestAnimationFrame(() => {
-      origin && refreshPosition(origin)
-      setIsOpen(true)
-      isClosing.current = false
-      startAnimation(anims.show, afterOpenMenuAnim)
-    })
+    if (isClosing.current) {
+      onCloseQueuedAction.current = tryOpen
+    } else {
+      tryOpen()
+    }
   }
 
   const closeMenu = () =>
     new Promise<void>(res => {
-      if (isClosing.current || !refs.current.isOpen) return res()
+      if (!refs.current.isOpen) return res()
 
       isClosing.current = true
       onCloseMenu?.()
@@ -118,11 +125,14 @@ export const useMenuBase = ({
         setIsOpen(false)
         afterCloseMenuAnim?.()
         res()
+
+        onCloseQueuedAction.current?.()
+        onCloseQueuedAction.current = null
       })
     })
 
   const refreshPosition = ({ x, y }: Origin) => {
-    if (!elementRef.current) return
+    if (!elementRef.current || refs.current.animation) return
 
     const { width, height } = elementRef.current.getBoundingClientRect()
     const { clientWidth, clientHeight } = document.documentElement
@@ -177,7 +187,6 @@ export const useMenuBase = ({
         setPositionUtility(calculatedPosition)
         return
       }
-
       // Save first calculated position
       firstCalculatedPosition ??= calculatedPosition
     }
@@ -185,12 +194,14 @@ export const useMenuBase = ({
     firstCalculatedPosition && setPositionUtility(firstCalculatedPosition)
   }
 
+  const isHiding = !isOpen || hideWhen
+
   const style: React.CSSProperties = {
     ...position,
     animation,
-    pointerEvents: !isOpen || animation ? 'none' : undefined,
-    opacity: !isOpen ? 0 : undefined
+    pointerEvents: isHiding || animation ? 'none' : undefined,
+    opacity: isHiding ? 0 : undefined
   }
 
-  return { isOpen, openMenu, closeMenu, style }
+  return { isOpen, openMenu, closeMenu, style, refreshPosition }
 }
