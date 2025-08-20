@@ -77,3 +77,14 @@ export interface ContextMenuOption {
   icon: IconName
   action: () => void
 }
+
+export type TransformOrigin =
+  | 'top-left'
+  | 'top'
+  | 'top-right'
+  | 'left'
+  | 'center'
+  | 'right'
+  | 'bottom-left'
+  | 'bottom'
+  | 'bottom-right'

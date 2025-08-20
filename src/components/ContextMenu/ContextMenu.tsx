@@ -11,8 +11,9 @@ export const ContextMenu = () => {
   const elementRef = useRef<HTMLDialogElement>(null)
   const [menuData, setMenuData] = useState<ContextMenuBuilder | null>(null)
 
-  const { isOpen, openMenu, closeMenu, animation, position } = useMenuBase({
+  const { isOpen, openMenu, closeMenu, style } = useMenuBase({
     elementRef,
+    transformOrigins: ['top-left', 'top-right', 'bottom-left', 'bottom-right'],
     closeOn: {
       distance: 350,
       leaveDocument: true,
@@ -46,12 +47,16 @@ export const ContextMenu = () => {
     }
   }, [])
 
+  useEffect(() => {
+    if (isOpen && !menuData?.options.length) {
+      closeMenu()
+    }
+  }, [isOpen, menuData])
+
   return (
     <MenuBase
-      className={`
-        top-0 left-0 py-1 origin-top-left ${Z_INDEX.CONTEXT_MENU}
-      `}
-      {...{ isOpen, animation, position }}
+      className={`top-0 left-0 py-1 ${Z_INDEX.CONTEXT_MENU}`}
+      {...{ isOpen, style }}
       id={HTML_IDS.CONTEXT_MENU}
       ref={elementRef}
     >

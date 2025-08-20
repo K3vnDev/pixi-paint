@@ -1,4 +1,4 @@
-import type { Origin, Position } from '@types'
+import type { Origin, Position as PositionType, TransformOrigin } from '@types'
 import { useEffect, useRef, useState } from 'react'
 import { animationData as animData } from '@/utils/animationData'
 import { wasInsideElement } from '@/utils/wasInsideElement'
@@ -7,6 +7,7 @@ import { useFreshRefs } from './useFreshRefs'
 
 interface Params {
   elementRef: React.RefObject<HTMLElement | null>
+  transformOrigins: TransformOrigin[]
   events?: {
     onOpenMenu?: () => void
     afterOpenMenuAnim?: () => void
@@ -22,8 +23,13 @@ interface Params {
   horizontal?: boolean
 }
 
+interface Position extends PositionType {
+  transformOrigin?: string
+}
+
 export const useMenuBase = ({
   elementRef,
+  transformOrigins,
   events: { onOpenMenu, afterOpenMenuAnim, onCloseMenu, afterCloseMenuAnim } = {},
   closeOn: {
     scroll: closeOnScroll = true,
@@ -88,14 +94,16 @@ export const useMenuBase = ({
   }, [])
 
   const openMenu = async (origin?: Origin) => {
+    if (isClosing.current) return
     await closeMenu()
 
     onOpenMenu?.()
-    setIsOpen(true)
-    isClosing.current = false
-    origin && refreshPosition(origin)
-
-    startAnimation(anims.show, afterOpenMenuAnim)
+    requestAnimationFrame(() => {
+      origin && refreshPosition(origin)
+      setIsOpen(true)
+      isClosing.current = false
+      startAnimation(anims.show, afterOpenMenuAnim)
+    })
   }
 
   const closeMenu = () =>
@@ -114,8 +122,75 @@ export const useMenuBase = ({
     })
 
   const refreshPosition = ({ x, y }: Origin) => {
-    setPosition({ left: `${x}px`, top: `${y}px` })
+    if (!elementRef.current) return
+
+    const { width, height } = elementRef.current.getBoundingClientRect()
+    const { clientWidth, clientHeight } = document.documentElement
+
+    const calcIsWithinBounds = (x: number, y: number) => {
+      return x >= 0 && x <= clientWidth && y >= 0 && y <= clientHeight
+    }
+
+    interface CalculatedPosition {
+      left: number
+      top: number
+      transformOrigin: string
+    }
+
+    let firstCalculatedPosition: CalculatedPosition | null = null
+
+    const setPositionUtility = ({ left, top, transformOrigin }: CalculatedPosition) => {
+      setPosition({
+        left: `${left}px`,
+        top: `${top}px`,
+        transformOrigin: transformOrigin.replace('-', ' ')
+      })
+    }
+
+    // Iterate over tranform origins to find a valid one
+    for (const transformOrigin of transformOrigins) {
+      const has = (str: string) => transformOrigin.split('-').includes(str)
+      const calcPositonMult = (kw1: string, kw2: string) => (has(kw1) ? 0 : has(kw2) ? -1 : -0.5)
+
+      const positionMultiplier = {
+        x: calcPositonMult('left', 'right'),
+        y: calcPositonMult('top', 'bottom')
+      }
+
+      const leftPosition = x + width * positionMultiplier.x
+      const topPosition = y + height * positionMultiplier.y
+
+      const leftGrow = x + width * (positionMultiplier.x + 1)
+      const topGrow = y + height * (positionMultiplier.y + 1)
+
+      const isWithinBounds =
+        calcIsWithinBounds(leftPosition, topPosition) && calcIsWithinBounds(leftGrow, topGrow)
+
+      const calculatedPosition = {
+        left: leftPosition,
+        top: topPosition,
+        transformOrigin
+      }
+
+      // If its within bounds, return position
+      if (isWithinBounds) {
+        setPositionUtility(calculatedPosition)
+        return
+      }
+
+      // Save first calculated position
+      firstCalculatedPosition ??= calculatedPosition
+    }
+
+    firstCalculatedPosition && setPositionUtility(firstCalculatedPosition)
   }
 
-  return { isOpen, openMenu, closeMenu, animation, position }
+  const style: React.CSSProperties = {
+    ...position,
+    animation,
+    pointerEvents: !isOpen || animation ? 'none' : undefined,
+    opacity: !isOpen ? 0 : undefined
+  }
+
+  return { isOpen, openMenu, closeMenu, style }
 }

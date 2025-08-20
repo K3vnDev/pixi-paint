@@ -24,8 +24,9 @@ export const PickerMenu = ({ parentRef }: Props) => {
   const elementRef = useRef<HTMLDialogElement>(null)
   const setIsUsingInput = useGeneralStore(s => s.setIsUsingInput)
 
-  const { animation, isOpen, openMenu, closeMenu, position } = useMenuBase({
+  const { isOpen, openMenu, closeMenu, style } = useMenuBase({
     elementRef,
+    transformOrigins: ['right'],
     horizontal: true,
     elementSelector: `#${HTML_IDS.PICKER_MENU}`,
     closeOn: {
@@ -55,7 +56,7 @@ export const PickerMenu = ({ parentRef }: Props) => {
       if (clickedInside(e) && !refs.current.isOpen && parentRef?.current) {
         const parentRect = (parentRef.current as HTMLElement).getBoundingClientRect()
 
-        const x = 0
+        const x = -parentRect.width / 1.5
         const y = parentRect.height / 2
 
         openMenu({ x, y })
@@ -85,13 +86,7 @@ export const PickerMenu = ({ parentRef }: Props) => {
   }, [debouncedPickerColor])
 
   return (
-    <MenuBase
-      ref={elementRef}
-      {...{ animation, isOpen, position }}
-      className={`
-        px-5 py-6 origin-right z-50 flex flex-col gap-4 w-min 
-      `}
-    >
+    <MenuBase ref={elementRef} {...{ isOpen, style }} className='px-5 py-6 z-50 flex flex-col gap-4 w-min'>
       <HexColorPicker color={pickerColor} onChange={setPickerColor} />
       <TextInput menuIsOpen={isOpen} closeMenu={closeMenu} />
       <div

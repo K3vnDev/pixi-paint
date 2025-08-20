@@ -74,6 +74,7 @@ export const EVENTS = {
   OPEN_CONTEXT_MENU: '$open-context-menu',
   CLOSE_CONTEXT_MENU: '$close-context-menu',
   CONTEXT_MENU_CLOSED: '$context-menu-closed',
+
   SHOW_TOOLTIP: '$show-tooltip',
   HIDE_TOOLTIP: '$hide-tooltip'
 } as const
