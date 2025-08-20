@@ -1,8 +1,9 @@
 import type { ContextMenuBuilder, ContextMenuOption } from '@types'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { CLICK_BUTTON, EVENTS } from '@/consts'
 import { clickIncludes } from '@/utils/clickIncludes'
-import { useFreshRef } from './useFreshRef'
+import { useFreshRefs } from './useFreshRefs'
+import { useTimeout } from './useTimeout'
 
 interface Params {
   options: ContextMenuOption[]
@@ -18,18 +19,23 @@ export const useContextMenu = ({
   showWhen = true
 }: Params) => {
   const OPEN_WAIT = 50
-  const refs = useFreshRef({ options, showWhen })
+  const refs = useFreshRefs({ options, showWhen })
+  const { startTimeout, stopTimeout } = useTimeout()
 
   const [menuIsOpen, setMenuIsOpen] = useState(false)
+  const isOpeningMenu = useRef(false)
 
   // Listen and handle pointer
   useEffect(() => {
     const handlePointerDown = (e: PointerEvent) => {
-      setTimeout(() => {
-        if (!ref.current) return
-        const clickBtn = e.button
+      if (isOpeningMenu.current) return
+      stopTimeout()
+      isOpeningMenu.current = true
 
-        if (clickIncludes(clickBtn, ...allowedClicks)) {
+      startTimeout(() => {
+        isOpeningMenu.current = false
+
+        if (ref.current && clickIncludes(e.button, ...allowedClicks)) {
           openMenu(e.clientX, e.clientY)
         }
       }, OPEN_WAIT)

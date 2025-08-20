@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useFreshRef } from './useFreshRef'
+import { useFreshRefs } from './useFreshRefs'
 import { useTimeout } from './useTimeout'
 
 export const useDebounce = <T>(value: T, wait: number, refresh = false) => {
@@ -8,7 +8,7 @@ export const useDebounce = <T>(value: T, wait: number, refresh = false) => {
   const [debouncedValue, setDebouncedValue] = useState(value)
 
   const isOnTimeout = useRef(false)
-  const latestValueRef = useFreshRef(value)
+  const latestValueRef = useFreshRefs(value)
 
   useEffect(() => {
     if (firstTrigger.current) {

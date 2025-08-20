@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useGeneralStore } from '@/store/useGeneralStore'
-import { useFreshRef } from './useFreshRef'
+import { useFreshRefs } from './useFreshRefs'
 
 interface Options {
   allowShiftKey?: boolean
@@ -15,7 +15,7 @@ export const useActionOnKey = (
   options: Options = {}
 ) => {
   const isUsingInput = useGeneralStore(s => s.isUsingInput)
-  const isUsingInputRef = useFreshRef(isUsingInput)
+  const isUsingInputRef = useFreshRefs(isUsingInput)
 
   useEffect(() => {
     const { allowShiftKey, allowCtrlKey, allowOnInput } = options

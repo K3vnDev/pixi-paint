@@ -15,7 +15,7 @@ export const NavbarRoute = ({ name, route }: Props) => {
   }
 
   const isSelected = path === route
-  const style = isSelected ? 'bg-theme-50 border-theme-20 py-3.5 translate-y-[4px]' : ''
+  const style = isSelected ? 'bg-theme-bg border-theme-20 py-3.5 translate-y-[4px]' : ''
 
   return (
     <button

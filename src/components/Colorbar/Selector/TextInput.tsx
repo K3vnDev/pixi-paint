@@ -1,9 +1,9 @@
+import { ColoredPixelatedImage } from '@@/ColoredPixelatedImage'
 import type { IconName } from '@types'
 import { useContext, useEffect, useRef, useState } from 'react'
-import { ColoredPixelatedImage } from '@/components/ColoredPixelatedImage'
 import { ColorSelectorContext } from '@/context/ColorSelectorContext'
 import { useActionOnKey } from '@/hooks/useActionOnKey'
-import { useFreshRef } from '@/hooks/useFreshRef'
+import { useFreshRefs } from '@/hooks/useFreshRefs'
 import { useTimeout } from '@/hooks/useTimeout'
 import { validateColor } from '@/utils/validateColor'
 
@@ -20,7 +20,7 @@ export const TextInput = ({ menuIsOpen, closeMenu }: Props) => {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const isFocused = useRef(false)
-  const menuIsOpenRef = useFreshRef(menuIsOpen)
+  const menuIsOpenRef = useFreshRefs(menuIsOpen)
 
   // biome-ignore format: <>
   useActionOnKey( ['Enter', 'Escape'], () => {

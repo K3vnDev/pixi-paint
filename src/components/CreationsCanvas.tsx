@@ -3,7 +3,7 @@ import type { GalleryCanvas } from '@types'
 import { useRouter } from 'next/navigation'
 import { useRef } from 'react'
 import { useContextMenu } from '@/hooks/useContextMenu'
-import { useFreshRef } from '@/hooks/useFreshRef'
+import { useFreshRefs } from '@/hooks/useFreshRefs'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { CanvasImage } from './CanvasImage'
 import { ColoredPixelatedImage } from './ColoredPixelatedImage'
@@ -20,7 +20,7 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   const savedCanvases = useCanvasStore(s => s.savedCanvases)
   const setSavedCanvases = useCanvasStore(s => s.setSavedCanvases)
   const getNewCanvasId = useCanvasStore(s => s.getNewCanvasId)
-  const savedCanvasesRef = useFreshRef(savedCanvases)
+  const savedCanvasesRef = useFreshRefs(savedCanvases)
 
   const openCanvas = () => {
     const newEditingCanvasId = id === BLANK_DRAFT.id ? null : id
@@ -88,7 +88,7 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
       <div
         className={`
           absolute w-full left-0 bottom-0 p-3.5 text-theme-10 flex 
-          *:bg-theme-50/80 *:backdrop-blur-xs *:rounded-md
+          *:bg-theme-bg/80 *:backdrop-blur-xs *:rounded-md
         `}
       >
         {isDraft && <span className='h-10 px-3 flex items-center text-2xl font-bold'>DRAFT</span>}

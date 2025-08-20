@@ -1,10 +1,10 @@
+import { ContextMenu } from '@@/ContextMenu/ContextMenu'
+import { CustomCursor } from '@@/CustomCursor'
+import { Navbar } from '@@/Navbar'
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
-import { ContextMenu } from '@/components/ContextMenu/ContextMenu'
-import { CustomCursor } from '@/components/CustomCursor'
-import { Navbar } from '@/components/Navbar'
 import './globals.css'
-import { Tooltip } from '@/components/Tooltip'
+import { Tooltip } from '@@/Tooltip'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -31,7 +31,7 @@ export default function RootLayout({
       <body
         className={`
           ${geistSans.variable} ${geistMono.variable} antialiased
-					bg-theme-50 overflow-x-hidden
+					bg-theme-bg overflow-x-hidden
 				`}
       >
         <Navbar />

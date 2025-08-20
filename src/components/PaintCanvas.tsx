@@ -1,4 +1,4 @@
-import { CANVAS_RESOLUTION } from '@consts'
+import { CANVAS_RESOLUTION, HTML_IDS } from '@consts'
 import { usePaintCanvas } from '@/hooks/usePaintCanvas'
 import { useCanvasPixelsAppearing } from '@/hooks/usePixelsAppearing'
 import { CanvasOutline } from './CanvasOutline'
@@ -20,7 +20,7 @@ export const PaintCanvas = () => {
         style={{ gridTemplateColumns }}
         draggable={false}
         ref={canvasRef}
-        id='paint-canvas'
+        id={HTML_IDS.PAINT_CANVAS}
       >
         {pixels.map((pixelColor, i) => (
           <Pixel isVisible={visiblePixelsMap[i]} color={pixelColor} index={i} key={i} />

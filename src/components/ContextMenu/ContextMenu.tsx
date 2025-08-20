@@ -1,117 +1,72 @@
 'use client'
 
-import { EVENTS, Z_INDEX } from '@consts'
+import { EVENTS, HTML_IDS, Z_INDEX } from '@consts'
 import type { ContextMenuBuilder } from '@types'
 import { useEffect, useRef, useState } from 'react'
-import { useAnimations } from '@/hooks/useAnimations'
-import { animationData } from '@/utils/animationData'
+import { useMenuBase } from '@/hooks/useMenuBase'
+import { MenuBase } from '../MenuBase'
 import { Option } from './Option'
 
 export const ContextMenu = () => {
-  const [menuData, setMenuData] = useState<ContextMenuBuilder | null>(null)
-  const isOpen = useRef(false)
-  const isClosing = useRef(false)
-  const CLOSE_DISTANCE = 350
-
-  const ELEMENT_ID = 'CONTEXT_MENU'
   const elementRef = useRef<HTMLDialogElement>(null)
+  const [menuData, setMenuData] = useState<ContextMenuBuilder | null>(null)
 
-  const { animation, anims, startAnimation } = useAnimations({
-    animations: {
-      show: animationData.menuShowVertical(),
-      hide: animationData.menuHideVertical()
+  const { isOpen, openMenu, closeMenu, style } = useMenuBase({
+    elementRef,
+    transformOrigins: ['top-left', 'top-right', 'bottom-left', 'bottom-right'],
+    closeOn: {
+      distance: 350,
+      leaveDocument: true,
+      scroll: true
+    },
+    elementSelector: `#${HTML_IDS.CONTEXT_MENU}`,
+    horizontal: false,
+    hideWhen: menuData === null,
+    events: {
+      onCloseMenu: () => {
+        document.dispatchEvent(new Event(EVENTS.CONTEXT_MENU_CLOSED))
+      }
     }
   })
 
   useEffect(() => {
-    const handleOpenMenu = (e: Event) => {
+    const handleOpenContextMenu = (e: Event) => {
       const menuBuilder: ContextMenuBuilder = (e as CustomEvent).detail
-      openMenu(menuBuilder)
+      setMenuData(menuBuilder)
     }
 
-    const handlePointerMove = (e: PointerEvent) => {
-      if (isOpen.current && elementRef.current) {
-        const { top, left, width, height } = elementRef.current.getBoundingClientRect()
-
-        const center = { x: left + width / 2, y: top + height / 2 }
-        const { clientX, clientY } = e
-
-        const distance = Math.sqrt((clientX - center.x) ** 2 + (clientY - center.y) ** 2)
-        if (distance > CLOSE_DISTANCE) {
-          closeMenu()
-        }
-      }
-    }
-
-    const handlePointerDown = ({ target }: PointerEvent) => {
-      if (isOpen.current) {
-        const clickedInside = !!(target as HTMLElement).closest(`#${ELEMENT_ID}`)
-        if (!clickedInside) closeMenu()
-      }
-    }
-
-    const handleCloseMenu = () => {
-      closeMenu()
-    }
-
-    document.addEventListener('pointermove', handlePointerMove, { capture: true })
-    document.addEventListener('pointerdown', handlePointerDown, { capture: true })
-    document.addEventListener('pointerleave', handleCloseMenu)
-    document.addEventListener('scroll', handleCloseMenu)
-    document.addEventListener(EVENTS.OPEN_CONTEXT_MENU, handleOpenMenu)
-    document.addEventListener(EVENTS.CLOSE_CONTEXT_MENU, handleCloseMenu)
+    document.addEventListener(EVENTS.OPEN_CONTEXT_MENU, handleOpenContextMenu)
+    document.addEventListener(EVENTS.CLOSE_CONTEXT_MENU, closeMenu)
 
     return () => {
-      document.removeEventListener('pointermove', handlePointerMove, { capture: true })
-      document.removeEventListener('pointerdown', handlePointerDown, { capture: true })
-      document.removeEventListener('pointerleave', handleCloseMenu)
-      document.removeEventListener('scroll', handleCloseMenu)
-      document.removeEventListener(EVENTS.OPEN_CONTEXT_MENU, handleOpenMenu)
-      document.removeEventListener(EVENTS.CLOSE_CONTEXT_MENU, handleCloseMenu)
+      document.removeEventListener(EVENTS.OPEN_CONTEXT_MENU, handleOpenContextMenu)
+      document.removeEventListener(EVENTS.CLOSE_CONTEXT_MENU, closeMenu)
     }
   }, [])
 
-  const openMenu = async (builder: ContextMenuBuilder) => {
-    await closeMenu()
+  useEffect(() => {
+    if (menuData) {
+      const { position } = menuData
+      setTimeout(() => openMenu(position), 0)
+    }
+  }, [menuData])
 
-    isOpen.current = true
-    setMenuData(builder)
-    startAnimation(anims.show)
-    isClosing.current = false
-  }
-
-  const closeMenu = () =>
-    new Promise<void>(res => {
-      if (isClosing.current || !isOpen.current) return res()
-
-      startAnimation(anims.hide, () => {
-        setMenuData(null)
-        isClosing.current = false
-        isOpen.current = false
-
-        res()
-      })
-      isClosing.current = true
-      document.dispatchEvent(new Event(EVENTS.CONTEXT_MENU_CLOSED))
-    })
-
-  if (!menuData) return null
-  const { options, position } = menuData
+  useEffect(() => {
+    if (isOpen && !menuData?.options.length) {
+      closeMenu()
+    }
+  }, [isOpen, menuData])
 
   return (
-    <dialog
-      className={`
-        fixed top-0 left-0 ${Z_INDEX.CONTEXT_MENU} py-1 rounded-xl origin-top-left
-        bg-theme-50 border-2 border-theme-20 shadow-card
-      `}
-      style={{ left: `${position.x}px`, top: `${position.y}px`, animation }}
-      id={ELEMENT_ID}
-      open
+    <MenuBase
+      className={`top-0 left-0 py-1 ${Z_INDEX.CONTEXT_MENU}`}
+      {...{ isOpen, style }}
+      id={HTML_IDS.CONTEXT_MENU}
       ref={elementRef}
     >
-      {options.map((option, i) => (
+      {menuData?.options.map((option, i) => (
         <Option closeMenu={closeMenu} key={i} {...option} />
       ))}
-    </dialog>
+    </MenuBase>
   )
 }

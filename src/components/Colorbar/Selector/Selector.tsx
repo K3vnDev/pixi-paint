@@ -1,5 +1,6 @@
+import { ColoredPixelatedImage } from '@@/ColoredPixelatedImage'
 import { useRef, useState } from 'react'
-import { ColoredPixelatedImage } from '@/components/ColoredPixelatedImage'
+import { HTML_IDS } from '@/consts'
 import { ColorSelectorContext } from '@/context/ColorSelectorContext'
 import { useActionOnKey } from '@/hooks/useActionOnKey'
 import { usePaintStore } from '@/store/usePaintStore'
@@ -13,6 +14,7 @@ export const Selector = () => {
   const setSecondaryColor = usePaintStore(s => s.setSecondaryColor)
   const [pickerColor, setPickerColor] = useState(primaryColor)
   const lastValidColor = useRef(primaryColor)
+  const [menuIsOpen, setMenuIsOpen] = useState(false)
 
   const pickerRef = useRef<HTMLElement>(null)
 
@@ -26,34 +28,42 @@ export const Selector = () => {
     setSecondaryColor(primary)
   }
 
-  const arrows = ['top-0 right-0', 'bottom-0 left-0 rotate-180']
+  const arrows = [{ pos: 'top-0 right-0' }, { pos: 'bottom-0 left-0', rot: 'rotate-180' }]
+  const pickerButtonStyle = menuIsOpen ? '' : 'button'
 
   return (
-    <ColorSelectorContext.Provider value={{ pickerColor, setPickerColor, lastValidColor }}>
+    <ColorSelectorContext.Provider
+      value={{ pickerColor, setPickerColor, lastValidColor, menuIsOpen, setMenuIsOpen }}
+    >
       <section className='w-full aspect-square relative translate-0 group'>
         <ColorBase
+          id={HTML_IDS.PICKER_MENU}
           ref={pickerRef}
-          className='absolute top-0 left-0 size-2/3 z-10 transition'
+          className={`absolute top-0 left-0 size-2/3 z-10 transition ${pickerButtonStyle}`}
           color={primaryColor}
         >
           <PickerMenu parentRef={pickerRef} />
         </ColorBase>
         <ColorBase
-          className='absolute bottom-0 right-0 size-1/2 transition group'
+          className='absolute bottom-0 right-0 size-1/2 transition group button'
           color={secondaryColor}
           onClick={swapColors}
         />
-        {arrows.map((className, i) => (
+
+        {arrows.map(({ pos, rot = '' }, i) => (
           <button
             key={i}
             className={`
-              absolute size-12 button flex items-center justify-center
+              absolute size-1/2 button flex items-center justify-center
               group-hover:opacity-50 group-hover:blur-none blur-sm opacity-10
-              transition duration-300 ${className}
+              transition duration-300 -z-10 ${pos}
             `}
             onClick={swapColors}
           >
-            <ColoredPixelatedImage icon='arrows-corner' className='size-2/3 bg-theme-10' />
+            <ColoredPixelatedImage
+              icon='arrows-corner'
+              className={`size-1/2 bg-theme-10 absolute ${pos} ${rot}`}
+            />
           </button>
         ))}
       </section>
