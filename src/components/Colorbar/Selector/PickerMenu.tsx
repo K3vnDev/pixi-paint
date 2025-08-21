@@ -35,7 +35,7 @@ export const PickerMenu = ({ parentRef }: Props) => {
     },
     events: {
       onOpenMenu: () => {
-        setPickerColor(primaryColor)
+        setPickerColor(refs.current.primaryColor)
       }
     }
   })

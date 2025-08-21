@@ -5,14 +5,17 @@ import { Z_INDEX } from '@/consts'
 import { useBasicPrevention } from '@/hooks/useBasicPrevention'
 import { useCanvasesGallery } from '@/hooks/useCanvasesGallery'
 import { useSaveCanvases } from '@/hooks/useSaveCanvases'
+import { useScroll } from '@/hooks/useScroll'
 
 export default function Home() {
-  useBasicPrevention()
   const { savedCanvases, draft, hydrated } = useSaveCanvases()
   const { canvasesGallery } = useCanvasesGallery({
     canvases: [draft, ...savedCanvases],
     loaded: hydrated
   })
+
+  useBasicPrevention()
+  useScroll()
 
   return (
     <main className='mt-48 w-screen flex flex-col gap-8 justify-center items-center relative'>

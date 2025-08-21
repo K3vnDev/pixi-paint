@@ -6,8 +6,10 @@ import { ToolBar } from '@@/Toolbar/Toolbar'
 import { useBasicPrevention } from '@/hooks/useBasicPrevention'
 import { useBodyClassName } from '@/hooks/useBodyClassName'
 import { useSaveCanvases } from '@/hooks/useSaveCanvases'
+import { useScroll } from '@/hooks/useScroll'
 
 export default function Home() {
+  useScroll({ resetOnLoad: true })
   useBodyClassName('overflow-hidden')
   useSaveCanvases()
   useBasicPrevention()
