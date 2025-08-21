@@ -6,8 +6,8 @@ import { usePaintStore } from '@/store/usePaintStore'
 import { clickIncludes } from '@/utils/clickIncludes'
 import { colorComparison } from '@/utils/colorComparison'
 import { findBucketPixels } from '@/utils/findBucketPixels'
+import { useBucketPixels } from './useBucketPixels'
 import { useFreshRefs } from './useFreshRefs'
-import { usePaintBucketPixels } from './usePaintBucketPixels'
 import { useTimeout } from './useTimeout'
 
 export const usePaintCanvas = () => {
@@ -35,7 +35,7 @@ export const usePaintCanvas = () => {
   const toolsHistory = useRef<TOOLS[]>([])
 
   const colorPickerHoldingColor = useRef<string | null>(null)
-  const { paintBucketPixels } = usePaintBucketPixels()
+  const { paintBucketPixels } = useBucketPixels()
 
   const isOnWheelTimeout = useRef(false)
   const { startTimeout: startWheelTimeout, stopTimeout: stopWheelTimeout } = useTimeout([], () => {
@@ -154,10 +154,11 @@ export const usePaintCanvas = () => {
         case TOOLS.BUCKET: {
           if (colorComparison(pixelColor, selectedColor)) break
 
+          // TODO: Delete this fuction, the hook should take care of everything
           const groupedGenerations = findBucketPixels({
-            pixelsMap: pixels,
-            startIndexes: [pixelIndex],
-            zoneColor: pixelColor
+            pixelsMap: pixels, // Get from hook
+            startIndexes: [pixelIndex], // Keep
+            zoneColor: pixelColor // Keep
           })
 
           // Don't proceed if there are no generations
@@ -167,6 +168,7 @@ export const usePaintCanvas = () => {
           if (groupedGenerations.length < maxPixelsForAnim) {
             // Paint pixel groups with an interval
             const intervalTime = getBucketIntervalTime(groupedGenerations.length, maxPixelsForAnim)
+
             paintBucketPixels({
               groupedGens: groupedGenerations,
               intervalTime,

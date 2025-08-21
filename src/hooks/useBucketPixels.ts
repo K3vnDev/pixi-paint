@@ -1,3 +1,4 @@
+import { usePaintStore } from '@/store/usePaintStore'
 import type { BucketPixel } from '@/types'
 import { useInterval } from './useInterval'
 
@@ -8,7 +9,7 @@ interface PaintBucketPixelsParams {
   instantPaintFirstGen?: boolean
 }
 
-export const usePaintBucketPixels = () => {
+export const useBucketPixels = () => {
   const { startInterval, stopInterval } = useInterval()
 
   const paintBucketPixels = ({

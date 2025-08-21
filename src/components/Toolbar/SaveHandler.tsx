@@ -7,9 +7,9 @@ import {
   SPRITES_SIZE
 } from '@consts'
 import { useRef, useState } from 'react'
+import { useBucketPixels } from '@/hooks/useBucketPixels'
 import { useConfetti } from '@/hooks/useConfetti'
 import { useContextMenu } from '@/hooks/useContextMenu'
-import { usePaintBucketPixels } from '@/hooks/usePaintBucketPixels'
 import { useTimeout } from '@/hooks/useTimeout'
 import { useTooltip } from '@/hooks/useTooltip'
 import { useCanvasStore } from '@/store/useCanvasStore'
@@ -33,7 +33,7 @@ export const SaveHandler = () => {
   const editingPixels = usePaintStore(s => s.pixels)
   const isDraft = editingCanvasId === null
   const elementRef = useRef<HTMLElement>(null)
-  const { paintBucketPixels } = usePaintBucketPixels()
+  const { paintBucketPixels } = useBucketPixels()
 
   const { startTimeout, stopTimeout } = useTimeout()
   const [hasRecentlySaved, setHasRecentlySaved] = useState(false)
