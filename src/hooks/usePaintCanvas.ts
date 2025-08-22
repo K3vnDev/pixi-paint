@@ -1,11 +1,9 @@
 import { CLICK_BUTTON as CB, TOOLS, WHEEL_SWITCH_TOOL_COOLDOWN } from '@consts'
-import type { PaintPixelData } from '@types'
 import { useEffect, useRef } from 'react'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { usePaintStore } from '@/store/usePaintStore'
 import { clickIncludes } from '@/utils/clickIncludes'
 import { colorComparison } from '@/utils/colorComparison'
-import { findBucketPixels } from '@/utils/findBucketPixels'
 import { useBucketPixels } from './useBucketPixels'
 import { useFreshRefs } from './useFreshRefs'
 import { useTimeout } from './useTimeout'
@@ -154,36 +152,14 @@ export const usePaintCanvas = () => {
         case TOOLS.BUCKET: {
           if (colorComparison(pixelColor, selectedColor)) break
 
-          // TODO: Delete this fuction, the hook should take care of everything
-          const groupedGenerations = findBucketPixels({
-            pixelsMap: pixels, // Get from hook
-            startIndexes: [pixelIndex], // Keep
-            zoneColor: pixelColor // Keep
-          })
-
-          // Don't proceed if there are no generations
-          if (groupedGenerations.length === 0) break
-
-          const maxPixelsForAnim = 33
-          if (groupedGenerations.length < maxPixelsForAnim) {
-            // Paint pixel groups with an interval
-            const intervalTime = getBucketIntervalTime(groupedGenerations.length, maxPixelsForAnim)
-
-            paintBucketPixels({
-              groupedGens: groupedGenerations,
-              intervalTime,
-              paintGenAction: currentGeneration => {
-                paintPixels(...currentGeneration.map(({ index }) => ({ color: selectedColor, index })))
-              }
-            })
-          } else {
-            // Instant paint pixel groups
-            const paintPixelsData: PaintPixelData[] = []
-            for (const generation of groupedGenerations) {
-              paintPixelsData.push(...generation.map(({ index }) => ({ color: selectedColor, index })))
+          paintBucketPixels({
+            autoIntervalTime: true,
+            startIndexes: [pixelIndex],
+            zoneColor: pixelColor,
+            paintGenerationAction: gen => {
+              paintPixels(...gen.map(({ index }) => ({ color: selectedColor, index })))
             }
-            paintPixels(...paintPixelsData)
-          }
+          })
           break
         }
         case TOOLS.COLOR_PICKER: {
@@ -219,11 +195,6 @@ export const usePaintCanvas = () => {
     if (!colorComparison(pixelColor, secondaryColor)) {
       paintPixels({ index, color: secondaryColor })
     }
-  }
-
-  const getBucketIntervalTime = (pixelCount: number, maxPixels: number) => {
-    const t = { min: 4, max: 70 }
-    return t.min + (1 - pixelCount / maxPixels) * t.max - t.min
   }
 
   // Switch tools on mouse wheel
