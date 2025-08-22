@@ -39,8 +39,7 @@ export const useCanvasStore = create<CanvasStore>((set, get) => ({
   setShowGrid: value => set(() => ({ showGrid: value })),
 
   getNewCanvasId: () => {
-    const { savedCanvases, getNewCanvasId } = get()
-    const generatedId = generateId()
-    return savedCanvases.some(c => c.id === generatedId) ? getNewCanvasId() : generatedId
+    const { savedCanvases } = get()
+    return generateId(id => !savedCanvases.some(c => c.id === id))
   }
 }))

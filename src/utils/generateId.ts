@@ -22,5 +22,5 @@ export const generateId = (checkCallback?: (id: string) => boolean): string => {
     id += Math.floor(Math.random() * 10)
   }
 
-  return !checkCallback?.(id) ? generateId(checkCallback) : id
+  return checkCallback?.(id) === false ? generateId(checkCallback) : id
 }
