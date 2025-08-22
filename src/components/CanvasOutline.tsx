@@ -26,7 +26,7 @@ export const CanvasOutline = ({ children, className = '' }: Props) => {
       <div
         className={`
           bg-gradient-to-r from-theme-10 to-theme-20 ${backgroundSize}
-          -z-10 absolute rounded-full blur-sm [transition:all_ease-out_1.75s]
+          -z-10 absolute rounded-full blur-sm transition-all ease-in-out
           top-1/2 left-1/2 -translate-1/2 animate-spin pointer-events-none
         `}
       />
@@ -43,6 +43,6 @@ export const CanvasOutline = ({ children, className = '' }: Props) => {
 }
 
 const BG_SIZES = {
-  HIDDEN: 'size-[50%]',
-  SHOWN: 'size-[200%]'
+  HIDDEN: 'size-[70%] duration-1200',
+  SHOWN: 'size-[150%] duration-2100'
 }
