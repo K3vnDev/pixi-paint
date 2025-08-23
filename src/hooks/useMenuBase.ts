@@ -2,6 +2,7 @@ import type { Origin, Position as PositionType, TransformOrigin } from '@types'
 import { useEffect, useRef, useState } from 'react'
 import { animationData as animData } from '@/utils/animationData'
 import { wasInsideElement } from '@/utils/wasInsideElement'
+import { useActionOnKey } from './useActionOnKey'
 import { useAnimations } from './useAnimations'
 import { useFreshRefs } from './useFreshRefs'
 
@@ -18,6 +19,7 @@ interface Params {
     scroll?: boolean
     leaveDocument?: boolean
     distance?: number
+    keys?: string[]
   }
   elementSelector?: string
   horizontal?: boolean
@@ -28,6 +30,35 @@ interface Position extends PositionType {
   transformOrigin?: string
 }
 
+/**
+ * Custom hook for managing the open/close state, positioning, and animation of a menu component.
+ *
+ * @param elementRef - A React ref to the menu DOM element.
+ * @param transformOrigins - An array of possible CSS transform-origin strings to use for positioning.
+ * @param events.onOpenMenu - Callback invoked before the menu opens.
+ * @param events.afterOpenMenuAnim - Callback invoked after the open animation completes.
+ * @param events.onCloseMenu - Callback invoked before the menu closes.
+ * @param events.afterCloseMenuAnim - Callback invoked after the close animation completes.
+ * @param closeOn.scroll - Whether to close the menu on scroll (default: true).
+ * @param closeOn.leaveDocument - Whether to close the menu when the pointer leaves the document (default: true).
+ * @param closeOn.distance - Distance in pixels from the menu center at which to close the menu (default: -1, disabled).
+ * @param closeOn.keys - Array of key names that will close the menu when pressed (default: ['Escape']).
+ * @param elementSelector - Optional CSS selector string to determine if a pointer event target is inside the menu.
+ * @param horizontal - Whether to use horizontal animations (default: false).
+ * @param hideWhen - Condition to hide the menu (default: false).
+ *
+ * @returns An object containing:
+ * - `isOpen`: Boolean indicating if the menu is open.
+ * - `openMenu(origin?: Origin)`: Function to open the menu at a given origin.
+ * - `closeMenu()`: Function to close the menu, returns a Promise that resolves when closing is complete.
+ * - `style`: React CSS properties to apply to the menu for positioning and animation.
+ * - `refreshPosition(origin: Origin)`: Function to recalculate and update the menu's position.
+ *
+ * @remarks
+ * - The hook manages event listeners for pointer and scroll events to handle automatic closing.
+ * - Menu positioning is calculated to keep the menu within viewport bounds based on the provided transform origins.
+ * - Animations are handled via a custom animation hook and can be customized for horizontal or vertical menus.
+ */
 export const useMenuBase = ({
   elementRef,
   transformOrigins,
@@ -35,7 +66,8 @@ export const useMenuBase = ({
   closeOn: {
     scroll: closeOnScroll = true,
     leaveDocument: closeOnLeaveDocument = true,
-    distance: closeAtDistance = -1
+    distance: closeAtDistance = -1,
+    keys: closeOnKeys = ['Escape']
   } = {},
   elementSelector,
   horizontal = false,
@@ -53,6 +85,18 @@ export const useMenuBase = ({
 
   const { animation, anims, startAnimation } = useAnimations({ animations: { show, hide } })
   const refs = useFreshRefs({ isOpen, animation })
+
+  useActionOnKey({
+    key: closeOnKeys,
+    action: () => {
+      refs.current.isOpen && closeMenu()
+    },
+    options: {
+      allowCtrlKey: true,
+      allowOnInput: true,
+      allowShiftKey: true
+    }
+  })
 
   useEffect(() => {
     const handlePointerMove = (e: PointerEvent) => {
@@ -86,13 +130,13 @@ export const useMenuBase = ({
     document.addEventListener('pointermove', handlePointerMove, { capture: true })
     document.addEventListener('pointerdown', handlePointerDown, { capture: true })
     document.addEventListener('pointerleave', handlePointerLeave)
-    document.addEventListener('scroll', handleScroll, { capture: true })
+    document.addEventListener('scroll', handleScroll)
 
     return () => {
       document.removeEventListener('pointermove', handlePointerMove, { capture: true })
       document.removeEventListener('pointerdown', handlePointerDown, { capture: true })
       document.removeEventListener('pointerleave', handlePointerLeave)
-      document.removeEventListener('scroll', handleScroll, { capture: true })
+      document.removeEventListener('scroll', handleScroll)
     }
   }, [])
 

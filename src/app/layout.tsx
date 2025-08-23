@@ -1,8 +1,8 @@
-import { ContextMenu } from '@@/ContextMenu/ContextMenu'
 import { CustomCursor } from '@@/CustomCursor'
-import { Navbar } from '@@/Navbar'
+import { ContextMenu } from '@@/context-menu/ContextMenu'
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
+import { Navbar } from '@/components/navbar/Navbar'
 import './globals.css'
 import { Tooltip } from '@@/Tooltip'
 

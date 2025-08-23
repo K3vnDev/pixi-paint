@@ -6,7 +6,7 @@ interface Props {
   route: string
 }
 
-export const NavbarRoute = ({ name, route }: Props) => {
+export const Route = ({ name, route }: Props) => {
   const router = useRouter()
   const path = usePathname()
 

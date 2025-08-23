@@ -2,39 +2,27 @@ import { ColoredPixelatedImage } from '@@/ColoredPixelatedImage'
 import type { IconName } from '@types'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { ColorSelectorContext } from '@/context/ColorSelectorContext'
-import { useActionOnKey } from '@/hooks/useActionOnKey'
 import { useFreshRefs } from '@/hooks/useFreshRefs'
 import { useTimeout } from '@/hooks/useTimeout'
 import { validateColor } from '@/utils/validateColor'
 
-interface Props {
-  menuIsOpen: boolean
-  closeMenu: () => void
-}
-
-export const TextInput = ({ menuIsOpen, closeMenu }: Props) => {
-  const { pickerColor, setPickerColor, lastValidColor } = useContext(ColorSelectorContext)
+export const TextInput = () => {
+  const { pickerColor, setPickerColor, lastValidColor, menuIsOpen } = useContext(ColorSelectorContext)
   const [buttonIcon, setButtonIcon] = useState<IconName>('clone')
-  const BUTTON_CHECK_TIME = 1000
   const { startTimeout, stopTimeout } = useTimeout()
   const buttonRef = useRef<HTMLButtonElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const isFocused = useRef(false)
   const menuIsOpenRef = useFreshRefs(menuIsOpen)
 
-  // biome-ignore format: <>
-  useActionOnKey( ['Enter', 'Escape'], () => {
-    if (menuIsOpenRef.current) {
-      closeMenu()
-    }
-  }, [], { allowOnInput: true, allowCtrlKey: true, allowShiftKey: true })
+  const BUTTON_CHECK_TIME = 1000
+  const MAX_LENGTH = 16
 
   useEffect(() => {
     const handlePaste = (e: ClipboardEvent) => {
       if (!isFocused.current && menuIsOpenRef.current) {
         const pastedText = e.clipboardData?.getData('text')
-        if (!pastedText) return
-        selectInput()
+        if (pastedText) inputUtils.select()
       }
     }
     document.addEventListener('paste', handlePaste, { capture: true })
@@ -45,15 +33,14 @@ export const TextInput = ({ menuIsOpen, closeMenu }: Props) => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!inputRef.current) return
       const { key, ctrlKey, shiftKey } = e
-      const { length } = inputRef.current.value
 
       if (menuIsOpenRef.current && !isFocused.current) {
         if (ctrlKey || shiftKey) {
           inputRef.current.focus()
-          selectInput()
+          inputUtils.select()
         } else if (key.length === 1 || key === 'Backspace') {
-          inputRef.current.focus()
-          inputRef.current.setSelectionRange(length, length)
+          inputUtils.focus()
+          inputUtils.cursorRight()
         }
       }
     }
@@ -62,6 +49,10 @@ export const TextInput = ({ menuIsOpen, closeMenu }: Props) => {
     return () => document.removeEventListener('keydown', handleKeyDown, { capture: true })
   }, [])
 
+  useEffect(() => {
+    !menuIsOpen && inputUtils.blur()
+  }, [menuIsOpen])
+
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
     setPickerColor(value)
@@ -69,7 +60,7 @@ export const TextInput = ({ menuIsOpen, closeMenu }: Props) => {
 
   const handleTextFocus = () => {
     isFocused.current = true
-    selectInput()
+    inputUtils.select()
   }
 
   const handleTextBlur = () => {
@@ -93,7 +84,12 @@ export const TextInput = ({ menuIsOpen, closeMenu }: Props) => {
     }, BUTTON_CHECK_TIME)
   }
 
-  const selectInput = () => inputRef.current?.select()
+  const inputUtils = {
+    select: () => inputRef.current?.select(),
+    focus: () => inputRef.current?.focus(),
+    cursorRight: () => inputRef.current?.setSelectionRange(MAX_LENGTH, MAX_LENGTH),
+    blur: () => inputRef.current?.blur()
+  }
 
   return (
     <label
@@ -110,7 +106,7 @@ export const TextInput = ({ menuIsOpen, closeMenu }: Props) => {
         onFocus={handleTextFocus}
         onBlur={handleTextBlur}
         onChange={handleTextChange}
-        maxLength={15}
+        maxLength={MAX_LENGTH}
       />
       <button
         className='w-fit h-full flex items-center px-2 py-1 button'

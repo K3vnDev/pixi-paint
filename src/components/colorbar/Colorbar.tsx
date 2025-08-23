@@ -1,6 +1,6 @@
 import { ZoneWrapper } from '../ZoneWrapper'
 import { Palette } from './Palette'
-import { Selector } from './Selector/Selector'
+import { Selector } from './selector/Selector'
 
 export const Colorbar = () => {
   return (

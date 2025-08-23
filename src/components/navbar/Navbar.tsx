@@ -1,7 +1,7 @@
 'use client'
 
 import { Z_INDEX } from '@/consts'
-import { NavbarRoute } from './NavbarRoute'
+import { Route } from './Route'
 
 export const Navbar = () => {
   const routes = [
@@ -23,7 +23,7 @@ export const Navbar = () => {
       `}
     >
       {routes.map(route => (
-        <NavbarRoute key={route.route} {...route} />
+        <Route key={route.route} {...route} />
       ))}
 
       {/* Background */}

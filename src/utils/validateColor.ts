@@ -6,7 +6,16 @@ interface ValidateColorReturnType {
 }
 
 export const validateColor = (color: string): ValidateColorReturnType => {
-  let cleaned = color.replaceAll('#', '').trim().slice(0, 6).toLowerCase()
+  let cleaned = ''
+  const hexLetters = ['a', 'b', 'c', 'd', 'e', 'f']
+
+  // Clean color
+  for (const char of color.toLowerCase()) {
+    if (!Number.isNaN(+char) || hexLetters.includes(char)) {
+      cleaned += char
+      if (cleaned.length >= 6) break
+    }
+  }
   const { BLACK } = COLOR_PALETTE
 
   // Return black if theres no input but keep it valid

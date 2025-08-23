@@ -20,7 +20,7 @@ export const Tool = ({ cursor, tool, shortcut }: ToolbarTool) => {
     setSelectedTool(tool)
   }
 
-  useActionOnKey(shortcut, selectTool, [])
+  useActionOnKey({ key: shortcut, action: selectTool })
 
   const selectedStyle = selectedTool === tool ? 'outline-5 brightness-selected translate-x-1.5' : ''
 

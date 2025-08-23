@@ -18,15 +18,17 @@ export const Selector = () => {
 
   const pickerRef = useRef<HTMLElement>(null)
 
-  useActionOnKey('S', () => {
-    swapColors()
-  }, [primaryColor, secondaryColor])
-
   const swapColors = () => {
     const [primary, secondary] = [primaryColor, secondaryColor]
     setPrimaryColor(secondary)
     setSecondaryColor(primary)
   }
+
+  useActionOnKey({
+    key: 'S',
+    action: swapColors,
+    deps: [primaryColor, secondaryColor]
+  })
 
   const arrows = [{ pos: 'top-0 right-0' }, { pos: 'bottom-0 left-0', rot: 'rotate-180' }]
   const pickerButtonStyle = menuIsOpen ? '' : 'button'
