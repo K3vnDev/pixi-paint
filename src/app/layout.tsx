@@ -5,6 +5,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import { Navbar } from '@/components/navbar/Navbar'
 import './globals.css'
 import { Tooltip } from '@@/Tooltip'
+import { DialogMenu } from '@/components/dialog-menu/DialogMenu'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -40,6 +41,7 @@ export default function RootLayout({
         <CustomCursor />
         <ContextMenu />
         <Tooltip />
+        <DialogMenu />
       </body>
     </html>
   )

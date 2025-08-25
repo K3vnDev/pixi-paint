@@ -76,11 +76,14 @@ export const EVENTS = {
   CONTEXT_MENU_CLOSED: '$context-menu-closed',
 
   SHOW_TOOLTIP: '$show-tooltip',
-  HIDE_TOOLTIP: '$hide-tooltip'
+  HIDE_TOOLTIP: '$hide-tooltip',
+
+  OPEN_DIALOG_MENU: '$open-dialog-menu'
 } as const
 
 export const Z_INDEX = {
-  CUSTOM_CURSOR: 'z-99999',
+  CUSTOM_CURSOR: 'z-999999',
+  DIALOG_MENU: 'z-99999',
   CONTEXT_MENU: 'z-9999',
   TOOLTIP: 'z-999',
   NAVBAR: 'z-99'

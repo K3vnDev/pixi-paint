@@ -3,6 +3,7 @@ import type { GalleryCanvas } from '@types'
 import { useRouter } from 'next/navigation'
 import { useRef } from 'react'
 import { useContextMenu } from '@/hooks/useContextMenu'
+import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useFreshRefs } from '@/hooks/useFreshRefs'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { CanvasImage } from './CanvasImage'
@@ -21,6 +22,8 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   const setSavedCanvases = useCanvasStore(s => s.setSavedCanvases)
   const getNewCanvasId = useCanvasStore(s => s.getNewCanvasId)
   const savedCanvasesRef = useFreshRefs(savedCanvases)
+
+  const { openMenu } = useDialogMenu()
 
   const openCanvas = () => {
     const newEditingCanvasId = id === BLANK_DRAFT.id ? null : id
@@ -41,9 +44,11 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   }
 
   const deleteCanvas = () => {
-    const { newCanvases, canvasIndex } = editCanvasesHelper()
-    newCanvases.splice(canvasIndex, 1)
-    setSavedCanvases(newCanvases)
+    openMenu(<h1 className='text-2xl text-white'>HELLO WORLD</h1>)
+
+    // const { newCanvases, canvasIndex } = editCanvasesHelper()
+    // newCanvases.splice(canvasIndex, 1)
+    // setSavedCanvases(newCanvases)
   }
 
   useContextMenu({
