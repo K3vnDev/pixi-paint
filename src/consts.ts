@@ -78,7 +78,8 @@ export const EVENTS = {
   SHOW_TOOLTIP: '$show-tooltip',
   HIDE_TOOLTIP: '$hide-tooltip',
 
-  OPEN_DIALOG_MENU: '$open-dialog-menu'
+  OPEN_DIALOG_MENU: '$open-dialog-menu',
+  CLOSE_DIALOG_MENU: '$close-dialog-menu'
 } as const
 
 export const Z_INDEX = {
@@ -98,5 +99,6 @@ export enum CLICK_BUTTON {
 export const HTML_IDS = {
   PAINT_CANVAS: 'paint-canvas',
   CONTEXT_MENU: 'context-menu',
-  PICKER_MENU: 'picker-menu'
+  PICKER_MENU: 'picker-menu',
+  DIALOG_MENU: 'dialog-menu'
 } as const

@@ -5,5 +5,10 @@ export const useDialogMenu = () => {
     const event = new CustomEvent(EVENTS.OPEN_DIALOG_MENU, { detail: data })
     document.dispatchEvent(event)
   }
-  return { openMenu }
+
+  const closeMenu = () => {
+    document.dispatchEvent(new CustomEvent(EVENTS.CLOSE_DIALOG_MENU))
+  }
+
+  return { openMenu, closeMenu }
 }

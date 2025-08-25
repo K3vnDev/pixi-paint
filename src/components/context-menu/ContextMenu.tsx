@@ -15,7 +15,7 @@ export const ContextMenu = () => {
     elementRef,
     transformOrigins: ['top-left', 'top-right', 'bottom-left', 'bottom-right'],
     closeOn: {
-      distance: 350,
+      distance: 300,
       leaveDocument: true,
       scroll: true
     },

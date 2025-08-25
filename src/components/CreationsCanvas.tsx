@@ -8,6 +8,10 @@ import { useFreshRefs } from '@/hooks/useFreshRefs'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { CanvasImage } from './CanvasImage'
 import { ColoredPixelatedImage } from './ColoredPixelatedImage'
+import { DMButton } from './dialog-menu/DMButton'
+import { DMHeader } from './dialog-menu/DMHeader'
+import { DMParagraph } from './dialog-menu/DMParagraph'
+import { DMZoneButtons } from './dialog-menu/DMZoneButtons'
 
 export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   const router = useRouter()
@@ -44,11 +48,26 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   }
 
   const deleteCanvas = () => {
-    openMenu(<h1 className='text-2xl text-white'>HELLO WORLD</h1>)
+    const deleteAction = () => {
+      const { newCanvases, canvasIndex } = editCanvasesHelper()
+      newCanvases.splice(canvasIndex, 1)
+      setSavedCanvases(newCanvases)
+    }
 
-    // const { newCanvases, canvasIndex } = editCanvasesHelper()
-    // newCanvases.splice(canvasIndex, 1)
-    // setSavedCanvases(newCanvases)
+    openMenu(
+      <>
+        <DMHeader icon='warning'>Delete painting?</DMHeader>
+        <DMParagraph>
+          Do you really want to delete your painting? You won't see it again (a long time).
+        </DMParagraph>
+        <DMZoneButtons>
+          <DMButton icon='trash' empty onClick={deleteAction}>
+            Yes, I don't care
+          </DMButton>
+          <DMButton>No, wait!</DMButton>
+        </DMZoneButtons>
+      </>
+    )
   }
 
   useContextMenu({
