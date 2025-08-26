@@ -21,7 +21,7 @@ export const DMButton = ({
   ...props
 }: Props) => {
   const { closeMenu } = useDialogMenu()
-  const bgStyle = !empty ? 'bg-theme-20/80' : ''
+  const bgStyle = !empty ? 'border-theme-10/60 bg-theme-20/80 animate-pulse-brightness' : 'border-theme-10/25'
 
   const handleClick = () => {
     onClick?.()
@@ -31,8 +31,8 @@ export const DMButton = ({
   return (
     <button
       className={twMerge(`
-        flex gap-2 items-center text-2xl font-semibold text-theme-10 px-4 py-2.5 border-2 
-        border-theme-10/60 rounded-lg button ${bgStyle} ${className}
+        flex gap-2 items-center text-2xl font-semibold text-theme-10 px-6 py-2.5 border-2 
+        rounded-lg button text-nowrap ${bgStyle} ${className}
       `)}
       onClick={handleClick}
       {...props}

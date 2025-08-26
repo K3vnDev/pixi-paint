@@ -57,7 +57,7 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
     openMenu(
       <>
         <DMHeader icon='warning'>Delete painting?</DMHeader>
-        <DMParagraph>
+        <DMParagraph className='w-xl'>
           Do you really want to delete your painting? You won't see it again (a long time).
         </DMParagraph>
         <DMZoneButtons>

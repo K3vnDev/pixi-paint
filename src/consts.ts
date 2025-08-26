@@ -34,7 +34,7 @@ export const BUCKET_INTERVAL_TIME = 55
 
 // Store
 export const BLANK_PIXELS = Array.from({ length: CANVAS_RESOLUTION ** 2 }, () => DEFAULT_SEC_COLOR)
-export const BLANK_DRAFT: SavedCanvas = { id: 'draft', pixels: BLANK_PIXELS }
+export const BLANK_DRAFT: SavedCanvas = { id: 'draft', pixels: BLANK_PIXELS } as const
 
 // LocalStorage keys
 export const LS_DRAFT_CANVAS_KEY = 'draft-canvas'

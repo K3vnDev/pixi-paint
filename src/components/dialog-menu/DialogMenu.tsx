@@ -12,6 +12,7 @@ export const DialogMenu = () => {
   const { isOpen, openMenu, closeMenu, style } = useMenuBase({
     elementRef,
     transformOrigins: ['center'],
+    horizontal: true,
     closeOn: { leaveDocument: false },
     elementSelector: `#${HTML_IDS.DIALOG_MENU}`,
     defaultOriginGetter: () => {
@@ -41,15 +42,15 @@ export const DialogMenu = () => {
   return (
     <div
       className={`
-        absolute w-dvw h-dvh top-0 left-0 ${Z_INDEX.DIALOG_MENU}
-        bg-black/40 backdrop-blur-[2px] ${blackBGStyle} transition-opacity duration-200
+        fixed w-dvw h-dvh top-0 left-0 ${Z_INDEX.DIALOG_MENU}
+        bg-black/50 backdrop-blur-xs ${blackBGStyle} transition-opacity duration-200
       `}
     >
       <MenuBase
         id={HTML_IDS.DIALOG_MENU}
         style={style}
         className={`
-          flex flex-col items-center gap-2 px-10 py-8 max-w-xl
+          flex flex-col items-center gap-2 px-10 py-8
           rounded-2xl ${Z_INDEX.DIALOG_MENU}
         `}
         isOpen={isOpen}

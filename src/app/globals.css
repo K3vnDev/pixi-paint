@@ -34,6 +34,8 @@
 
   --animate-slide-in-left: slide-in-left var(--slide-anim-timing);
   --animate-slide-in-right: slide-in-right var(--slide-anim-timing);
+
+  --animate-pulse-brightness: pulse-brightness 1s ease-in-out both alternate infinite;
 }
 
 .button {
@@ -140,5 +142,11 @@
   100% {
     scale: 0.5 0.8;
     opacity: 0;
+  }
+}
+
+@keyframes pulse-brightness {
+  to {
+    filter: brightness(133%);
   }
 }

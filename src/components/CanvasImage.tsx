@@ -7,13 +7,14 @@ type Props = {
   dataUrl: string
 } & ReusableComponent
 
-export const CanvasImage = ({ dataUrl, className = '' }: Props) => (
+export const CanvasImage = ({ dataUrl, className = '', ref, style }: Props) => (
   <Image
+    ref={ref}
     width={CANVAS_RESOLUTION}
     height={CANVAS_RESOLUTION}
     src={dataUrl}
     alt={`A pixelated painting with a resolution of ${CANVAS_RESOLUTION}x${CANVAS_RESOLUTION}.`}
     className={twMerge(`rounded-sm ${className}`)}
-    style={{ imageRendering: 'pixelated' }}
+    style={{ imageRendering: 'pixelated', ...style }}
   />
 )
