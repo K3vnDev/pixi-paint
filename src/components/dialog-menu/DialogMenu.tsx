@@ -50,7 +50,7 @@ export const DialogMenu = () => {
         id={HTML_IDS.DIALOG_MENU}
         style={style}
         className={`
-          flex flex-col items-center gap-2 px-10 py-8
+          flex flex-col items-center gap-2 px-10 py-8 pb-5
           rounded-2xl ${Z_INDEX.DIALOG_MENU}
         `}
         isOpen={isOpen}

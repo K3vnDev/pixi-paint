@@ -1,0 +1,68 @@
+import { useRef } from 'react'
+import { BLANK_DRAFT, COLOR_PALETTE } from '@/consts'
+import { useCanvasStore } from '@/store/useCanvasStore'
+import { usePaintStore } from '@/store/usePaintStore'
+import { calcMiddlePixelsIndexes } from '@/utils/calcMiddlePixels'
+import { useBucketPixels } from './useBucketPixels'
+import { useFreshRefs } from './useFreshRefs'
+
+export const useSaveHandler = () => {
+  const setDraft = useCanvasStore(s => s.setDraftCanvas)
+  const draft = useCanvasStore(s => s.draftCanvas)
+  const savedCanvases = useCanvasStore(s => s.savedCanvases)
+  const setSavedCanvases = useCanvasStore(s => s.setSavedCanvases)
+  const editingCanvasId = useCanvasStore(s => s.editingCanvasId)
+  const setEditingCanvasId = useCanvasStore(s => s.setEditingCanvasId)
+  const getNewCanvasId = useCanvasStore(s => s.getNewCanvasId)
+  const editingPixels = usePaintStore(s => s.pixels)
+  const paintPixels = usePaintStore(s => s.paintPixels)
+  const elementRef = useRef<HTMLElement>(null)
+
+  const refs = useFreshRefs({ editingPixels, draft })
+  const { paintBucketPixels } = useBucketPixels()
+
+  const isDraft = editingCanvasId === null
+
+  const cloneToNewDraftAction = () => {
+    const { editingPixels } = refs.current
+    setEditingCanvasId(null)
+    setDraft({ ...BLANK_DRAFT, pixels: editingPixels })
+  }
+
+  const newBlankDraftAction = () => {
+    setEditingCanvasId(null)
+    setDraft({ ...BLANK_DRAFT })
+
+    paintBucketPixels({
+      startIndexes: calcMiddlePixelsIndexes(),
+      paintGenerationAction: generation => {
+        paintPixels(...generation.map(({ index }) => ({ color: COLOR_PALETTE.WHITE, index })))
+      }
+    })
+  }
+
+  const createNewSave = () => {
+    const newCanvasId = getNewCanvasId()
+    const savingCanvas = { id: newCanvasId, pixels: refs.current.editingPixels }
+
+    setSavedCanvases([...savedCanvases, savingCanvas])
+    setEditingCanvasId(newCanvasId)
+    setDraft({ ...BLANK_DRAFT })
+  }
+
+  const saveDraft = () => {
+    const newCanvasId = getNewCanvasId()
+    const savingCanvas = { id: newCanvasId, pixels: refs.current.draft.pixels }
+    setSavedCanvases([...savedCanvases, savingCanvas])
+  }
+
+  return {
+    cloneToNewDraftAction,
+    newBlankDraftAction,
+    createNewSave,
+    saveDraft,
+    refs,
+    elementRef,
+    isDraft
+  }
+}

@@ -79,6 +79,7 @@ export type IconName =
   | 'trash'
   | 'arrows-corner'
   | 'warning'
+  | 'save'
 
 export interface ContextMenuOption {
   label: string

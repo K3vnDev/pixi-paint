@@ -58,7 +58,7 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
       <>
         <DMHeader icon='warning'>Delete painting?</DMHeader>
         <DMParagraph className='w-xl'>
-          Do you really want to delete your painting? You won't see it again (a long time).
+          Do you really want to delete your painting? You won't see it ever again (that's a long time).
         </DMParagraph>
         <DMZoneButtons>
           <DMButton icon='trash' empty onClick={deleteAction}>
@@ -85,7 +85,13 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
       {
         label: 'Download',
         icon: 'download',
-        action: () => {}
+        action: () =>
+          openMenu(
+            <>
+              <DMHeader>Feature not implemented yet :(</DMHeader>
+              <DMButton>Okay...</DMButton>
+            </>
+          )
       },
       {
         label: 'Delete',

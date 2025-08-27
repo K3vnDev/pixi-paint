@@ -11,7 +11,10 @@ export const DMCanvasImage = ({ pixels, className = '', ...props }: Props) => {
   const dataUrl = getPixelsDataUrl(pixels)
   return (
     <CanvasImage
-      className={twMerge(`size-32 min-w-32 aspect-square animate-pulse-brightness ${className}`)}
+      className={twMerge(`
+        size-32 min-w-32 aspect-square animate-pulse-brightness rounded-xl
+        border-4 border-theme-10/50 ${className}
+      `)}
       dataUrl={dataUrl}
       {...props}
     />
