@@ -3,10 +3,15 @@ import type { GalleryCanvas } from '@types'
 import { useRouter } from 'next/navigation'
 import { useRef } from 'react'
 import { useContextMenu } from '@/hooks/useContextMenu'
+import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useFreshRefs } from '@/hooks/useFreshRefs'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { CanvasImage } from './CanvasImage'
 import { ColoredPixelatedImage } from './ColoredPixelatedImage'
+import { DMButton } from './dialog-menu/DMButton'
+import { DMHeader } from './dialog-menu/DMHeader'
+import { DMParagraph } from './dialog-menu/DMParagraph'
+import { DMZoneButtons } from './dialog-menu/DMZoneButtons'
 
 export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   const router = useRouter()
@@ -21,6 +26,8 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   const setSavedCanvases = useCanvasStore(s => s.setSavedCanvases)
   const getNewCanvasId = useCanvasStore(s => s.getNewCanvasId)
   const savedCanvasesRef = useFreshRefs(savedCanvases)
+
+  const { openMenu } = useDialogMenu()
 
   const openCanvas = () => {
     const newEditingCanvasId = id === BLANK_DRAFT.id ? null : id
@@ -41,9 +48,26 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   }
 
   const deleteCanvas = () => {
-    const { newCanvases, canvasIndex } = editCanvasesHelper()
-    newCanvases.splice(canvasIndex, 1)
-    setSavedCanvases(newCanvases)
+    const deleteAction = () => {
+      const { newCanvases, canvasIndex } = editCanvasesHelper()
+      newCanvases.splice(canvasIndex, 1)
+      setSavedCanvases(newCanvases)
+    }
+
+    openMenu(
+      <>
+        <DMHeader icon='warning'>Delete painting?</DMHeader>
+        <DMParagraph className='w-xl'>
+          Do you really want to delete your painting? You won't see it ever again (that's a long time).
+        </DMParagraph>
+        <DMZoneButtons>
+          <DMButton icon='trash' empty onClick={deleteAction}>
+            Yes, I don't care
+          </DMButton>
+          <DMButton>No, wait!</DMButton>
+        </DMZoneButtons>
+      </>
+    )
   }
 
   useContextMenu({
@@ -61,7 +85,13 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
       {
         label: 'Download',
         icon: 'download',
-        action: () => {}
+        action: () =>
+          openMenu(
+            <>
+              <DMHeader>Feature not implemented yet :(</DMHeader>
+              <DMButton>Okay...</DMButton>
+            </>
+          )
       },
       {
         label: 'Delete',

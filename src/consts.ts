@@ -34,7 +34,7 @@ export const BUCKET_INTERVAL_TIME = 55
 
 // Store
 export const BLANK_PIXELS = Array.from({ length: CANVAS_RESOLUTION ** 2 }, () => DEFAULT_SEC_COLOR)
-export const BLANK_DRAFT: SavedCanvas = { id: 'draft', pixels: BLANK_PIXELS }
+export const BLANK_DRAFT: SavedCanvas = { id: 'draft', pixels: BLANK_PIXELS } as const
 
 // LocalStorage keys
 export const LS_DRAFT_CANVAS_KEY = 'draft-canvas'
@@ -76,11 +76,15 @@ export const EVENTS = {
   CONTEXT_MENU_CLOSED: '$context-menu-closed',
 
   SHOW_TOOLTIP: '$show-tooltip',
-  HIDE_TOOLTIP: '$hide-tooltip'
+  HIDE_TOOLTIP: '$hide-tooltip',
+
+  OPEN_DIALOG_MENU: '$open-dialog-menu',
+  CLOSE_DIALOG_MENU: '$close-dialog-menu'
 } as const
 
 export const Z_INDEX = {
-  CUSTOM_CURSOR: 'z-99999',
+  CUSTOM_CURSOR: 'z-999999',
+  DIALOG_MENU: 'z-99999',
   CONTEXT_MENU: 'z-9999',
   TOOLTIP: 'z-999',
   NAVBAR: 'z-99'
@@ -95,5 +99,6 @@ export enum CLICK_BUTTON {
 export const HTML_IDS = {
   PAINT_CANVAS: 'paint-canvas',
   CONTEXT_MENU: 'context-menu',
-  PICKER_MENU: 'picker-menu'
+  PICKER_MENU: 'picker-menu',
+  DIALOG_MENU: 'dialog-menu'
 } as const

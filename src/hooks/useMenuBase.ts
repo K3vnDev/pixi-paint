@@ -24,6 +24,7 @@ interface Params {
   elementSelector?: string
   horizontal?: boolean
   hideWhen?: boolean
+  defaultOriginGetter?: () => Origin | undefined
 }
 
 interface Position extends PositionType {
@@ -71,7 +72,8 @@ export const useMenuBase = ({
   } = {},
   elementSelector,
   horizontal = false,
-  hideWhen = false
+  hideWhen = false,
+  defaultOriginGetter
 }: Params) => {
   const [isOpen, setIsOpen] = useState(false)
   const [position, setPosition] = useState<Position>()
@@ -127,16 +129,23 @@ export const useMenuBase = ({
       if (closeOnScroll) closeMenu()
     }
 
+    const handleResize = () => {
+      const origin = defaultOriginGetter?.()
+      origin && refreshPosition(origin)
+    }
+
     document.addEventListener('pointermove', handlePointerMove, { capture: true })
     document.addEventListener('pointerdown', handlePointerDown, { capture: true })
     document.addEventListener('pointerleave', handlePointerLeave)
     document.addEventListener('scroll', handleScroll)
+    window.addEventListener('resize', handleResize)
 
     return () => {
       document.removeEventListener('pointermove', handlePointerMove, { capture: true })
       document.removeEventListener('pointerdown', handlePointerDown, { capture: true })
       document.removeEventListener('pointerleave', handlePointerLeave)
       document.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleResize)
     }
   }, [])
 
@@ -144,7 +153,12 @@ export const useMenuBase = ({
     const tryOpen = () => {
       requestAnimationFrame(() => {
         onOpenMenu?.()
-        origin && refreshPosition(origin)
+
+        // Refresh position
+        const refreshOrigin = origin ?? defaultOriginGetter?.()
+        refreshOrigin && refreshPosition(refreshOrigin)
+
+        // Open and animate
         setIsOpen(true)
         startAnimation(anims.show, afterOpenMenuAnim)
       })
