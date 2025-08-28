@@ -3,6 +3,7 @@
 import { EVENTS, Z_INDEX } from '@consts'
 import { useEffect, useRef, useState } from 'react'
 import { useFreshRefs } from '@/hooks/useFreshRefs'
+import type { Origin, TooltipDetail } from '@/types'
 
 export const Tooltip = () => {
   const [text, setText] = useState('')
@@ -15,12 +16,9 @@ export const Tooltip = () => {
   useEffect(() => {
     const handlePointer = (e: PointerEvent) => {
       if (!elementRef.current || !isVisibleRef.current) return
-      const { clientX, clientY } = e
-      const { height } = elementRef.current.getBoundingClientRect()
-      const { style } = elementRef.current
 
-      style.top = `${clientY - height / 2 + OFFSET.Y}px`
-      style.left = `${clientX + OFFSET.X}px`
+      const { clientX, clientY } = e
+      setPosition({ x: clientX, y: clientY })
     }
 
     document.addEventListener('pointermove', handlePointer, { capture: true })
@@ -32,8 +30,10 @@ export const Tooltip = () => {
 
   useEffect(() => {
     const handleShowTooltip = (e: Event) => {
-      const { detail } = e as CustomEvent
-      setText(detail.text)
+      const { detail } = e as CustomEvent<TooltipDetail>
+      const { text, position } = detail
+      setText(text)
+      position && setPosition(position)
       show()
     }
 
@@ -45,6 +45,16 @@ export const Tooltip = () => {
       document.removeEventListener(EVENTS.HIDE_TOOLTIP, hide)
     }
   })
+
+  const setPosition = ({ x, y }: Origin) => {
+    if (!elementRef.current) return
+
+    const { style } = elementRef.current
+    const { height } = elementRef.current.getBoundingClientRect()
+
+    style.top = `${y - height / 2 + OFFSET.Y}px`
+    style.left = `${x + OFFSET.X}px`
+  }
 
   const style = !isVisible || !text.trim() ? 'opacity-0 scale-65' : ''
 

@@ -1,5 +1,6 @@
+import { EVENTS } from '@consts'
+import type { Origin, TooltipDetail } from '@types'
 import { useEffect, useState } from 'react'
-import { EVENTS } from '@/consts'
 import { useFreshRefs } from './useFreshRefs'
 
 interface Params {
@@ -16,23 +17,26 @@ export const useTooltip = ({ ref, text, showWhen = true }: Params) => {
     if (!ref.current) return
     const element: HTMLElement = ref.current
 
-    element.addEventListener('pointerenter', show, { capture: true })
+    const handlePointerEnter = (e: PointerEvent) => {
+      show({ x: e.clientX, y: e.clientY })
+    }
+
+    element.addEventListener('pointerenter', handlePointerEnter, { capture: true })
     element.addEventListener('pointerleave', hide, { capture: true })
 
     return () => {
-      element.removeEventListener('pointerenter', show, { capture: true })
+      element.removeEventListener('pointerenter', handlePointerEnter, { capture: true })
       element.removeEventListener('pointerleave', hide, { capture: true })
     }
   }, [])
 
-  const show = () => {
-    if (refs.current.showWhen) {
-      const { text } = refs.current
-      if (!text.trim()) return
+  const show = (position?: Origin) => {
+    const text = refs.current.text.trim()
+    if (!refs.current.showWhen || !text) return
 
-      document.dispatchEvent(new CustomEvent(EVENTS.SHOW_TOOLTIP, { detail: { text } }))
-      setIsBeingShown(true)
-    }
+    const detail: TooltipDetail = { text, position }
+    document.dispatchEvent(new CustomEvent(EVENTS.SHOW_TOOLTIP, { detail }))
+    setIsBeingShown(true)
   }
 
   const hide = () => {

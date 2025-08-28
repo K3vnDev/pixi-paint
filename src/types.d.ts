@@ -52,6 +52,28 @@ export type ReusableComponent = {
   ref?: React.RefObject<any | null>
 }
 
+export type IconName =
+  | 'check'
+  | 'clone'
+  | 'cross'
+  | 'download'
+  | 'pencil'
+  | 'trash'
+  | 'arrows-corner'
+  | 'warning'
+  | 'save'
+
+export type TransformOrigin =
+  | 'top-left'
+  | 'top'
+  | 'top-right'
+  | 'left'
+  | 'center'
+  | 'right'
+  | 'bottom-left'
+  | 'bottom'
+  | 'bottom-right'
+
 export interface Origin {
   x: number
   y: number
@@ -64,22 +86,11 @@ export interface Position {
   bottom?: string
 }
 
-export type ContextMenuBuilder = {
+export type ContextMenuDetail = {
   position: Origin
   options: ContextMenuOption[]
   allowedClicks: CLICK_BUTTON[]
 }
-
-export type IconName =
-  | 'check'
-  | 'clone'
-  | 'cross'
-  | 'download'
-  | 'pencil'
-  | 'trash'
-  | 'arrows-corner'
-  | 'warning'
-  | 'save'
 
 export interface ContextMenuOption {
   label: string
@@ -87,13 +98,7 @@ export interface ContextMenuOption {
   action: () => void
 }
 
-export type TransformOrigin =
-  | 'top-left'
-  | 'top'
-  | 'top-right'
-  | 'left'
-  | 'center'
-  | 'right'
-  | 'bottom-left'
-  | 'bottom'
-  | 'bottom-right'
+export interface TooltipDetail {
+  text: string
+  position?: Origin
+}

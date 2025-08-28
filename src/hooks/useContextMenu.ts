@@ -1,4 +1,4 @@
-import type { ContextMenuBuilder, ContextMenuOption } from '@types'
+import type { ContextMenuDetail, ContextMenuOption } from '@types'
 import { useEffect, useRef, useState } from 'react'
 import { CLICK_BUTTON, EVENTS } from '@/consts'
 import { clickIncludes } from '@/utils/clickIncludes'
@@ -59,13 +59,13 @@ export const useContextMenu = ({
     const { options, showWhen } = refs.current
     if (!options.length || !showWhen) return
 
-    const builder: ContextMenuBuilder = {
+    const detail: ContextMenuDetail = {
       options,
       position: { x, y },
       allowedClicks
     }
 
-    const event = new CustomEvent(EVENTS.OPEN_CONTEXT_MENU, { detail: builder })
+    const event = new CustomEvent(EVENTS.OPEN_CONTEXT_MENU, { detail })
     document.dispatchEvent(event)
     setMenuIsOpen(true)
   }

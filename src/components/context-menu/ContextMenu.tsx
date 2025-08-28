@@ -1,7 +1,7 @@
 'use client'
 
 import { EVENTS, HTML_IDS, Z_INDEX } from '@consts'
-import type { ContextMenuBuilder } from '@types'
+import type { ContextMenuDetail } from '@types'
 import { useEffect, useRef, useState } from 'react'
 import { useMenuBase } from '@/hooks/useMenuBase'
 import { MenuBase } from '../MenuBase'
@@ -9,7 +9,7 @@ import { Option } from './Option'
 
 export const ContextMenu = () => {
   const elementRef = useRef<HTMLDialogElement>(null)
-  const [menuData, setMenuData] = useState<ContextMenuBuilder | null>(null)
+  const [menuData, setMenuData] = useState<ContextMenuDetail | null>(null)
 
   const { isOpen, openMenu, closeMenu, style } = useMenuBase({
     elementRef,
@@ -31,8 +31,8 @@ export const ContextMenu = () => {
 
   useEffect(() => {
     const handleOpenContextMenu = (e: Event) => {
-      const menuBuilder: ContextMenuBuilder = (e as CustomEvent).detail
-      setMenuData(menuBuilder)
+      const menuDetail: ContextMenuDetail = (e as CustomEvent).detail
+      setMenuData(menuDetail)
     }
 
     document.addEventListener(EVENTS.OPEN_CONTEXT_MENU, handleOpenContextMenu)
