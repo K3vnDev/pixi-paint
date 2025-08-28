@@ -7,7 +7,7 @@ import { useBucketPixels } from './useBucketPixels'
 import { useFreshRefs } from './useFreshRefs'
 
 export const useSaveHandler = () => {
-  const setDraft = useCanvasStore(s => s.setDraftCanvas)
+  const setDraftPixels = useCanvasStore(s => s.setDraftCanvasPixels)
   const draft = useCanvasStore(s => s.draftCanvas)
   const savedCanvases = useCanvasStore(s => s.savedCanvases)
   const setSavedCanvases = useCanvasStore(s => s.setSavedCanvases)
@@ -26,12 +26,12 @@ export const useSaveHandler = () => {
   const cloneToNewDraftAction = () => {
     const { editingPixels } = refs.current
     setEditingCanvasId(null)
-    setDraft({ ...BLANK_DRAFT, pixels: editingPixels })
+    setDraftPixels(editingPixels)
   }
 
   const newBlankDraftAction = () => {
     setEditingCanvasId(null)
-    setDraft({ ...BLANK_DRAFT })
+    setDraftPixels(BLANK_DRAFT.pixels)
 
     paintBucketPixels({
       startIndexes: calcMiddlePixelsIndexes(),
@@ -47,7 +47,7 @@ export const useSaveHandler = () => {
 
     setSavedCanvases([...savedCanvases, savingCanvas])
     setEditingCanvasId(newCanvasId)
-    setDraft({ ...BLANK_DRAFT })
+    setDraftPixels(BLANK_DRAFT.pixels)
   }
 
   const saveDraft = () => {

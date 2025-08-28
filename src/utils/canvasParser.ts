@@ -2,20 +2,23 @@ import { CANVAS_RESOLUTION } from '@consts'
 import type { SavedCanvas, StorageCanvas } from '@types'
 
 export const canvasParser = {
-  fromStorage: ({ id, pixels: { pixels, bg } }: StorageCanvas): SavedCanvas => {
-    const pixelsArr = Array(CANVAS_RESOLUTION ** 2)
+  fromStorage: ({ pixels, bg, id }: StorageCanvas): SavedCanvas | null => {
+    try {
+      const pixelsArr = Array(CANVAS_RESOLUTION ** 2)
 
-    for (const [pixelColor, indexes] of Object.entries(pixels)) {
-      for (const index of indexes) {
-        pixelsArr[index] = pixelColor.toLowerCase()
+      for (const [pixelColor, indexes] of Object.entries(pixels)) {
+        for (const index of indexes) {
+          pixelsArr[index] = pixelColor.toLowerCase()
+        }
       }
+      for (let i = 0; i < pixelsArr.length; i++) {
+        if (!pixelsArr[i]) pixelsArr[i] = bg.toLowerCase()
+      }
+      return { id, pixels: pixelsArr }
+    } catch (err) {
+      console.error('Error when attempting to parse canvas from local storage!', err)
+      return null
     }
-
-    for (let i = 0; i < pixelsArr.length; i++) {
-      if (!pixelsArr[i]) pixelsArr[i] = bg.toLowerCase()
-    }
-
-    return { id, pixels: pixelsArr }
   },
 
   toStorage: ({ id, pixels }: SavedCanvas): StorageCanvas => {
@@ -36,9 +39,6 @@ export const canvasParser = {
     const [bg] = Object.entries(pixelsObj).sort(([, a], [, b]) => (b as any).length - (a as any).length)[0]
     delete pixelsObj[bg]
 
-    return {
-      id,
-      pixels: { bg, pixels: pixelsObj }
-    }
+    return { bg, pixels: pixelsObj, id }
   }
 }

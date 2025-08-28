@@ -34,11 +34,9 @@ export interface Cursor {
 }
 
 export interface StorageCanvas {
+  pixels: Record<string, number[]>
+  bg: string
   id: string
-  pixels: {
-    pixels: Record<string, number[]>
-    bg: string
-  }
 }
 
 export interface PaintPixelData {

@@ -9,6 +9,7 @@ interface CanvasStore {
 
   draftCanvas: SavedCanvas
   setDraftCanvas: (value: SavedCanvas) => void
+  setDraftCanvasPixels: (value: string[]) => void
 
   hydrated: boolean
   setHydrated: (value: boolean) => void
@@ -28,6 +29,8 @@ export const useCanvasStore = create<CanvasStore>((set, get) => ({
 
   draftCanvas: BLANK_DRAFT,
   setDraftCanvas: value => set(() => ({ draftCanvas: value })),
+  setDraftCanvasPixels: value =>
+    set(({ draftCanvas }) => ({ draftCanvas: { ...draftCanvas, pixels: value } })),
 
   editingCanvasId: null,
   setEditingCanvasId: value => set(() => ({ editingCanvasId: value })),
