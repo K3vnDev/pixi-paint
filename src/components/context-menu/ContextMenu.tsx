@@ -2,7 +2,7 @@
 
 import { EVENTS, HTML_IDS, Z_INDEX } from '@consts'
 import type { ContextMenuDetail } from '@types'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMenuBase } from '@/hooks/useMenuBase'
 import { MenuBase } from '../MenuBase'
 import { Option } from './Option'
@@ -45,21 +45,26 @@ export const ContextMenu = () => {
   }, [])
 
   useEffect(() => {
-    if (menuData) {
+    if (menuData?.options.length) {
       const { position } = menuData
       setTimeout(() => openMenu(position), 0)
     }
   }, [menuData])
 
   useEffect(() => {
-    if (isOpen && !menuData?.options.length) {
-      closeMenu()
-    }
+    if (isOpen && !menuData?.options.length) closeMenu()
   }, [isOpen, menuData])
+
+  const flexOrder = useMemo(() => {
+    const { transformOrigin } = style
+    return typeof transformOrigin === 'string' && transformOrigin.includes('bottom')
+      ? 'flex-col-reverse'
+      : 'flex-col'
+  }, [style])
 
   return (
     <MenuBase
-      className={`top-0 left-0 py-1 ${Z_INDEX.CONTEXT_MENU}`}
+      className={`flex ${flexOrder} top-0 left-0 py-1 ${Z_INDEX.CONTEXT_MENU}`}
       {...{ isOpen, style }}
       id={HTML_IDS.CONTEXT_MENU}
       ref={elementRef}

@@ -62,6 +62,8 @@ export type IconName =
   | 'arrows-corner'
   | 'warning'
   | 'save'
+  | 'upload'
+  | 'heart'
 
 export type TransformOrigin =
   | 'top-left'

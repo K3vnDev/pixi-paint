@@ -70,12 +70,25 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
     )
   }
 
+  const openFeatureNotImplemented = () =>
+    openMenu(
+      <>
+        <DMHeader>Feature not implemented yet :(</DMHeader>
+        <DMButton>Okay...</DMButton>
+      </>
+    )
+
   useContextMenu({
     options: [
       {
         label: 'Edit',
         icon: 'pencil',
         action: openCanvas
+      },
+      {
+        label: 'Publish',
+        icon: 'heart',
+        action: openFeatureNotImplemented
       },
       {
         label: 'Duplicate',
@@ -85,13 +98,7 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
       {
         label: 'Download',
         icon: 'download',
-        action: () =>
-          openMenu(
-            <>
-              <DMHeader>Feature not implemented yet :(</DMHeader>
-              <DMButton>Okay...</DMButton>
-            </>
-          )
+        action: openFeatureNotImplemented
       },
       {
         label: 'Delete',
