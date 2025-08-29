@@ -1,4 +1,4 @@
-import { BLANK_DRAFT, LS_DRAFT_CANVAS_KEY, LS_EDITING_CANVAS_ID_KEY, LS_SAVED_CANVASES_KEY } from '@consts'
+import { BLANK_DRAFT, LS_KEYS } from '@consts'
 import type { SavedCanvas, StorageCanvas } from '@types'
 import { useEffect } from 'react'
 import { useCanvasStore } from '@/store/useCanvasStore'
@@ -27,11 +27,14 @@ export const useSaveCanvases = () => {
     if (hydrated) return
 
     // Editing canvas id
-    const storedEditingCanvasId = getLocalStorageItem<string | null>(LS_EDITING_CANVAS_ID_KEY, null)
+    const storedEditingCanvasId = getLocalStorageItem<string | null>(LS_KEYS.EDITING_CANVAS_ID, null)
     setEditingCanvasId(storedEditingCanvasId)
 
     // Saved canvases
-    const storedSavedCanvases: SavedCanvas[] = getLocalStorageItem<StorageCanvas[]>(LS_SAVED_CANVASES_KEY, [])
+    const storedSavedCanvases: SavedCanvas[] = getLocalStorageItem<StorageCanvas[]>(
+      LS_KEYS.SAVED_CANVASES,
+      []
+    )
       .map(c => {
         const parsed = canvasParser.fromStorage(c)
         if (parsed === null) return null
@@ -45,7 +48,7 @@ export const useSaveCanvases = () => {
 
     // Draft canvas
     const rawStoredDraftCanvas = getLocalStorageItem<StorageCanvas>(
-      LS_DRAFT_CANVAS_KEY,
+      LS_KEYS.DRAFT_CANVAS,
       canvasParser.toStorage(BLANK_DRAFT)
     )
     const storedDraftCanvasPixels = canvasParser.fromStorage(rawStoredDraftCanvas)
@@ -57,20 +60,20 @@ export const useSaveCanvases = () => {
   // Store editing canvas id
   useSaveItem({
     watchItem: editingCanvasId,
-    key: LS_EDITING_CANVAS_ID_KEY
+    key: LS_KEYS.EDITING_CANVAS_ID
   })
 
   // Store draft canvas
   useSaveItem({
     watchItem: draft,
-    key: LS_DRAFT_CANVAS_KEY,
+    key: LS_KEYS.DRAFT_CANVAS,
     getter: d => canvasParser.toStorage(d)
   })
 
   // Store saved canvases
   useSaveItem({
     watchItem: savedCanvases,
-    key: LS_SAVED_CANVASES_KEY,
+    key: LS_KEYS.SAVED_CANVASES,
     getter: s => s.map(c => canvasParser.toStorage(c))
   })
 

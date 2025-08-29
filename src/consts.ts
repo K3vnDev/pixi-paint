@@ -36,10 +36,12 @@ export const BUCKET_INTERVAL_TIME = 55
 export const BLANK_PIXELS = Array.from({ length: CANVAS_RESOLUTION ** 2 }, () => DEFAULT_SEC_COLOR)
 export const BLANK_DRAFT: SavedCanvas = { id: 'draft', pixels: BLANK_PIXELS } as const
 
-// LocalStorage keys
-export const LS_DRAFT_CANVAS_KEY = 'draft-canvas'
-export const LS_SAVED_CANVASES_KEY = 'saved-canvases'
-export const LS_EDITING_CANVAS_ID_KEY = 'editing-canvas-id'
+export const LS_KEYS = {
+  DRAFT_CANVAS: 'draft-canvas',
+  SAVED_CANVASES: 'saved-canvases',
+  EDITING_CANVAS_ID: 'editing-canvas-id',
+  DOWNLOAD_SETTINGS: 'download-settings'
+}
 
 export const CURSORS: Cursor[] = [
   {

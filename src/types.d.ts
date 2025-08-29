@@ -107,3 +107,8 @@ export interface TooltipDetail {
   text: string
   position?: Origin
 }
+
+export interface DownloadSettings {
+  formatIndex: number
+  sizeIndex: number
+}
