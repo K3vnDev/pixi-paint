@@ -62,6 +62,8 @@ export type IconName =
   | 'save'
   | 'upload'
   | 'heart'
+  | 'image'
+  | 'code'
 
 export type TransformOrigin =
   | 'top-left'
@@ -92,9 +94,12 @@ export type ContextMenuDetail = {
   allowedClicks: CLICK_BUTTON[]
 }
 
-export interface ContextMenuOption {
+export interface Option {
   label: string
   icon: IconName
+}
+
+export interface ContextMenuOption extends Option {
   action: () => void
 }
 

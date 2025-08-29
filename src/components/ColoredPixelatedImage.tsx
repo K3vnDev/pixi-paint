@@ -1,3 +1,4 @@
+import { twMerge } from 'tailwind-merge'
 import type { IconName, ReusableComponent } from '@/types'
 
 type Props = {
@@ -11,7 +12,7 @@ export const ColoredPixelatedImage = ({ src, icon, className = '', ref, style }:
   return (
     <div
       ref={ref}
-      className={className}
+      className={twMerge(`bg-theme-10 size-8 ${className}`)}
       style={{
         WebkitMask: `url(${imageUrl}) no-repeat center / contain`,
         mask: `url(${imageUrl}) no-repeat center / contain`,
