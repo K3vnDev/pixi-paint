@@ -1,22 +1,16 @@
 import type { Option, ReusableComponent } from '@types'
-import { useEffect, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import { ColoredPixelatedImage } from '../ColoredPixelatedImage'
 import { DMLabel } from './DMLabel'
 
 type Props = {
   label: string
-  startIndex?: number
+  selectedIndex?: number
   options: Option[]
   onSelect?: (newIndex: number) => void
 } & ReusableComponent
 
-export const DMRadio = ({ label, startIndex = 0, options, onSelect, className = '', ...props }: Props) => {
-  const [selectedIndex, setSelectedIndex] = useState(startIndex)
-  useEffect(() => onSelect?.(selectedIndex), [selectedIndex])
-
-  console.log({ selectedIndex })
-
+export const DMRadio = ({ label, selectedIndex = 0, options, onSelect, className = '', ...props }: Props) => {
   return (
     <div className={twMerge(`flex gap-6 items-center w-fit ${className}`)} {...props}>
       <DMLabel>{label}</DMLabel>
@@ -27,7 +21,7 @@ export const DMRadio = ({ label, startIndex = 0, options, onSelect, className = 
         `)}
       >
         {options.map((option, i) => (
-          <DMOption {...{ selectedIndex, setSelectedIndex, ...option }} index={i} key={i} />
+          <DMOption {...{ selectedIndex, onSelect, ...option }} index={i} key={i} />
         ))}
       </ul>
     </div>
@@ -37,13 +31,13 @@ export const DMRadio = ({ label, startIndex = 0, options, onSelect, className = 
 type DMOptionProps = {
   index: number
   selectedIndex: number
-  setSelectedIndex: (index: number) => void
+  onSelect?: (index: number) => void
 } & Option
 
-const DMOption = ({ icon, index, label, selectedIndex, setSelectedIndex }: DMOptionProps) => {
+const DMOption = ({ icon, index, label, selectedIndex, onSelect }: DMOptionProps) => {
   const handleClick = () => {
     if (selectedIndex !== index) {
-      setSelectedIndex(index)
+      onSelect?.(index)
     }
   }
 

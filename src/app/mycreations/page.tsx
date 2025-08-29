@@ -1,6 +1,6 @@
 'use client'
 
-import { CreationsCanvas } from '@@/CreationsCanvas'
+import { CreationsCanvas } from '@/components/creations-canvas/CreationsCanvas'
 import { Z_INDEX } from '@/consts'
 import { useBasicPrevention } from '@/hooks/useBasicPrevention'
 import { useCanvasesGallery } from '@/hooks/useCanvasesGallery'

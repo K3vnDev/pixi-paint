@@ -6,13 +6,13 @@ import { useContextMenu } from '@/hooks/useContextMenu'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useFreshRefs } from '@/hooks/useFreshRefs'
 import { useCanvasStore } from '@/store/useCanvasStore'
-import { CanvasImage } from './CanvasImage'
-import { ColoredPixelatedImage } from './ColoredPixelatedImage'
-import { DMButton } from './dialog-menu/DMButton'
-import { DMHeader } from './dialog-menu/DMHeader'
-import { DMParagraph } from './dialog-menu/DMParagraph'
-import { DMRadio } from './dialog-menu/DMRadio'
-import { DMZoneButtons } from './dialog-menu/DMZoneButtons'
+import { CanvasImage } from '../CanvasImage'
+import { ColoredPixelatedImage } from '../ColoredPixelatedImage'
+import { DMButton } from '../dialog-menu/DMButton'
+import { DMHeader } from '../dialog-menu/DMHeader'
+import { DMParagraph } from '../dialog-menu/DMParagraph'
+import { DMZoneButtons } from '../dialog-menu/DMZoneButtons'
+import { DownloadPaintingsMenu } from './DownloadPaintingsMenu'
 
 export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   const router = useRouter()
@@ -72,26 +72,7 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   }
 
   const downloadPaintings = () => {
-    openMenu(
-      <>
-        <DMHeader icon='download'>Paintings downloader</DMHeader>
-        <DMParagraph className='w-128 mb-4'>
-          Download your paintings. JSON files can be imported back later.
-        </DMParagraph>
-
-        <DMRadio
-          label='Format'
-          className='w-full'
-          options={[
-            { icon: 'image', label: 'PNG' },
-            { icon: 'code', label: 'JSON' }
-          ]}
-        />
-        <DMButton icon='download' className='mt-10'>
-          Download
-        </DMButton>
-      </>
-    )
+    openMenu(<DownloadPaintingsMenu canvasId={id} />)
   }
 
   const openFeatureNotImplemented = () =>
