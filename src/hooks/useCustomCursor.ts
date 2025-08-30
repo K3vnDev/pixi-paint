@@ -78,21 +78,23 @@ export const useCustomCursor = () => {
 
   // Handle pointer visibility
   useEffect(() => {
-    const handlePointerLeave = (e: PointerEvent) => {
+    const hideCursor = (e: Event) => {
       e.stopPropagation()
       setIsShowingCursor(false)
     }
-    const handlePointerEnter = (e: PointerEvent) => {
+    const showCusor = (e: Event) => {
       e.stopPropagation()
       setIsShowingCursor(true)
     }
 
-    document.addEventListener('pointerleave', handlePointerLeave)
-    document.addEventListener('pointerenter', handlePointerEnter)
+    document.addEventListener('pointerleave', hideCursor)
+    window.addEventListener('blur', hideCursor)
+    document.addEventListener('pointerenter', showCusor)
 
     return () => {
-      document.removeEventListener('pointerleave', handlePointerLeave)
-      document.removeEventListener('pointerenter', handlePointerEnter)
+      document.removeEventListener('pointerleave', hideCursor)
+      window.removeEventListener('blur', hideCursor)
+      document.removeEventListener('pointerenter', showCusor)
     }
   }, [isShowingCursor])
 

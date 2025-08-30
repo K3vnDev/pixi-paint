@@ -33,9 +33,12 @@ export interface Cursor {
   colorize?: 'primary' | 'secondary'
 }
 
-export interface StorageCanvas {
+export interface JSONCanvas {
   pixels: Record<string, number[]>
   bg: string
+}
+
+export interface StorageCanvas extends JSONCanvas {
   id: string
 }
 
