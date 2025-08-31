@@ -1,9 +1,10 @@
 'use client'
 
-import { EVENTS, Z_INDEX } from '@consts'
-import { useEffect, useRef, useState } from 'react'
+import { Z_INDEX } from '@consts'
+import type { Origin, TooltipDetail } from '@types'
+import { useRef, useState } from 'react'
+import { useEvent } from '@/hooks/useEvent'
 import { useFreshRefs } from '@/hooks/useFreshRefs'
-import type { Origin, TooltipDetail } from '@/types'
 
 export const Tooltip = () => {
   const [text, setText] = useState('')
@@ -13,38 +14,28 @@ export const Tooltip = () => {
 
   const OFFSET = { X: 45, Y: 10 }
 
-  useEffect(() => {
-    const handlePointer = (e: PointerEvent) => {
+  const show = () => setIsVisible(true)
+  const hide = () => setIsVisible(false)
+
+  useEvent(
+    'pointermove',
+    (e: PointerEvent) => {
       if (!elementRef.current || !isVisibleRef.current) return
 
       const { clientX, clientY } = e
       setPosition({ x: clientX, y: clientY })
-    }
+    },
+    { capture: true }
+  )
 
-    document.addEventListener('pointermove', handlePointer, { capture: true })
-    return () => document.removeEventListener('pointermove', handlePointer, { capture: true })
-  }, [])
-
-  const show = () => setIsVisible(true)
-  const hide = () => setIsVisible(false)
-
-  useEffect(() => {
-    const handleShowTooltip = (e: Event) => {
-      const { detail } = e as CustomEvent<TooltipDetail>
-      const { text, position } = detail
-      setText(text)
-      position && setPosition(position)
-      show()
-    }
-
-    document.addEventListener(EVENTS.SHOW_TOOLTIP, handleShowTooltip)
-    document.addEventListener(EVENTS.HIDE_TOOLTIP, hide)
-
-    return () => {
-      document.removeEventListener(EVENTS.SHOW_TOOLTIP, handleShowTooltip)
-      document.removeEventListener(EVENTS.HIDE_TOOLTIP, hide)
-    }
+  useEvent('$show-tooltip', ({ detail }: CustomEvent<TooltipDetail>) => {
+    const { text, position } = detail
+    setText(text)
+    position && setPosition(position)
+    show()
   })
+
+  useEvent('$hide-tooltip', hide)
 
   const setPosition = ({ x, y }: Origin) => {
     if (!elementRef.current) return

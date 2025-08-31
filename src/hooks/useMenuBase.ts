@@ -1,9 +1,11 @@
 import type { Origin, Position as PositionType, TransformOrigin } from '@types'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { animationData as animData } from '@/utils/animationData'
+import { getSafeWinDoc } from '@/utils/getSafeWinDoc'
 import { wasInsideElement } from '@/utils/wasInsideElement'
 import { useActionOnKey } from './useActionOnKey'
 import { useAnimations } from './useAnimations'
+import { useEvent } from './useEvent'
 import { useFreshRefs } from './useFreshRefs'
 
 interface Params {
@@ -86,7 +88,16 @@ export const useMenuBase = ({
     : [animData.menuShowVertical(), animData.menuHideVertical()]
 
   const { animation, anims, startAnimation } = useAnimations({ animations: { show, hide } })
-  const refs = useFreshRefs({ isOpen, animation })
+
+  const refs = useFreshRefs({
+    isOpen,
+    animation,
+    closeOnLeaveDocument,
+    closeOnScroll,
+    defaultOriginGetter,
+    elementSelector,
+    closeAtDistance
+  })
 
   useActionOnKey({
     key: closeOnKeys,
@@ -100,9 +111,11 @@ export const useMenuBase = ({
     }
   })
 
-  useEffect(() => {
-    const handlePointerMove = (e: PointerEvent) => {
-      if (refs.current.isOpen && elementRef.current && closeAtDistance > 0) {
+  useEvent(
+    'pointermove',
+    (e: PointerEvent) => {
+      const { isOpen, closeAtDistance } = refs.current
+      if (isOpen && elementRef.current && closeAtDistance > 0) {
         const { top, left, width, height } = elementRef.current.getBoundingClientRect()
 
         const center = { x: left + width / 2, y: top + height / 2 }
@@ -113,41 +126,32 @@ export const useMenuBase = ({
           closeMenu()
         }
       }
-    }
+    },
+    { capture: true }
+  )
 
-    const handlePointerDown = ({ target }: PointerEvent) => {
-      if (elementSelector && refs.current.isOpen && !wasInsideElement(target).selector(elementSelector)) {
+  useEvent(
+    'pointerdown',
+    ({ target }: PointerEvent) => {
+      const { elementSelector, isOpen } = refs.current
+      if (elementSelector && isOpen && !wasInsideElement(target).selector(elementSelector)) {
         closeMenu()
       }
-    }
+    },
+    { capture: true }
+  )
 
-    const handlePointerLeave = () => {
-      if (closeOnLeaveDocument) closeMenu()
-    }
+  useEvent('pointerleave', () => refs.current.closeOnLeaveDocument && closeMenu())
+  useEvent('scroll', () => refs.current.closeOnScroll && closeMenu)
 
-    const handleScroll = () => {
-      if (closeOnScroll) closeMenu()
-    }
-
-    const handleResize = () => {
-      const origin = defaultOriginGetter?.()
+  useEvent(
+    'resize',
+    () => {
+      const origin = refs.current.defaultOriginGetter?.()
       origin && refreshPosition(origin)
-    }
-
-    document.addEventListener('pointermove', handlePointerMove, { capture: true })
-    document.addEventListener('pointerdown', handlePointerDown, { capture: true })
-    document.addEventListener('pointerleave', handlePointerLeave)
-    document.addEventListener('scroll', handleScroll)
-    window.addEventListener('resize', handleResize)
-
-    return () => {
-      document.removeEventListener('pointermove', handlePointerMove, { capture: true })
-      document.removeEventListener('pointerdown', handlePointerDown, { capture: true })
-      document.removeEventListener('pointerleave', handlePointerLeave)
-      document.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [])
+    },
+    { target: getSafeWinDoc().window }
+  )
 
   const openMenu = (origin?: Origin) => {
     const tryOpen = () => {

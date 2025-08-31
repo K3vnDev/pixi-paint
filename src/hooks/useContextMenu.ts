@@ -2,6 +2,7 @@ import type { ContextMenuDetail, ContextMenuOption } from '@types'
 import { useEffect, useRef, useState } from 'react'
 import { CLICK_BUTTON, EVENTS } from '@/consts'
 import { clickIncludes } from '@/utils/clickIncludes'
+import { useEvent } from './useEvent'
 import { useFreshRefs } from './useFreshRefs'
 import { useTimeout } from './useTimeout'
 
@@ -26,8 +27,9 @@ export const useContextMenu = ({
   const isOpeningMenu = useRef(false)
 
   // Listen and handle pointer
-  useEffect(() => {
-    const handlePointerDown = (e: PointerEvent) => {
+  useEvent(
+    'pointerup',
+    (e: PointerEvent) => {
       if (isOpeningMenu.current) return
       stopTimeout()
       isOpeningMenu.current = true
@@ -39,21 +41,15 @@ export const useContextMenu = ({
           openMenu(e.clientX, e.clientY)
         }
       }, OPEN_WAIT)
-    }
+    },
+    { target: ref, capture: true }
+  )
 
-    const handleContextMenuClosed = () => {
-      setMenuIsOpen(false)
-    }
+  useEvent('$context-menu-closed', () => {
+    setMenuIsOpen(false)
+  })
 
-    ref.current?.addEventListener('pointerup', handlePointerDown, { capture: true })
-    document.addEventListener(EVENTS.CONTEXT_MENU_CLOSED, handleContextMenuClosed)
-
-    return () => {
-      ref.current?.removeEventListener('pointerup', handlePointerDown, { capture: true })
-      document.removeEventListener(EVENTS.CONTEXT_MENU_CLOSED, handleContextMenuClosed)
-      closeMenu()
-    }
-  }, [])
+  useEffect(() => closeMenu, [])
 
   const openMenu = (x: number, y: number) => {
     const { options, showWhen } = refs.current

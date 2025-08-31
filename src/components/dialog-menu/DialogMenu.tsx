@@ -1,7 +1,8 @@
 'use client'
 
 import { EVENTS, HTML_IDS, Z_INDEX } from '@consts'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
+import { useEvent } from '@/hooks/useEvent'
 import { useMenuBase } from '@/hooks/useMenuBase'
 import type { DialogMenuDetail } from '@/types'
 import { MenuBase } from '../MenuBase'
@@ -29,23 +30,15 @@ export const DialogMenu = () => {
     }
   })
 
-  useEffect(() => {
-    const handleOpenDialogMenu = (e: Event) => {
-      const { detail } = e as CustomEvent<DialogMenuDetail>
-      setChildren(detail.component)
-      menuId.current = detail.id
+  useEvent('$open-dialog-menu', (e: Event) => {
+    const { detail } = e as CustomEvent<DialogMenuDetail>
+    setChildren(detail.component)
+    menuId.current = detail.id
 
-      requestAnimationFrame(() => openMenu())
-    }
+    requestAnimationFrame(() => openMenu())
+  })
 
-    document.addEventListener(EVENTS.OPEN_DIALOG_MENU, handleOpenDialogMenu)
-    document.addEventListener(EVENTS.CLOSE_DIALOG_MENU, closeMenu)
-
-    return () => {
-      document.removeEventListener(EVENTS.OPEN_DIALOG_MENU, handleOpenDialogMenu)
-      document.removeEventListener(EVENTS.CLOSE_DIALOG_MENU, closeMenu)
-    }
-  }, [])
+  useEvent('$close-dialog-menu', closeMenu)
 
   const blackBGStyle = isOpen ? '' : 'opacity-0 pointer-events-none'
 

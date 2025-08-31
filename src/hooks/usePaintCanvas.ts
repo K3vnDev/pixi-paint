@@ -5,6 +5,7 @@ import { usePaintStore } from '@/store/usePaintStore'
 import { clickIncludes } from '@/utils/clickIncludes'
 import { colorComparison } from '@/utils/colorComparison'
 import { useBucketPixels } from './useBucketPixels'
+import { useEvent } from './useEvent'
 import { useFreshRefs } from './useFreshRefs'
 import { useTimeout } from './useTimeout'
 
@@ -77,111 +78,99 @@ export const usePaintCanvas = () => {
     }
   }, [tool])
 
-  // Pointer event handlers
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
+  // Triggered on move and click
+  const handlePointer = (e: PointerEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
 
-    const handlePointerDown = (e: PointerEvent) => {
+    // Dont proceed if it wasn't a valid click
+    const clickBtn = clickButton.current
+    if (!clickIncludes(clickBtn, CB.LEFT, CB.RIGHT, CB.MIDDLE)) return
+
+    // Extract pixel index and don't proceed if its not valid
+    const element = e.target as HTMLDivElement
+    const pixelIndex = +(element.getAttribute('data-pixel-index') ?? NaN)
+    if (Number.isNaN(pixelIndex)) return
+
+    const { pixels, tool, selectedColor } = stateRefs.current
+    const pixelColor = structuredClone(pixels[pixelIndex])
+
+    // Switch to the eraser automatically on right click
+    if (tool !== TOOLS.ERASER && clickIncludes(clickBtn, CB.RIGHT)) {
+      erasePixel(pixelColor, pixelIndex)
+      setTool(TOOLS.ERASER)
+      usingSecondClickOnEraser.current = true
+      return
+    }
+
+    if (clickIncludes(clickBtn, CB.MIDDLE)) {
+      // Switch to the color picker automaticallly on middle click
+      setTool(TOOLS.COLOR_PICKER)
+      colorPickerHoldingColor.current = pixelColor
+      return
+    }
+
+    switch (tool) {
+      case TOOLS.ERASER: {
+        erasePixel(pixelColor, pixelIndex)
+
+        if (clickIncludes(clickBtn, CB.RIGHT)) {
+          usingSecondClickOnEraser.current = true
+        }
+        break
+      }
+      case TOOLS.BRUSH: {
+        paintPixel(pixelColor, pixelIndex)
+        break
+      }
+      case TOOLS.BUCKET: {
+        if (colorComparison(pixelColor, selectedColor)) break
+
+        paintBucketPixels({
+          autoIntervalTime: true,
+          startIndexes: [pixelIndex],
+          zoneColor: pixelColor,
+          paintGenerationAction: gen => {
+            paintPixels(...gen.map(({ index }) => ({ color: selectedColor, index })))
+          }
+        })
+        break
+      }
+      case TOOLS.COLOR_PICKER: {
+        setSelectedColor(pixelColor)
+        setTool(lastUsedPaintTool.current)
+        break
+      }
+    }
+  }
+
+  const handlePointerStop = () => {
+    clickButton.current = -1
+
+    if (usingSecondClickOnEraser.current) {
+      // Handle ceasing the use of eraser, switching back to the last used tool
+      const [lastUsedTool] = toolsHistory.current
+      setTool(lastUsedTool ?? TOOLS.BRUSH)
+    } else if (colorPickerHoldingColor.current) {
+      // Handle ceasing the use of eraser, switching back to the last used paint tool
+      setSelectedColor(colorPickerHoldingColor.current)
+      colorPickerHoldingColor.current = null
+      setTool(lastUsedPaintTool.current)
+    }
+  }
+
+  useEvent('pointerup', handlePointerStop, { passive: false })
+  useEvent('pointerleave', handlePointerStop, { passive: false })
+
+  useEvent('pointermove', handlePointer, { passive: false })
+  useEvent(
+    'pointerdown',
+    (e: PointerEvent) => {
       clickButton.current = e.button
       handlePointer(e)
-    }
-
-    const HandlePointerMove = (e: PointerEvent) => handlePointer(e)
-
-    const handlePointerStop = () => {
-      clickButton.current = -1
-
-      if (usingSecondClickOnEraser.current) {
-        // Handle ceasing the use of eraser, switching back to the last used tool
-        const [lastUsedTool] = toolsHistory.current
-        setTool(lastUsedTool ?? TOOLS.BRUSH)
-      } else if (colorPickerHoldingColor.current) {
-        // Handle ceasing the use of eraser, switching back to the last used paint tool
-        setSelectedColor(colorPickerHoldingColor.current)
-        colorPickerHoldingColor.current = null
-        setTool(lastUsedPaintTool.current)
-      }
-    }
-
-    // Triggered on move and click
-    const handlePointer = (e: PointerEvent) => {
-      e.preventDefault()
-      e.stopPropagation()
-
-      // Dont proceed if it wasn't a valid click
-      const clickBtn = clickButton.current
-      if (!clickIncludes(clickBtn, CB.LEFT, CB.RIGHT, CB.MIDDLE)) return
-
-      // Extract pixel index and don't proceed if its not valid
-      const element = e.target as HTMLDivElement
-      const pixelIndex = +(element.getAttribute('data-pixel-index') ?? NaN)
-      if (Number.isNaN(pixelIndex)) return
-
-      const { pixels, tool, selectedColor } = stateRefs.current
-      const pixelColor = structuredClone(pixels[pixelIndex])
-
-      // Switch to the eraser automatically on right click
-      if (tool !== TOOLS.ERASER && clickIncludes(clickBtn, CB.RIGHT)) {
-        erasePixel(pixelColor, pixelIndex)
-        setTool(TOOLS.ERASER)
-        usingSecondClickOnEraser.current = true
-        return
-      }
-
-      if (clickIncludes(clickBtn, CB.MIDDLE)) {
-        // Switch to the color picker automaticallly on middle click
-        setTool(TOOLS.COLOR_PICKER)
-        colorPickerHoldingColor.current = pixelColor
-        return
-      }
-
-      switch (tool) {
-        case TOOLS.ERASER: {
-          erasePixel(pixelColor, pixelIndex)
-
-          if (clickIncludes(clickBtn, CB.RIGHT)) {
-            usingSecondClickOnEraser.current = true
-          }
-          break
-        }
-        case TOOLS.BRUSH: {
-          paintPixel(pixelColor, pixelIndex)
-          break
-        }
-        case TOOLS.BUCKET: {
-          if (colorComparison(pixelColor, selectedColor)) break
-
-          paintBucketPixels({
-            autoIntervalTime: true,
-            startIndexes: [pixelIndex],
-            zoneColor: pixelColor,
-            paintGenerationAction: gen => {
-              paintPixels(...gen.map(({ index }) => ({ color: selectedColor, index })))
-            }
-          })
-          break
-        }
-        case TOOLS.COLOR_PICKER: {
-          setSelectedColor(pixelColor)
-          setTool(lastUsedPaintTool.current)
-          break
-        }
-      }
-    }
-
-    canvas.addEventListener('pointerdown', handlePointerDown, { passive: false })
-    canvas.addEventListener('pointermove', HandlePointerMove, { passive: false })
-    document.addEventListener('pointerup', handlePointerStop, { passive: false })
-    document.addEventListener('pointerleave', handlePointerStop, { passive: false })
-
-    return () => {
-      canvas.removeEventListener('pointerdown', handlePointerDown)
-      canvas.removeEventListener('pointermove', HandlePointerMove)
-      document.removeEventListener('pointerup', handlePointerStop)
-      document.removeEventListener('pointerleave', handlePointerStop)
-    }
-  }, [])
+    },
+    { passive: false }
+  )
 
   const paintPixel = (pixelColor: string, index: number) => {
     const { selectedColor } = stateRefs.current
@@ -198,29 +187,24 @@ export const usePaintCanvas = () => {
   }
 
   // Switch tools on mouse wheel
-  useEffect(() => {
-    const handleWheel = (e: WheelEvent) => {
-      if (colorPickerHoldingColor.current || usingSecondClickOnEraser.current || isOnWheelTimeout.current) {
-        return
-      }
-      const add = e.deltaY < 0 ? -1 : 1
-      const selectedTool = +stateRefs.current.tool
-
-      const toolsLength = Object.keys(TOOLS).filter(k => Number.isNaN(+k)).length
-
-      let newSelectedTool = selectedTool + add
-      if (newSelectedTool >= toolsLength) newSelectedTool = 1
-      else if (newSelectedTool < 1) newSelectedTool = toolsLength - 1
-
-      isOnWheelTimeout.current = true
-      startWheelTimeout(stopWheelTimeout, WHEEL_SWITCH_TOOL_COOLDOWN)
-
-      setTool(newSelectedTool)
+  useEvent('wheel', (e: WheelEvent) => {
+    if (colorPickerHoldingColor.current || usingSecondClickOnEraser.current || isOnWheelTimeout.current) {
+      return
     }
+    const add = e.deltaY < 0 ? -1 : 1
+    const selectedTool = +stateRefs.current.tool
 
-    document.addEventListener('wheel', handleWheel)
-    return () => document.removeEventListener('wheel', handleWheel)
-  }, [])
+    const toolsLength = Object.keys(TOOLS).filter(k => Number.isNaN(+k)).length
+
+    let newSelectedTool = selectedTool + add
+    if (newSelectedTool >= toolsLength) newSelectedTool = 1
+    else if (newSelectedTool < 1) newSelectedTool = toolsLength - 1
+
+    isOnWheelTimeout.current = true
+    startWheelTimeout(stopWheelTimeout, WHEEL_SWITCH_TOOL_COOLDOWN)
+
+    setTool(newSelectedTool)
+  })
 
   return { pixels, canvasRef }
 }

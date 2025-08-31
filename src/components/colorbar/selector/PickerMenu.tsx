@@ -5,6 +5,7 @@ import { MenuBase } from '@/components/MenuBase'
 import { HTML_IDS } from '@/consts'
 import { ColorSelectorContext } from '@/context/ColorSelectorContext'
 import { useDebounce } from '@/hooks/useDebounce'
+import { useEvent } from '@/hooks/useEvent'
 import { useFreshRefs } from '@/hooks/useFreshRefs'
 import { useMenuBase } from '@/hooks/useMenuBase'
 import { useGeneralStore } from '@/store/useGeneralStore'
@@ -52,8 +53,17 @@ export const PickerMenu = ({ parentRef }: Props) => {
   }, [isOpen])
 
   // Handle pointer events
-  useEffect(() => {
-    const handlePointerUp = (e: PointerEvent) => {
+  useEvent(
+    'pointerup',
+    (e: PointerEvent) => {
+      const clickedInside = (e: PointerEvent) => {
+        const parent = parentRef?.current
+        if (!parent) return false
+
+        const target = e.target as HTMLElement
+        return parent.contains(target) || elementRef.current?.contains(target)
+      }
+
       if (clickedInside(e) && !refs.current.isOpen && parentRef?.current) {
         const parentRect = (parentRef.current as HTMLElement).getBoundingClientRect()
 
@@ -62,19 +72,9 @@ export const PickerMenu = ({ parentRef }: Props) => {
 
         openMenu({ x, y })
       }
-    }
-
-    const clickedInside = (e: PointerEvent) => {
-      const parent: HTMLElement = parentRef?.current
-      if (!parent) return false
-
-      const target = e.target as HTMLElement
-      return parent.contains(target) || elementRef.current?.contains(target)
-    }
-
-    document.addEventListener('pointerup', handlePointerUp, { capture: true })
-    return () => document.removeEventListener('pointerup', handlePointerUp, { capture: true })
-  }, [])
+    },
+    { capture: true }
+  )
 
   // Refresh primary color
   useEffect(() => {

@@ -1,7 +1,8 @@
 import { EVENTS } from '@consts'
 import type { DialogMenuDetail } from '@types'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { generateId } from '@/utils/generateId'
+import { useEvent } from './useEvent'
 
 export const useDialogMenu = () => {
   const [openId, setOpenId] = useState<string | null>(null)
@@ -19,14 +20,14 @@ export const useDialogMenu = () => {
     document.dispatchEvent(new CustomEvent(EVENTS.CLOSE_DIALOG_MENU))
   }
 
-  useEffect(() => {
-    const handleDialogMenuClosed = (e: Event) => {
+  useEvent(
+    '$dialog-menu-closed',
+    e => {
       const { detail: closedId } = e as CustomEvent<string>
       if (closedId === openId) setOpenId(null)
-    }
-    document.addEventListener(EVENTS.DIALOG_MENU_CLOSED, handleDialogMenuClosed)
-    return () => document.removeEventListener(EVENTS.DIALOG_MENU_CLOSED, handleDialogMenuClosed)
-  }, [openId])
+    },
+    { deps: [openId] }
+  )
 
   return { openMenu, closeMenu, menuIsOpen: !!openId }
 }

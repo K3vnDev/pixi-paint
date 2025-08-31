@@ -1,17 +1,10 @@
-import { useEffect } from 'react'
+import { getSafeWinDoc } from '@/utils/getSafeWinDoc'
+import { useEvent } from './useEvent'
 
 export const useBasicPrevention = () => {
-  useEffect(() => {
-    const preventDefault = (e: Event) => {
-      e.preventDefault()
-    }
-
-    window.addEventListener('dragstart', preventDefault)
-    window.addEventListener('contextmenu', preventDefault)
-
-    return () => {
-      window.removeEventListener('dragstart', preventDefault)
-      window.removeEventListener('contextmenu', preventDefault)
-    }
-  }, [])
+  const preventDefault = (e: Event) => {
+    e.preventDefault()
+  }
+  useEvent('dragstart', preventDefault, { target: getSafeWinDoc().window })
+  useEvent('contextmenu', preventDefault, { target: getSafeWinDoc().window })
 }

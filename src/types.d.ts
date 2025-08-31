@@ -1,4 +1,6 @@
-import type { TOOLS } from '@consts'
+import type { EVENTS, TOOLS } from '@consts'
+
+export type CustomEventName = (typeof EVENTS)[keyof typeof EVENTS]
 
 export interface BucketPixel {
   index: number
@@ -50,7 +52,7 @@ export interface PaintPixelData {
 export type ReusableComponent = {
   className?: string
   style?: React.CSSProperties
-  ref?: React.RefObject<any | null>
+  ref?: React.RefObject<any>
 }
 
 export type IconName =

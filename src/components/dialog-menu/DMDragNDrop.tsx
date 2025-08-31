@@ -1,7 +1,8 @@
 import { ColoredPixelatedImage } from '@@/ColoredPixelatedImage'
 import type { IconName, ReusableComponent } from '@types'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { twMerge } from 'tailwind-merge'
+import { useEvent } from '@/hooks/useEvent'
 import { useTimeout } from '@/hooks/useTimeout'
 
 type Props = {
@@ -25,34 +26,24 @@ export const DMDragNDrop = ({
   const { startTimeout, stopTimeout } = useTimeout()
   const DRAG_OVER_MIN = 220
 
-  useEffect(() => {
-    const handleDrop = (e: DragEvent) => {
-      e.preventDefault()
+  useEvent('drop', (e: DragEvent) => {
+    e.preventDefault()
 
-      if (e.dataTransfer) {
-        const { files } = e.dataTransfer
-        handleFiles(files)
-      }
+    if (e.dataTransfer) {
+      const { files } = e.dataTransfer
+      handleFiles(files)
     }
+  })
 
-    const handleDragOver = (e: DragEvent) => {
-      e.preventDefault()
-      setIsDraggingOver(true)
+  useEvent('dragover', (e: DragEvent) => {
+    e.preventDefault()
+    setIsDraggingOver(true)
 
-      stopTimeout()
-      startTimeout(() => {
-        setIsDraggingOver(false)
-      }, DRAG_OVER_MIN)
-    }
-
-    document.addEventListener('drop', handleDrop)
-    document.addEventListener('dragover', handleDragOver)
-
-    return () => {
-      document.removeEventListener('drop', handleDrop)
-      document.removeEventListener('dragover', handleDragOver)
-    }
-  }, [])
+    stopTimeout()
+    startTimeout(() => {
+      setIsDraggingOver(false)
+    }, DRAG_OVER_MIN)
+  })
 
   const handleClick = () => {
     const input = document.createElement('input')

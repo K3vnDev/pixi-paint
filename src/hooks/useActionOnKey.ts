@@ -1,5 +1,6 @@
-import { useEffect } from 'react'
 import { useGeneralStore } from '@/store/useGeneralStore'
+import { getSafeWinDoc } from '@/utils/getSafeWinDoc'
+import { useEvent } from './useEvent'
 import { useFreshRefs } from './useFreshRefs'
 
 type Params = {
@@ -17,12 +18,12 @@ export const useActionOnKey = ({ key, action, deps = [], options = {} }: Params)
   const isUsingInput = useGeneralStore(s => s.isUsingInput)
   const isUsingInputRef = useFreshRefs(isUsingInput)
 
-  useEffect(() => {
-    const { allowShiftKey, allowCtrlKey, allowOnInput } = options
-
-    const handleKeyDown = (e: KeyboardEvent) => {
+  useEvent(
+    'keydown',
+    (e: KeyboardEvent) => {
       const { ctrlKey, shiftKey, key: pressedKey } = e
       const keys = typeof key === 'string' ? [key] : key
+      const { allowShiftKey, allowCtrlKey, allowOnInput } = options
 
       if (
         !(!allowCtrlKey && ctrlKey) &&
@@ -34,8 +35,10 @@ export const useActionOnKey = ({ key, action, deps = [], options = {} }: Params)
         e.stopPropagation()
         action(e)
       }
+    },
+    {
+      target: getSafeWinDoc().window,
+      deps
     }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, deps)
+  )
 }

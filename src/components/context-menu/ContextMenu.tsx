@@ -3,6 +3,7 @@
 import { EVENTS, HTML_IDS, Z_INDEX } from '@consts'
 import type { ContextMenuDetail } from '@types'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEvent } from '@/hooks/useEvent'
 import { useMenuBase } from '@/hooks/useMenuBase'
 import { MenuBase } from '../MenuBase'
 import { Option } from './Option'
@@ -24,25 +25,16 @@ export const ContextMenu = () => {
     hideWhen: menuData === null,
     events: {
       onCloseMenu: () => {
-        document.dispatchEvent(new Event(EVENTS.CONTEXT_MENU_CLOSED))
+        document.dispatchEvent(new CustomEvent(EVENTS.CONTEXT_MENU_CLOSED))
       }
     }
   })
 
-  useEffect(() => {
-    const handleOpenContextMenu = (e: Event) => {
-      const menuDetail: ContextMenuDetail = (e as CustomEvent).detail
-      setMenuData(menuDetail)
-    }
-
-    document.addEventListener(EVENTS.OPEN_CONTEXT_MENU, handleOpenContextMenu)
-    document.addEventListener(EVENTS.CLOSE_CONTEXT_MENU, closeMenu)
-
-    return () => {
-      document.removeEventListener(EVENTS.OPEN_CONTEXT_MENU, handleOpenContextMenu)
-      document.removeEventListener(EVENTS.CLOSE_CONTEXT_MENU, closeMenu)
-    }
-  }, [])
+  useEvent('$open-context-menu', e => {
+    const menuDetail: ContextMenuDetail = (e as CustomEvent).detail
+    setMenuData(menuDetail)
+  })
+  useEvent('$close-context-menu', closeMenu)
 
   useEffect(() => {
     if (menuData?.options.length) {

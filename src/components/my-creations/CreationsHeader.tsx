@@ -3,9 +3,9 @@ import { DMDragNDrop } from '@@/dialog-menu/DMDragNDrop'
 import { DMHeader } from '@@/dialog-menu/DMHeader'
 import { Z_INDEX } from '@consts'
 import type { IconName, JSONCanvas, ReusableComponent, SavedCanvas } from '@types'
-import { useEffect } from 'react'
 import { twMerge } from 'tailwind-merge'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
+import { useEvent } from '@/hooks/useEvent'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { canvasParser } from '@/utils/canvasParser'
 import { generateId } from '@/utils/generateId'
@@ -15,16 +15,16 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
   const { openMenu, closeMenu, menuIsOpen } = useDialogMenu()
   const addToSavedCanvases = useCanvasStore(s => s.addToSavedCanvases)
 
-  useEffect(() => {
-    const handleDragStart = (e: DragEvent) => {
+  useEvent(
+    'dragenter',
+    (e: DragEvent) => {
       if (!menuIsOpen) {
         e.stopPropagation()
         openImportMenu()
       }
-    }
-    document.addEventListener('dragenter', handleDragStart)
-    return () => document.removeEventListener('dragenter', handleDragStart)
-  }, [menuIsOpen])
+    },
+    { deps: [menuIsOpen] }
+  )
 
   // TODO: Validate with zod
   const onDropOrSelect = (contents: string[]) => {
