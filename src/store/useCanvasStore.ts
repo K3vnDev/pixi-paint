@@ -6,6 +6,7 @@ import { generateId } from '@/utils/generateId'
 interface CanvasStore {
   savedCanvases: SavedCanvas[]
   setSavedCanvases: (value: SavedCanvas[]) => void
+  addToSavedCanvases: (...canvases: SavedCanvas[]) => void
 
   draftCanvas: SavedCanvas
   setDraftCanvas: (value: SavedCanvas) => void
@@ -25,7 +26,25 @@ interface CanvasStore {
 
 export const useCanvasStore = create<CanvasStore>((set, get) => ({
   savedCanvases: [],
-  setSavedCanvases: value => set(() => ({ savedCanvases: value })),
+  setSavedCanvases: value =>
+    set(() => {
+      const seenIds = new Set<string>()
+      const newCanvases = value.map(canvas => {
+        let { id } = canvas
+        while (seenIds.has(id)) {
+          id = generateId()
+        }
+        seenIds.add(id)
+        return { ...canvas, id }
+      })
+      return { savedCanvases: newCanvases }
+    }),
+
+  addToSavedCanvases: (...canvases) =>
+    set(({ savedCanvases, setSavedCanvases }) => {
+      setSavedCanvases([...savedCanvases, ...canvases])
+      return {}
+    }),
 
   draftCanvas: BLANK_DRAFT,
   setDraftCanvas: value => set(() => ({ draftCanvas: value })),

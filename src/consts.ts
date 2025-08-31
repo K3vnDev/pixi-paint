@@ -81,7 +81,8 @@ export const EVENTS = {
   HIDE_TOOLTIP: '$hide-tooltip',
 
   OPEN_DIALOG_MENU: '$open-dialog-menu',
-  CLOSE_DIALOG_MENU: '$close-dialog-menu'
+  CLOSE_DIALOG_MENU: '$close-dialog-menu',
+  DIALOG_MENU_CLOSED: '$dialog-menu-closed'
 } as const
 
 export const Z_INDEX = {

@@ -3,59 +3,73 @@ import { DMDragNDrop } from '@@/dialog-menu/DMDragNDrop'
 import { DMHeader } from '@@/dialog-menu/DMHeader'
 import { Z_INDEX } from '@consts'
 import type { IconName, JSONCanvas, ReusableComponent, SavedCanvas } from '@types'
+import { useEffect } from 'react'
 import { twMerge } from 'tailwind-merge'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { canvasParser } from '@/utils/canvasParser'
+import { generateId } from '@/utils/generateId'
 import { ColoredPixelatedImage } from '../ColoredPixelatedImage'
 
 export const CreationsHeader = ({ className = '', ...props }: ReusableComponent) => {
-  const { openMenu, closeMenu } = useDialogMenu()
-  const getNewCanvasId = useCanvasStore(s => s.getNewCanvasId)
-  const savedCanvases = useCanvasStore(s => s.savedCanvases)
-  const setSavedCanvases = useCanvasStore(s => s.setSavedCanvases)
+  const { openMenu, closeMenu, menuIsOpen } = useDialogMenu()
+  const addToSavedCanvases = useCanvasStore(s => s.addToSavedCanvases)
 
+  useEffect(() => {
+    const handleDragStart = (e: DragEvent) => {
+      if (!menuIsOpen) {
+        e.stopPropagation()
+        openImportMenu()
+      }
+    }
+    document.addEventListener('dragenter', handleDragStart)
+    return () => document.removeEventListener('dragenter', handleDragStart)
+  }, [menuIsOpen])
+
+  // TODO: Validate with zod
   const onDropOrSelect = (contents: string[]) => {
     const jsonCanvases: JSONCanvas[] = []
 
     // Parse and contents into an one level array
-    // TODO: Validate with zod
     for (const content of contents) {
       const raw: JSONCanvas | JSONCanvas[] = JSON.parse(content)
       Array.isArray(raw) ? jsonCanvases.push(...raw) : jsonCanvases.push(raw)
     }
 
+    const replaceableId = generateId()
     const importedCanvases: SavedCanvas[] = jsonCanvases
-      .map(c => canvasParser.fromStorage({ ...c, id: getNewCanvasId() }))
+      .map(c => canvasParser.fromStorage({ ...c, id: replaceableId }))
       .filter(c => !!c)
 
-    setSavedCanvases([...savedCanvases, ...importedCanvases])
+    addToSavedCanvases(...importedCanvases)
     closeMenu()
   }
+
+  const openImportMenu = () =>
+    openMenu(
+      <>
+        <DMHeader icon='code' className='border-none mb-0'>
+          Paintings importer
+        </DMHeader>
+        <DMDragNDrop
+          className='w-128 my-1 px-10'
+          acceptedFormats={['application/json']}
+          allowMultipleFiles
+          {...{ onDropOrSelect }}
+        >
+          Drag & Drop compatible JSON files here, or click to choose...
+        </DMDragNDrop>
+        <DMButton icon='cross' empty className='mt-4'>
+          Nah, I'm good
+        </DMButton>
+      </>
+    )
 
   const buttons: ButtonType[] = [
     {
       label: 'Import',
       icon: 'upload',
-      action: () =>
-        openMenu(
-          <>
-            <DMHeader icon='code' className='border-none mb-0'>
-              Paintings importer
-            </DMHeader>
-            <DMDragNDrop
-              className='w-128 my-1 px-10'
-              acceptedFormats={['application/json']}
-              allowMultipleFiles
-              {...{ onDropOrSelect }}
-            >
-              Drag & Drop compatible JSON files here, or click to choose...
-            </DMDragNDrop>
-            <DMButton icon='cross' empty className='mt-4'>
-              Nervermind...
-            </DMButton>
-          </>
-        )
+      action: openImportMenu
     },
     { label: 'Selection mode', icon: 'check' }
   ]
@@ -70,24 +84,33 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
       {...props}
     >
       {buttons.map((button, i) => (
-        <Button {...button} key={i} />
+        <Button {...button} key={i} index={i} />
       ))}
     </header>
   )
 }
 
-export const Button = ({ label, action, icon }: ButtonType) => (
-  <button
-    className={`
+type ButtonProps = {
+  index: number
+} & ButtonType
+
+export const Button = ({ label, action, icon, index }: ButtonProps) => {
+  const animationDelay = `${200 * index}ms`
+
+  return (
+    <button
+      className={`
         flex gap-2 items-center border-2 border-theme-10/70 bg-theme-20/25
-        px-7 py-2 rounded-lg button
+        px-7 py-2 rounded-lg animate-appear button
       `}
-    onClick={action}
-  >
-    <ColoredPixelatedImage icon={icon} className='size-8' />
-    <span className='text-2xl text-theme-10 font-semibold'>{label}</span>
-  </button>
-)
+      onClick={action}
+      style={{ animationDelay }}
+    >
+      <ColoredPixelatedImage icon={icon} className='size-8' />
+      <span className='text-2xl text-theme-10 font-semibold'>{label}</span>
+    </button>
+  )
+}
 
 interface ButtonType {
   label: string

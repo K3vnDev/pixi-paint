@@ -106,12 +106,17 @@ export interface ContextMenuOption extends Option {
   action: () => void
 }
 
+export interface DownloadSettings {
+  formatIndex: number
+  sizeIndex: number
+}
+
 export interface TooltipDetail {
   text: string
   position?: Origin
 }
 
-export interface DownloadSettings {
-  formatIndex: number
-  sizeIndex: number
+export interface DialogMenuDetail {
+  component: React.ReactNode
+  id: string
 }
