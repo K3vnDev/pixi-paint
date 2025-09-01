@@ -41,13 +41,13 @@ export const SaveHandler = () => {
           `}
           pixels={draft.pixels}
           goodOption={{
+            label: 'Save it, then clone',
             action: () => {
               saveDraft()
               cloneToNewDraftAction()
-            },
-            label: 'Save it, then clone'
+            }
           }}
-          badOption={{ action: cloneToNewDraftAction, label: 'Yes, overwrite it' }}
+          badOption={{ label: 'Yes, overwrite it', action: cloneToNewDraftAction }}
         />
       )
     } else {

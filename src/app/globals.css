@@ -10,6 +10,7 @@
   --canvas-size: 660px;
   --sidebar-margin: 36px;
   --navbar-height: 90px;
+  --galery-pad-x: 110px;
 
   /* Easing vars */
   --easing-back-out: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -31,11 +32,11 @@
 
   /* Animations */
   --animate-pop: pop 400ms ease both;
+  --animate-pulse-brightness: pulse-brightness 1s ease-in-out both alternate infinite;
+  --animate-appear: appear 750ms var(--easing-back-out) backwards;
 
   --animate-slide-in-left: slide-in-left var(--slide-anim-timing);
   --animate-slide-in-right: slide-in-right var(--slide-anim-timing);
-
-  --animate-pulse-brightness: pulse-brightness 1s ease-in-out both alternate infinite;
 }
 
 .button {
@@ -148,5 +149,18 @@
 @keyframes pulse-brightness {
   to {
     filter: brightness(133%);
+  }
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    scale: 0.75;
+    filter: blur(8px);
+  }
+  to {
+    scale: 1;
+    opacity: 1;
+    filter: blur(0);
   }
 }

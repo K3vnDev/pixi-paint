@@ -2,6 +2,7 @@ import { ColoredPixelatedImage } from '@@/ColoredPixelatedImage'
 import type { IconName } from '@types'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { ColorSelectorContext } from '@/context/ColorSelectorContext'
+import { useEvent } from '@/hooks/useEvent'
 import { useFreshRefs } from '@/hooks/useFreshRefs'
 import { useTimeout } from '@/hooks/useTimeout'
 import { validateColor } from '@/utils/validateColor'
@@ -18,19 +19,20 @@ export const TextInput = () => {
   const BUTTON_CHECK_TIME = 1000
   const MAX_LENGTH = 16
 
-  useEffect(() => {
-    const handlePaste = (e: ClipboardEvent) => {
+  useEvent(
+    'paste',
+    (e: ClipboardEvent) => {
       if (!isFocused.current && menuIsOpenRef.current) {
         const pastedText = e.clipboardData?.getData('text')
         if (pastedText) inputUtils.select()
       }
-    }
-    document.addEventListener('paste', handlePaste, { capture: true })
-    return () => document.removeEventListener('paste', handlePaste, { capture: true })
-  }, [])
+    },
+    { capture: true }
+  )
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+  useEvent(
+    'keydown',
+    (e: KeyboardEvent) => {
       if (!inputRef.current) return
       const { key, ctrlKey, shiftKey } = e
 
@@ -43,11 +45,9 @@ export const TextInput = () => {
           inputUtils.cursorRight()
         }
       }
-    }
-
-    document.addEventListener('keydown', handleKeyDown, { capture: true })
-    return () => document.removeEventListener('keydown', handleKeyDown, { capture: true })
-  }, [])
+    },
+    { capture: true }
+  )
 
   useEffect(() => {
     !menuIsOpen && inputUtils.blur()

@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { HTML_IDS } from '@/consts'
 import { usePaintStore } from '@/store/usePaintStore'
+import { getSafeWinDoc } from '@/utils/getSafeWinDoc'
 import { wasInsideElement } from '@/utils/wasInsideElement'
+import { useEvent } from './useEvent'
 import { useFreshRefs } from './useFreshRefs'
 
 export const useCustomCursor = () => {
@@ -19,9 +21,9 @@ export const useCustomCursor = () => {
 
   const [isShowingCursor, setIsShowingCursor] = useState(false)
 
-  // Tool main movement
-  useEffect(() => {
-    const handlePointerMove = (e: PointerEvent) => {
+  useEvent(
+    'pointermove',
+    (e: PointerEvent) => {
       // Check if its hovering paint canvas and preseve its state when moving out while holding the button
       const newIsHoveingPaintCanvas = isAtPaintCanvas(e)
       if (
@@ -38,26 +40,25 @@ export const useCustomCursor = () => {
       pointerPosition.current = { x: e.clientX, y: e.clientY }
       refreshCursor()
       setIsShowingCursor(true)
-    }
+    },
+    { capture: true, target: getSafeWinDoc().window }
+  )
 
-    const handlePointerUp = () => {
-      isPreservingHoveringState.current = false
-    }
-
-    const handlePointerDown = (e: PointerEvent) => {
+  useEvent(
+    'pointerdown',
+    (e: PointerEvent) => {
       lastPointerDownWasCanvas.current = isAtPaintCanvas(e)
-    }
+    },
+    { capture: true, target: getSafeWinDoc().window }
+  )
 
-    window.addEventListener('pointermove', handlePointerMove, { capture: true })
-    window.addEventListener('pointerdown', handlePointerDown, { capture: true })
-    window.addEventListener('pointerup', handlePointerUp, { capture: true })
-
-    return () => {
-      window.removeEventListener('pointermove', handlePointerMove, { capture: true })
-      window.removeEventListener('pointerdown', handlePointerDown, { capture: true })
-      window.removeEventListener('pointerup', handlePointerUp, { capture: true })
-    }
-  }, [])
+  useEvent(
+    'pointerup',
+    () => {
+      isPreservingHoveringState.current = false
+    },
+    { capture: true, target: getSafeWinDoc().window }
+  )
 
   const isAtPaintCanvas = (e: PointerEvent) => wasInsideElement(e.target).id(HTML_IDS.PAINT_CANVAS)
 
@@ -77,24 +78,18 @@ export const useCustomCursor = () => {
   useEffect(refreshCursor, [tool])
 
   // Handle pointer visibility
-  useEffect(() => {
-    const handlePointerLeave = (e: PointerEvent) => {
-      e.stopPropagation()
-      setIsShowingCursor(false)
-    }
-    const handlePointerEnter = (e: PointerEvent) => {
-      e.stopPropagation()
-      setIsShowingCursor(true)
-    }
+  const hideCursor = (e: Event) => {
+    e.stopPropagation()
+    setIsShowingCursor(false)
+  }
+  const showCusor = (e: Event) => {
+    e.stopPropagation()
+    setIsShowingCursor(true)
+  }
 
-    document.addEventListener('pointerleave', handlePointerLeave)
-    document.addEventListener('pointerenter', handlePointerEnter)
-
-    return () => {
-      document.removeEventListener('pointerleave', handlePointerLeave)
-      document.removeEventListener('pointerenter', handlePointerEnter)
-    }
-  }, [isShowingCursor])
+  useEvent('pointerleave', hideCursor, { deps: [isShowingCursor] })
+  useEvent('blur', hideCursor, { deps: [isShowingCursor], target: getSafeWinDoc().window })
+  useEvent('pointerenter', showCusor, { deps: [isShowingCursor] })
 
   return { cursorsContainerRef, isShowingCursor, currentCursorIndex }
 }

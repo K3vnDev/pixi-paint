@@ -1,4 +1,6 @@
-import type { TOOLS } from '@consts'
+import type { EVENTS, TOOLS } from '@consts'
+
+export type CustomEventName = (typeof EVENTS)[keyof typeof EVENTS]
 
 export interface BucketPixel {
   index: number
@@ -33,12 +35,13 @@ export interface Cursor {
   colorize?: 'primary' | 'secondary'
 }
 
-export interface StorageCanvas {
+export interface JSONCanvas {
+  pixels: Record<string, number[]>
+  bg: string
+}
+
+export interface StorageCanvas extends JSONCanvas {
   id: string
-  pixels: {
-    pixels: Record<string, number[]>
-    bg: string
-  }
 }
 
 export interface PaintPixelData {
@@ -49,7 +52,7 @@ export interface PaintPixelData {
 export type ReusableComponent = {
   className?: string
   style?: React.CSSProperties
-  ref?: React.RefObject<any | null>
+  ref?: React.RefObject<any>
 }
 
 export type IconName =
@@ -64,6 +67,8 @@ export type IconName =
   | 'save'
   | 'upload'
   | 'heart'
+  | 'image'
+  | 'code'
 
 export type TransformOrigin =
   | 'top-left'
@@ -94,13 +99,26 @@ export type ContextMenuDetail = {
   allowedClicks: CLICK_BUTTON[]
 }
 
-export interface ContextMenuOption {
+export interface Option {
   label: string
   icon: IconName
+}
+
+export interface ContextMenuOption extends Option {
   action: () => void
+}
+
+export interface DownloadSettings {
+  formatIndex: number
+  sizeIndex: number
 }
 
 export interface TooltipDetail {
   text: string
   position?: Origin
+}
+
+export interface DialogMenuDetail {
+  component: React.ReactNode
+  id: string
 }

@@ -6,12 +6,13 @@ import { useContextMenu } from '@/hooks/useContextMenu'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useFreshRefs } from '@/hooks/useFreshRefs'
 import { useCanvasStore } from '@/store/useCanvasStore'
-import { CanvasImage } from './CanvasImage'
-import { ColoredPixelatedImage } from './ColoredPixelatedImage'
-import { DMButton } from './dialog-menu/DMButton'
-import { DMHeader } from './dialog-menu/DMHeader'
-import { DMParagraph } from './dialog-menu/DMParagraph'
-import { DMZoneButtons } from './dialog-menu/DMZoneButtons'
+import { CanvasImage } from '../CanvasImage'
+import { ColoredPixelatedImage } from '../ColoredPixelatedImage'
+import { DMButton } from '../dialog-menu/DMButton'
+import { DMHeader } from '../dialog-menu/DMHeader'
+import { DMParagraph } from '../dialog-menu/DMParagraph'
+import { DMZoneButtons } from '../dialog-menu/DMZoneButtons'
+import { DownloadPaintingsMenu } from './DownloadPaintingsMenu'
 
 export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   const router = useRouter()
@@ -70,11 +71,15 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
     )
   }
 
+  const downloadPaintings = () => {
+    openMenu(<DownloadPaintingsMenu canvasId={id} />)
+  }
+
   const openFeatureNotImplemented = () =>
     openMenu(
       <>
-        <DMHeader>Feature not implemented yet :(</DMHeader>
-        <DMButton>Okay...</DMButton>
+        <DMHeader icon='code'>Feature not implemented yet :(</DMHeader>
+        <DMButton>...Okay</DMButton>
       </>
     )
 
@@ -98,7 +103,7 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
       {
         label: 'Download',
         icon: 'download',
-        action: openFeatureNotImplemented
+        action: downloadPaintings
       },
       {
         label: 'Delete',

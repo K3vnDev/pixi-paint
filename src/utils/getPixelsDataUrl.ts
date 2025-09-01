@@ -1,9 +1,17 @@
 import { CANVAS_RESOLUTION } from '@consts'
 
-export const getPixelsDataUrl = (pixels: string[]) => {
+interface Config {
+  type?: string
+  scale?: number
+}
+
+export const getPixelsDataUrl = (pixels: string[], config?: Config) => {
+  const type = config?.type
+  const scale = config?.scale ?? 1
+
   const canvas = document.createElement('canvas')
-  canvas.width = CANVAS_RESOLUTION
-  canvas.height = CANVAS_RESOLUTION
+  canvas.width = CANVAS_RESOLUTION * scale
+  canvas.height = CANVAS_RESOLUTION * scale
   const ctx = canvas.getContext('2d')
   if (!ctx) throw new Error('Canvas context not available')
 
@@ -12,9 +20,9 @@ export const getPixelsDataUrl = (pixels: string[]) => {
     const x = i % CANVAS_RESOLUTION
     const y = Math.floor(i / CANVAS_RESOLUTION)
     ctx.fillStyle = pixelColor
-    ctx.fillRect(x, y, 1, 1)
+    ctx.fillRect(x * scale, y * scale, scale, scale)
   })
 
   ctx.imageSmoothingEnabled = false
-  return canvas.toDataURL()
+  return canvas.toDataURL(type)
 }

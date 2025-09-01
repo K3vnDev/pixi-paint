@@ -1,5 +1,5 @@
-import { BLANK_DRAFT, LS_DRAFT_CANVAS_KEY, LS_EDITING_CANVAS_ID_KEY, LS_SAVED_CANVASES_KEY } from '@consts'
-import type { StorageCanvas } from '@types'
+import { BLANK_DRAFT, LS_KEYS } from '@consts'
+import type { SavedCanvas, StorageCanvas } from '@types'
 import { useEffect } from 'react'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { usePaintStore } from '@/store/usePaintStore'
@@ -15,7 +15,7 @@ export const useSaveCanvases = () => {
   const setSavedCanvases = useCanvasStore(s => s.setSavedCanvases)
 
   const draft = useCanvasStore(s => s.draftCanvas)
-  const setDraft = useCanvasStore(s => s.setDraftCanvas)
+  const setDraftPixels = useCanvasStore(s => s.setDraftCanvasPixels)
 
   const hydrated = useCanvasStore(s => s.hydrated)
   const setHydrated = useCanvasStore(s => s.setHydrated)
@@ -26,22 +26,28 @@ export const useSaveCanvases = () => {
     if (hydrated) return
 
     // Editing canvas id
-    const storedEditingCanvasId = getLocalStorageItem<string | null>(LS_EDITING_CANVAS_ID_KEY, null)
-    setEditingCanvasId(storedEditingCanvasId)
+    const storedEditingCanvasId = getLocalStorageItem<string | null>(LS_KEYS.EDITING_CANVAS_ID, null)
+    if (typeof storedEditingCanvasId === 'string') setEditingCanvasId(storedEditingCanvasId)
 
-    // Saved canvases
-    const storedSavedCanvases = getLocalStorageItem<StorageCanvas[]>(LS_SAVED_CANVASES_KEY, []).map(c =>
-      canvasParser.fromStorage(c)
-    )
-    setSavedCanvases(storedSavedCanvases)
+    // Load and validate saved canvases
+    try {
+      const rawStorageCanvases: StorageCanvas[] = getLocalStorageItem<StorageCanvas[]>(
+        LS_KEYS.SAVED_CANVASES,
+        []
+      )
+      const validatedStorageCanvases: SavedCanvas[] = rawStorageCanvases
+        .map(c => canvasParser.fromStorage(c))
+        .filter(c => !!c)
 
-    // Draft canvas
-    const rawStoredDraftCanvas = getLocalStorageItem<StorageCanvas>(
-      LS_DRAFT_CANVAS_KEY,
-      canvasParser.toStorage(BLANK_DRAFT)
-    )
-    const storedDraftCanvas = canvasParser.fromStorage(rawStoredDraftCanvas)
-    setDraft(storedDraftCanvas)
+      setSavedCanvases(validatedStorageCanvases)
+    } catch (err) {
+      console.error('There was an error parsing saved canvases!', err)
+    }
+
+    // Load and validate draft canvas
+    const rawStoredDraftCanvas = getLocalStorageItem<StorageCanvas | null>(LS_KEYS.DRAFT_CANVAS, null)
+    const validatedDraftCanvas = rawStoredDraftCanvas ? canvasParser.fromStorage(rawStoredDraftCanvas) : null
+    validatedDraftCanvas && setDraftPixels(validatedDraftCanvas.pixels)
 
     setHydrated(true)
   }, [])
@@ -49,21 +55,24 @@ export const useSaveCanvases = () => {
   // Store editing canvas id
   useSaveItem({
     watchItem: editingCanvasId,
-    key: LS_EDITING_CANVAS_ID_KEY
+    key: LS_KEYS.EDITING_CANVAS_ID,
+    delay: 0
   })
 
   // Store draft canvas
   useSaveItem({
     watchItem: draft,
-    key: LS_DRAFT_CANVAS_KEY,
-    getter: d => canvasParser.toStorage(d)
+    key: LS_KEYS.DRAFT_CANVAS,
+    getter: ({ pixels }) => {
+      return pixels.length ? canvasParser.toStorage({ ...BLANK_DRAFT, pixels }) : undefined
+    }
   })
 
   // Store saved canvases
   useSaveItem({
     watchItem: savedCanvases,
-    key: LS_SAVED_CANVASES_KEY,
-    getter: s => s.map(c => canvasParser.toStorage(c))
+    key: LS_KEYS.SAVED_CANVASES,
+    getter: s => s.map(c => (c.pixels.length ? canvasParser.toStorage(c) : null)).filter(c => !!c)
   })
 
   // Handle draft or saved canvas update
@@ -72,7 +81,7 @@ export const useSaveCanvases = () => {
 
     // Update draft
     if (isDraft && hydrated) {
-      setDraft({ ...draft, pixels: editingPixels })
+      setDraftPixels(editingPixels)
       return
     }
 
