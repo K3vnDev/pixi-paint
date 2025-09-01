@@ -10,7 +10,6 @@ import { useSaveItem } from './useSaveItem'
 export const useSaveCanvases = () => {
   const editingCanvasId = useCanvasStore(s => s.editingCanvasId)
   const setEditingCanvasId = useCanvasStore(s => s.setEditingCanvasId)
-  const generateCanvasId = useCanvasStore(s => s.getNewCanvasId)
 
   const savedCanvases = useCanvasStore(s => s.savedCanvases)
   const setSavedCanvases = useCanvasStore(s => s.setSavedCanvases)
@@ -28,31 +27,27 @@ export const useSaveCanvases = () => {
 
     // Editing canvas id
     const storedEditingCanvasId = getLocalStorageItem<string | null>(LS_KEYS.EDITING_CANVAS_ID, null)
-    setEditingCanvasId(storedEditingCanvasId)
+    if (typeof storedEditingCanvasId === 'string') setEditingCanvasId(storedEditingCanvasId)
 
-    // Saved canvases
-    const storedSavedCanvases: SavedCanvas[] = getLocalStorageItem<StorageCanvas[]>(
-      LS_KEYS.SAVED_CANVASES,
-      []
-    )
-      .map(c => {
-        const parsed = canvasParser.fromStorage(c)
-        if (parsed === null) return null
+    // Load and validate saved canvases
+    try {
+      const rawStorageCanvases: StorageCanvas[] = getLocalStorageItem<StorageCanvas[]>(
+        LS_KEYS.SAVED_CANVASES,
+        []
+      )
+      const validatedStorageCanvases: SavedCanvas[] = rawStorageCanvases
+        .map(c => canvasParser.fromStorage(c))
+        .filter(c => !!c)
 
-        const id = parsed.id ?? generateCanvasId()
-        return { ...parsed, id }
-      })
-      .filter(c => !!c)
+      setSavedCanvases(validatedStorageCanvases)
+    } catch (err) {
+      console.error('There was an error parsing saved canvases!', err)
+    }
 
-    setSavedCanvases(storedSavedCanvases)
-
-    // Draft canvas
-    const rawStoredDraftCanvas = getLocalStorageItem<StorageCanvas>(
-      LS_KEYS.DRAFT_CANVAS,
-      canvasParser.toStorage(BLANK_DRAFT)
-    )
-    const storedDraftCanvasPixels = canvasParser.fromStorage(rawStoredDraftCanvas)
-    storedDraftCanvasPixels && setDraftPixels(storedDraftCanvasPixels.pixels)
+    // Load and validate draft canvas
+    const rawStoredDraftCanvas = getLocalStorageItem<StorageCanvas | null>(LS_KEYS.DRAFT_CANVAS, null)
+    const validatedDraftCanvas = rawStoredDraftCanvas ? canvasParser.fromStorage(rawStoredDraftCanvas) : null
+    validatedDraftCanvas && setDraftPixels(validatedDraftCanvas.pixels)
 
     setHydrated(true)
   }, [])
@@ -60,21 +55,24 @@ export const useSaveCanvases = () => {
   // Store editing canvas id
   useSaveItem({
     watchItem: editingCanvasId,
-    key: LS_KEYS.EDITING_CANVAS_ID
+    key: LS_KEYS.EDITING_CANVAS_ID,
+    delay: 0
   })
 
   // Store draft canvas
   useSaveItem({
     watchItem: draft,
     key: LS_KEYS.DRAFT_CANVAS,
-    getter: d => canvasParser.toStorage(d)
+    getter: ({ pixels }) => {
+      return pixels.length ? canvasParser.toStorage({ ...BLANK_DRAFT, pixels }) : undefined
+    }
   })
 
   // Store saved canvases
   useSaveItem({
     watchItem: savedCanvases,
     key: LS_KEYS.SAVED_CANVASES,
-    getter: s => s.map(c => canvasParser.toStorage(c))
+    getter: s => s.map(c => (c.pixels.length ? canvasParser.toStorage(c) : null)).filter(c => !!c)
   })
 
   // Handle draft or saved canvas update

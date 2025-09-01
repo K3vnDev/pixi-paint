@@ -63,20 +63,31 @@ export const DMDragNDrop = ({
   }
 
   const handleFiles = async (fileList: FileList) => {
-    const readFile = (file: File): Promise<string> => {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.onload = () => resolve(reader.result as string)
-        reader.onerror = () => reject(reader.error)
-        reader.readAsText(file)
+    const readFile = (file: File): Promise<string | null> => {
+      return new Promise(res => {
+        try {
+          const reader = new FileReader()
+          reader.onload = () => res(reader.result as string)
+          reader.onerror = () => res(null)
+          reader.readAsText(file)
+        } catch {
+          res(null)
+        }
       })
     }
 
     const files = Array.from(fileList)
     if (!files.length) return
 
-    const contents = await Promise.all(files.map(file => readFile(file)))
-    onDropOrSelect(contents)
+    const allContents = await Promise.all(files.map(file => readFile(file)))
+    const validContents = allContents.filter((c): c is string => {
+      if (typeof c !== 'string') {
+        console.error('Failed to import a file!')
+        return false
+      }
+      return true
+    })
+    onDropOrSelect(validContents)
   }
 
   const [twBaseStyles, twIconStyles, text] = isDragginOver

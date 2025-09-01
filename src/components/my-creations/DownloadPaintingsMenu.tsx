@@ -53,7 +53,10 @@ export const DownloadPaintingsMenu = ({ canvasId }: Props) => {
       downloadUtility(dataUrl, 'my-cool-painting.png')
     } else {
       // Download json
-      const { id: _, ...parsed } = canvasParser.toStorage(canvas)
+      const storageCanvas = canvasParser.toStorage(canvas)
+      if (!storageCanvas) return
+
+      const { id: _, ...parsed } = storageCanvas
       const blob = new Blob([JSON.stringify(parsed, null, 2)], { type: 'application/json' })
       const url = URL.createObjectURL(blob)
       downloadUtility(url, 'my-cool-painting.json')

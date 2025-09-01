@@ -26,20 +26,32 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
     { deps: [menuIsOpen] }
   )
 
-  // TODO: Validate with zod
   const onDropOrSelect = (contents: string[]) => {
     const jsonCanvases: JSONCanvas[] = []
 
     // Parse and contents into an one level array
     for (const content of contents) {
-      const raw: JSONCanvas | JSONCanvas[] = JSON.parse(content)
-      Array.isArray(raw) ? jsonCanvases.push(...raw) : jsonCanvases.push(raw)
+      try {
+        const raw: JSONCanvas | JSONCanvas[] = JSON.parse(content)
+        Array.isArray(raw) ? jsonCanvases.push(...raw) : jsonCanvases.push(raw)
+      } catch (err) {
+        console.error('Tried to import an invalid file!', err)
+      }
     }
 
+    // Filter valid imported canvases
     const replaceableId = generateId()
     const importedCanvases: SavedCanvas[] = jsonCanvases
       .map(c => canvasParser.fromStorage({ ...c, id: replaceableId }))
       .filter(c => !!c)
+
+    // Log warning for invalid ones
+    const invalidCanvasesCount = jsonCanvases.length - importedCanvases.length
+    if (invalidCanvasesCount) {
+      console.warn(
+        `${invalidCanvasesCount} of the imported paintings were not valid so we are skipping them...`
+      )
+    }
 
     addToSavedCanvases(...importedCanvases)
     closeMenu()
@@ -70,8 +82,7 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
       label: 'Import',
       icon: 'upload',
       action: openImportMenu
-    },
-    { label: 'Selection mode', icon: 'check' }
+    }
   ]
 
   return (

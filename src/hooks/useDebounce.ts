@@ -4,15 +4,15 @@ import { useTimeout } from './useTimeout'
 
 export const useDebounce = <T>(value: T, wait: number, refresh = false) => {
   const { startTimeout, stopTimeout } = useTimeout()
-  const firstTrigger = useRef(true)
+  const isFirstTrigger = useRef(true)
   const [debouncedValue, setDebouncedValue] = useState(value)
 
   const isOnTimeout = useRef(false)
   const latestValueRef = useFreshRefs(value)
 
   useEffect(() => {
-    if (firstTrigger.current) {
-      firstTrigger.current = false
+    if (isFirstTrigger.current || wait <= 0) {
+      isFirstTrigger.current = false
       return
     }
 
@@ -30,5 +30,5 @@ export const useDebounce = <T>(value: T, wait: number, refresh = false) => {
     }, wait)
   }, [value])
 
-  return debouncedValue
+  return wait <= 0 ? value : debouncedValue
 }

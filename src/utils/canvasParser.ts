@@ -1,27 +1,44 @@
 import { CANVAS_RESOLUTION } from '@consts'
 import type { SavedCanvas, StorageCanvas } from '@types'
+import { JSONCanvas as JSONCanvasSchema } from '@/schemas/JSONCanvas'
+import { generateId } from './generateId'
+import { validateColor } from './validateColor'
 
 export const canvasParser = {
-  fromStorage: ({ pixels, bg, id }: StorageCanvas): SavedCanvas | null => {
+  fromStorage: ({ id: rawId, ...jsonCanvas }: StorageCanvas): SavedCanvas | null => {
     try {
+      const { bg, pixels } = JSONCanvasSchema.parse(jsonCanvas)
       const pixelsArr = Array(CANVAS_RESOLUTION ** 2)
 
+      // Fill with specific colors
       for (const [pixelColor, indexes] of Object.entries(pixels)) {
         for (const index of indexes) {
-          pixelsArr[index] = pixelColor.toLowerCase()
+          const { isValid, value } = validateColor(pixelColor)
+          if (isValid) pixelsArr[index] = value
         }
       }
+      // Fill with background
       for (let i = 0; i < pixelsArr.length; i++) {
         if (!pixelsArr[i]) pixelsArr[i] = bg.toLowerCase()
       }
+      // Handle id
+      const id = typeof rawId === 'string' ? rawId : generateId()
+
       return { id, pixels: pixelsArr }
-    } catch (err) {
-      console.error('Error when attempting to parse canvas from local storage!', err)
+    } catch {
+      console.error(
+        `canvasParser.fromStorage: Error when attempting to parse canvas (id: ${rawId}) from local storage.`
+      )
       return null
     }
   },
 
-  toStorage: ({ id, pixels }: SavedCanvas): StorageCanvas => {
+  toStorage: ({ id, pixels }: SavedCanvas): StorageCanvas | null => {
+    if (!pixels.length) {
+      console.error(`canvasParser.toStorage: An empty canvas was given (id: ${id}).`)
+      return null
+    }
+
     const pixelsObj: any = {}
 
     pixels.forEach((pixelColor, i) => {
