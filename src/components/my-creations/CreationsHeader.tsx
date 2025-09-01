@@ -9,7 +9,7 @@ import { useEvent } from '@/hooks/useEvent'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { canvasParser } from '@/utils/canvasParser'
 import { generateId } from '@/utils/generateId'
-import { ColoredPixelatedImage } from '../ColoredPixelatedImage'
+import { CreationsHeaderButton } from './CreationsHeaderButton'
 
 export const CreationsHeader = ({ className = '', ...props }: ReusableComponent) => {
   const { openMenu, closeMenu, menuIsOpen } = useDialogMenu()
@@ -65,7 +65,7 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
       </>
     )
 
-  const buttons: ButtonType[] = [
+  const buttons: CreationsButtonType[] = [
     {
       label: 'Import',
       icon: 'upload',
@@ -79,40 +79,18 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
       className={twMerge(`
         fixed w-full left-0 top-[var(--navbar-height)] backdrop-blur-md ${Z_INDEX.NAVBAR}
         bg-gradient-to-b from-25% from-theme-bg to-theme-bg/60
-        flex gap-6 p-5 ${className}
+        flex gap-5 py-6 px-[var(--galery-pad-x)] border-theme-20/50 ${className}
       `)}
       {...props}
     >
       {buttons.map((button, i) => (
-        <Button {...button} key={i} index={i} />
+        <CreationsHeaderButton {...button} key={i} index={i} />
       ))}
     </header>
   )
 }
 
-type ButtonProps = {
-  index: number
-} & ButtonType
-
-export const Button = ({ label, action, icon, index }: ButtonProps) => {
-  const animationDelay = `${200 * index}ms`
-
-  return (
-    <button
-      className={`
-        flex gap-2 items-center border-2 border-theme-10/70 bg-theme-20/25
-        px-7 py-2 rounded-lg animate-appear button
-      `}
-      onClick={action}
-      style={{ animationDelay }}
-    >
-      <ColoredPixelatedImage icon={icon} className='size-8' />
-      <span className='text-2xl text-theme-10 font-semibold'>{label}</span>
-    </button>
-  )
-}
-
-interface ButtonType {
+export interface CreationsButtonType {
   label: string
   icon: IconName
   action?: () => void
