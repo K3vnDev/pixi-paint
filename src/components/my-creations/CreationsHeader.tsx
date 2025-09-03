@@ -3,7 +3,9 @@ import { DMDragNDrop } from '@@/dialog-menu/DMDragNDrop'
 import { DMHeader } from '@@/dialog-menu/DMHeader'
 import { Z_INDEX } from '@consts'
 import type { IconName, JSONCanvas, ReusableComponent, SavedCanvas } from '@types'
+import { useContext } from 'react'
 import { twMerge } from 'tailwind-merge'
+import { CreationsContext } from '@/context/CreationsContext'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useEvent } from '@/hooks/useEvent'
 import { useCanvasStore } from '@/store/useCanvasStore'
@@ -13,7 +15,8 @@ import { CreationsHeaderButton } from './CreationsHeaderButton'
 
 export const CreationsHeader = ({ className = '', ...props }: ReusableComponent) => {
   const { openMenu, closeMenu, menuIsOpen } = useDialogMenu()
-  const addToSavedCanvases = useCanvasStore(s => s.addToSavedCanvases)
+  const { setIsOnSelectionMode } = useContext(CreationsContext)
+  const pushToSavedCanvases = useCanvasStore(s => s.pushToSavedCanvases)
 
   useEvent(
     'dragenter',
@@ -53,7 +56,7 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
       )
     }
 
-    addToSavedCanvases(...importedCanvases)
+    pushToSavedCanvases(...importedCanvases)
     closeMenu()
   }
 
@@ -82,6 +85,11 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
       label: 'Import',
       icon: 'upload',
       action: openImportMenu
+    },
+    {
+      label: 'Selection mode',
+      icon: 'check',
+      action: () => setIsOnSelectionMode(true)
     }
   ]
 

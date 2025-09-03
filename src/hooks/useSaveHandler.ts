@@ -9,8 +9,7 @@ import { useFreshRefs } from './useFreshRefs'
 export const useSaveHandler = () => {
   const setDraftPixels = useCanvasStore(s => s.setDraftCanvasPixels)
   const draft = useCanvasStore(s => s.draftCanvas)
-  const savedCanvases = useCanvasStore(s => s.savedCanvases)
-  const setSavedCanvases = useCanvasStore(s => s.setSavedCanvases)
+  const unshiftToSavedCanvases = useCanvasStore(s => s.unshiftToSavedCanvases)
   const editingCanvasId = useCanvasStore(s => s.editingCanvasId)
   const setEditingCanvasId = useCanvasStore(s => s.setEditingCanvasId)
   const getNewCanvasId = useCanvasStore(s => s.getNewCanvasId)
@@ -45,7 +44,7 @@ export const useSaveHandler = () => {
     const newCanvasId = getNewCanvasId()
     const savingCanvas = { id: newCanvasId, pixels: refs.current.editingPixels }
 
-    setSavedCanvases([...savedCanvases, savingCanvas])
+    unshiftToSavedCanvases(savingCanvas)
     setEditingCanvasId(newCanvasId)
     setDraftPixels(BLANK_DRAFT.pixels)
   }
@@ -53,7 +52,7 @@ export const useSaveHandler = () => {
   const saveDraft = () => {
     const newCanvasId = getNewCanvasId()
     const savingCanvas = { id: newCanvasId, pixels: refs.current.draft.pixels }
-    setSavedCanvases([...savedCanvases, savingCanvas])
+    unshiftToSavedCanvases(savingCanvas)
   }
 
   return {

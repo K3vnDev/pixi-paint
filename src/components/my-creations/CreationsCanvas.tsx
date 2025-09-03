@@ -1,7 +1,8 @@
 import { BLANK_DRAFT } from '@consts'
 import type { GalleryCanvas } from '@types'
 import { useRouter } from 'next/navigation'
-import { useRef } from 'react'
+import { useContext, useMemo, useRef } from 'react'
+import { CreationsContext } from '@/context/CreationsContext'
 import { useContextMenu } from '@/hooks/useContextMenu'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useFreshRefs } from '@/hooks/useFreshRefs'
@@ -20,14 +21,15 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   const canvasRef = useRef<HTMLLIElement>(null)
   const editingCavasId = useCanvasStore(s => s.editingCanvasId)
 
-  const isDraft = id === 'draft'
-  const isCurrentlyEditing = (isDraft && editingCavasId === null) || editingCavasId === id
+  const isDraft = useMemo(() => id === 'draft', [])
+  const isCurrentlyEditing = useMemo(() => (isDraft && editingCavasId === null) || editingCavasId === id, [])
 
   const savedCanvases = useCanvasStore(s => s.savedCanvases)
   const setSavedCanvases = useCanvasStore(s => s.setSavedCanvases)
   const getNewCanvasId = useCanvasStore(s => s.getNewCanvasId)
   const savedCanvasesRef = useFreshRefs(savedCanvases)
 
+  const { isOnSelectionMode } = useContext(CreationsContext)
   const { openMenu } = useDialogMenu()
 
   const openCanvas = () => {
@@ -116,29 +118,61 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   })
 
   const mainVisibility = !isVisible ? 'brightness-150 blur-[4px] scale-75 opacity-0' : ''
-  const editingIndicatorVisibility = isCurrentlyEditing ? '' : 'opacity-0'
+  const itemStyle = 'bg-theme-bg/80 backdrop-blur-xs rounded-md shadow-card'
 
   return (
     <li
       className={`
-        button relative w-full aspect-square transition-all duration-300 ${mainVisibility}
+        button relative w-full aspect-square transition-all duration-300 
+        ${mainVisibility}
       `}
       key={id}
       onClick={openCanvas}
       ref={canvasRef}
     >
-      <div
-        className={`
-          absolute w-full left-0 bottom-0 p-3.5 text-theme-10 flex 
-          *:bg-theme-bg/80 *:backdrop-blur-xs *:rounded-md
-        `}
-      >
-        {isDraft && <span className='h-10 px-3 flex items-center text-2xl font-bold'>DRAFT</span>}
-        <span className={`ml-auto ${editingIndicatorVisibility} transition delay-1000`}>
+      <CanvasImage className='size-full rounded-xl border-4 border-theme-10' dataUrl={dataUrl} />
+
+      {/* Draft indicator */}
+      {isDraft && (
+        <span
+          className={`
+            absolute h-10 px-3 flex items-center text-2xl font-bold 
+            left-[var(--creations-canvas-pad)] bottom-[var(--creations-canvas-pad)] 
+            animate-appear text-theme-10 ${itemStyle}
+          `}
+        >
+          DRAFT
+        </span>
+      )}
+
+      {/* Editing indicator */}
+      {isCurrentlyEditing && (
+        <span
+          className={`
+            absolute ml-auto animate-appear opacity-100 
+            right-[var(--creations-canvas-pad)] bottom-[var(--creations-canvas-pad)] ${itemStyle}
+          `}
+        >
           <ColoredPixelatedImage icon='pencil' className='bg-theme-10 size-10 ' />
         </span>
-      </div>
-      <CanvasImage className='size-full rounded-xl border-4 border-theme-10' dataUrl={dataUrl} />
+      )}
+
+      {/*Selection box*/}
+      {isOnSelectionMode && <SelectionBox />}
     </li>
   )
 }
+
+// interface SelectionBoxProps {}
+
+const SelectionBox = () => (
+  <div
+    className={`
+      absolute right-[var(--creations-canvas-pad)] top-[var(--creations-canvas-pad)]
+      size-12 border-2 border-theme-10/50 flex items-center justify-center
+      bg-theme-bg/80 backdrop-blur-xs rounded-md shadow-card animate-appear
+    `}
+  >
+    <ColoredPixelatedImage icon='check' className='size-full scale-110' />
+  </div>
+)
