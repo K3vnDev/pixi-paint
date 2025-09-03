@@ -142,7 +142,7 @@ export const useMenuBase = ({
   )
 
   useEvent('pointerleave', () => refs.current.closeOnLeaveDocument && closeMenu())
-  useEvent('scroll', () => refs.current.closeOnScroll && closeMenu)
+  useEvent('scroll', () => refs.current.closeOnScroll && closeMenu())
 
   useEvent(
     'resize',

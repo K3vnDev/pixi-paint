@@ -15,7 +15,7 @@ import { CreationsHeaderButton } from './CreationsHeaderButton'
 
 export const CreationsHeader = ({ className = '', ...props }: ReusableComponent) => {
   const { openMenu, closeMenu, menuIsOpen } = useDialogMenu()
-  const { setIsOnSelectionMode } = useContext(CreationsContext)
+  const { enableSelectionMode } = useContext(CreationsContext)
   const pushToSavedCanvases = useCanvasStore(s => s.pushToSavedCanvases)
 
   useEvent(
@@ -89,7 +89,7 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
     {
       label: 'Selection mode',
       icon: 'check',
-      action: () => setIsOnSelectionMode(true)
+      action: enableSelectionMode
     }
   ]
 

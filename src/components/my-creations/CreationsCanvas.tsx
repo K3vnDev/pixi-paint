@@ -6,6 +6,7 @@ import { CreationsContext } from '@/context/CreationsContext'
 import { useContextMenu } from '@/hooks/useContextMenu'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useFreshRefs } from '@/hooks/useFreshRefs'
+import { usePressed } from '@/hooks/usePressed'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { CanvasImage } from '../CanvasImage'
 import { ColoredPixelatedImage } from '../ColoredPixelatedImage'
@@ -14,6 +15,7 @@ import { DMHeader } from '../dialog-menu/DMHeader'
 import { DMParagraph } from '../dialog-menu/DMParagraph'
 import { DMZoneButtons } from '../dialog-menu/DMZoneButtons'
 import { DownloadPaintingsMenu } from './DownloadPaintingsMenu'
+import { SelectionBox } from './SelectionBox'
 
 export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   const router = useRouter()
@@ -29,8 +31,16 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   const getNewCanvasId = useCanvasStore(s => s.getNewCanvasId)
   const savedCanvasesRef = useFreshRefs(savedCanvases)
 
-  const { isOnSelectionMode } = useContext(CreationsContext)
+  const { isOnSelectionMode, isCanvasSelected, toggleCanvas } = useContext(CreationsContext)
+  const canvasIsSelected = isOnSelectionMode && isCanvasSelected(id)
+
   const { openMenu } = useDialogMenu()
+  const { isPressed } = usePressed({
+    ref: canvasRef,
+    onPressStart: () => {
+      isOnSelectionMode && toggleCanvas(id)
+    }
+  })
 
   const openCanvas = () => {
     const newEditingCanvasId = id === BLANK_DRAFT.id ? null : id
@@ -114,23 +124,30 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
       }
     ],
     ref: canvasRef,
-    showWhen: !isDraft
+    showWhen: !isDraft && !isOnSelectionMode
   })
 
-  const mainVisibility = !isVisible ? 'brightness-150 blur-[4px] scale-75 opacity-0' : ''
+  const handleClick = () => {
+    !isOnSelectionMode && openCanvas()
+  }
+
+  const visibilityStyle = !isVisible ? 'brightness-150 blur-[4px] scale-75 opacity-0' : ''
+  const pressedStyle = isPressed ? 'brightness-90 scale-97' : 'hover:brightness-115'
+  const selectedStyle =
+    canvasIsSelected || !isOnSelectionMode ? 'border-theme-10' : 'border-theme-10/10 brightness-75'
   const itemStyle = 'bg-theme-bg/80 backdrop-blur-xs rounded-md shadow-card'
 
   return (
     <li
       className={`
-        button relative w-full aspect-square transition-all duration-300 
-        ${mainVisibility}
+        relative w-full aspect-square transition-all duration-200
+        ${pressedStyle} ${visibilityStyle}
       `}
       key={id}
-      onClick={openCanvas}
+      onClick={handleClick}
       ref={canvasRef}
     >
-      <CanvasImage className='size-full rounded-xl border-4 border-theme-10' dataUrl={dataUrl} />
+      <CanvasImage className={`size-full rounded-xl border-4 ${selectedStyle}`} dataUrl={dataUrl} />
 
       {/* Draft indicator */}
       {isDraft && (
@@ -153,26 +170,12 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
             right-[var(--creations-canvas-pad)] bottom-[var(--creations-canvas-pad)] ${itemStyle}
           `}
         >
-          <ColoredPixelatedImage icon='pencil' className='bg-theme-10 size-10 ' />
+          <ColoredPixelatedImage icon='pencil' className='bg-theme-10 size-10' />
         </span>
       )}
 
       {/*Selection box*/}
-      {isOnSelectionMode && <SelectionBox />}
+      {isOnSelectionMode && <SelectionBox {...{ canvasIsSelected }} />}
     </li>
   )
 }
-
-// interface SelectionBoxProps {}
-
-const SelectionBox = () => (
-  <div
-    className={`
-      absolute right-[var(--creations-canvas-pad)] top-[var(--creations-canvas-pad)]
-      size-12 border-2 border-theme-10/50 flex items-center justify-center
-      bg-theme-bg/80 backdrop-blur-xs rounded-md shadow-card animate-appear
-    `}
-  >
-    <ColoredPixelatedImage icon='check' className='size-full scale-110' />
-  </div>
-)
