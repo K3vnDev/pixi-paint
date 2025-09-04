@@ -31,8 +31,15 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   const getNewCanvasId = useCanvasStore(s => s.getNewCanvasId)
   const savedCanvasesRef = useFreshRefs(savedCanvases)
 
-  const { isOnSelectionMode, isCanvasSelected, toggleCanvas } = useContext(CreationsContext)
+  const {
+    isOnSelectionMode: isOnGlobalSelectionMode,
+    isCanvasSelected,
+    toggleCanvas
+  } = useContext(CreationsContext)
+
+  const isOnSelectionMode = isOnGlobalSelectionMode && !isDraft
   const canvasIsSelected = isOnSelectionMode && isCanvasSelected(id)
+  const isDisabled = !isVisible || (isOnGlobalSelectionMode && isDraft)
 
   const { openMenu } = useDialogMenu()
   const { isPressed } = usePressed({
@@ -134,14 +141,15 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   const visibilityStyle = !isVisible ? 'brightness-150 blur-[4px] scale-75 opacity-0' : ''
   const pressedStyle = isPressed ? 'brightness-90 scale-97' : 'hover:brightness-115'
   const selectedStyle =
-    canvasIsSelected || !isOnSelectionMode ? 'border-theme-10' : 'border-theme-10/10 brightness-75'
+    canvasIsSelected || !isOnSelectionMode ? 'border-theme-10' : 'border-theme-10/10 brightness-70'
   const itemStyle = 'bg-theme-bg/80 backdrop-blur-xs rounded-md shadow-card'
+  const disableStyle = isDisabled ? 'pointer-events-none opacity-7.5' : ''
 
   return (
     <li
       className={`
         relative w-full aspect-square transition-all duration-200
-        ${pressedStyle} ${visibilityStyle}
+        ${pressedStyle} ${visibilityStyle} ${disableStyle}
       `}
       key={id}
       onClick={handleClick}

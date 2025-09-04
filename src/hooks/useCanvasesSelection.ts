@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { useCanvasStore } from '@/store/useCanvasStore'
 
 export const useCanvasesSelection = () => {
   const [isOnSelectionMode, setIsOnSelectionMode] = useState(false)
   const [selectedCanvases, setSelectedCanvases] = useState<Set<string>>(new Set())
+  const savedCanvases = useCanvasStore(s => s.savedCanvases)
 
   const enableSelectionMode = () => setIsOnSelectionMode(true)
   const disableSelectionMode = () => setIsOnSelectionMode(false)
@@ -15,6 +17,11 @@ export const useCanvasesSelection = () => {
     })
   }
 
+  const selectAllCanvases = () => {
+    const allCanvasIds = savedCanvases.map(c => c.id)
+    setSelectedCanvases(new Set(allCanvasIds))
+  }
+
   const deselectCanvas = (id: string) => {
     setSelectedCanvases(prev => {
       const newSet = new Set(prev)
@@ -22,6 +29,8 @@ export const useCanvasesSelection = () => {
       return newSet
     })
   }
+
+  const deselectAllCanvases = () => setSelectedCanvases(new Set())
 
   const toggleCanvas = (id: string) => {
     setSelectedCanvases(prev => {
@@ -40,6 +49,8 @@ export const useCanvasesSelection = () => {
     selectCanvas,
     deselectCanvas,
     toggleCanvas,
-    isCanvasSelected
+    isCanvasSelected,
+    selectAllCanvases,
+    deselectAllCanvases
   }
 }

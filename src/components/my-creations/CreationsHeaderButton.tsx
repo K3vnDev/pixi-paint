@@ -6,7 +6,7 @@ type Props = {
 } & CreationsButtonType
 
 export const CreationsHeaderButton = ({ label, action, icon, index }: Props) => {
-  const animationDelay = `${200 * index}ms`
+  const animationDelay = `${100 * index}ms`
 
   return (
     <button

@@ -7,9 +7,15 @@ interface Params {
   ref: React.RefObject<HTMLElement | null>
   onPressStart?: () => void
   onPressEnd?: () => void
+  clickButtons?: Array<CLICK_BUTTON.LEFT | CLICK_BUTTON.RIGHT>
 }
 
-export const usePressed = ({ ref: target, onPressStart, onPressEnd }: Params) => {
+export const usePressed = ({
+  ref: target,
+  onPressStart,
+  onPressEnd,
+  clickButtons = [CLICK_BUTTON.LEFT, CLICK_BUTTON.RIGHT]
+}: Params) => {
   const [isPressed, setIsPressed] = useState(false)
   const firstRender = useRef(true)
 
@@ -24,8 +30,8 @@ export const usePressed = ({ ref: target, onPressStart, onPressEnd }: Params) =>
   }, [isPressed])
 
   const clicked = (e: PointerEvent) => {
-    const btn = (e.buttons - 1) * 2 // Normalize to 0 (left), 1 (middle), 2 (right)
-    return clickIncludes(btn, CLICK_BUTTON.LEFT, CLICK_BUTTON.RIGHT)
+    const btn = (e.buttons - 1) * 2 // Normalize to 0 (left), 2 (right)
+    return clickIncludes(btn, ...clickButtons)
   }
 
   // Event handlers to manage the pressed state

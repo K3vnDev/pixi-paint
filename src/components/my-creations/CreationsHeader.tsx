@@ -15,8 +15,15 @@ import { CreationsHeaderButton } from './CreationsHeaderButton'
 
 export const CreationsHeader = ({ className = '', ...props }: ReusableComponent) => {
   const { openMenu, closeMenu, menuIsOpen } = useDialogMenu()
-  const { enableSelectionMode } = useContext(CreationsContext)
   const pushToSavedCanvases = useCanvasStore(s => s.pushToSavedCanvases)
+
+  const {
+    isOnSelectionMode,
+    enableSelectionMode,
+    selectAllCanvases,
+    deselectAllCanvases,
+    disableSelectionMode
+  } = useContext(CreationsContext)
 
   useEvent(
     'dragenter',
@@ -80,18 +87,42 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
       </>
     )
 
-  const buttons: CreationsButtonType[] = [
-    {
-      label: 'Import',
-      icon: 'upload',
-      action: openImportMenu
-    },
-    {
-      label: 'Selection mode',
-      icon: 'check',
-      action: enableSelectionMode
-    }
-  ]
+  const buttons: CreationsButtonType[] = isOnSelectionMode
+    ? [
+        {
+          label: 'Exit selection',
+          icon: 'cross',
+          action: () => {
+            deselectAllCanvases()
+            disableSelectionMode()
+          }
+        },
+        {
+          label: 'Select all',
+          icon: 'check',
+          action: selectAllCanvases
+        },
+        {
+          label: 'Download selected',
+          icon: 'download'
+        },
+        {
+          label: 'Delete selected',
+          icon: 'trash'
+        }
+      ]
+    : [
+        {
+          label: 'Selection mode',
+          icon: 'check',
+          action: enableSelectionMode
+        },
+        {
+          label: 'Import',
+          icon: 'upload',
+          action: openImportMenu
+        }
+      ]
 
   return (
     <header

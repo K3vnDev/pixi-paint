@@ -8,6 +8,9 @@ type CreationsContext = {
   selectCanvas: (id: string) => void
   deselectCanvas: (id: string) => void
   toggleCanvas: (id: string) => void
+  selectAllCanvases: () => void
+  deselectAllCanvases: () => void
+
   isCanvasSelected: (id: string) => boolean
 }
 
@@ -19,5 +22,7 @@ export const CreationsContext = createContext<CreationsContext>({
   selectCanvas: () => {},
   deselectCanvas: () => {},
   toggleCanvas: () => {},
+  selectAllCanvases: () => {},
+  deselectAllCanvases: () => {},
   isCanvasSelected: () => false
 })
