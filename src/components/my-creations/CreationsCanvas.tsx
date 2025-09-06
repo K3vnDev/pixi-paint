@@ -2,9 +2,10 @@ import { BLANK_DRAFT } from '@consts'
 import type { GalleryCanvas } from '@types'
 import { useRouter } from 'next/navigation'
 import { useContext, useMemo, useRef } from 'react'
-import { CreationsContext } from '@/context/CreationsContext'
+import { CreationsContext, type DraggingSelection } from '@/context/CreationsContext'
 import { useContextMenu } from '@/hooks/useContextMenu'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
+import { useEvent } from '@/hooks/useEvent'
 import { useFreshRefs } from '@/hooks/useFreshRefs'
 import { usePressed } from '@/hooks/usePressed'
 import { useCanvasStore } from '@/store/useCanvasStore'
@@ -29,25 +30,53 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   const savedCanvases = useCanvasStore(s => s.savedCanvases)
   const setSavedCanvases = useCanvasStore(s => s.setSavedCanvases)
   const getNewCanvasId = useCanvasStore(s => s.getNewCanvasId)
-  const savedCanvasesRef = useFreshRefs(savedCanvases)
 
   const {
     isOnSelectionMode: isOnGlobalSelectionMode,
     isCanvasSelected,
-    toggleCanvas
+    selectCanvas,
+    deselectCanvas,
+    toggleCanvas,
+    draggingSelection,
+    setDraggingSelection
   } = useContext(CreationsContext)
 
   const isOnSelectionMode = isOnGlobalSelectionMode && !isDraft
   const canvasIsSelected = isOnSelectionMode && isCanvasSelected(id)
   const isDisabled = !isVisible || (isOnGlobalSelectionMode && isDraft)
 
+  const refs = useFreshRefs({ savedCanvases, draggingSelection, isOnSelectionMode, canvasIsSelected })
+
   const { openMenu } = useDialogMenu()
   const { isPressed } = usePressed({
     ref: canvasRef,
-    onPressStart: () => {
-      isOnSelectionMode && toggleCanvas(id)
+    onPressStartDown: () => {
+      const { isOnSelectionMode, canvasIsSelected } = refs.current
+      if (!isOnSelectionMode) return
+
+      const newDraggingSelection: DraggingSelection = canvasIsSelected ? 'deselecting' : 'selecting'
+      setDraggingSelection(newDraggingSelection)
+      toggleCanvas(id)
+    },
+    onPressStartEnter: () => {
+      const { isOnSelectionMode, draggingSelection } = refs.current
+
+      if (isOnSelectionMode && draggingSelection) {
+        if (draggingSelection === 'selecting') selectCanvas(id)
+        else deselectCanvas(id)
+      }
     }
   })
+
+  useEvent(
+    'pointerup',
+    () => {
+      if (refs.current.isOnSelectionMode) {
+        setDraggingSelection(null)
+      }
+    },
+    { capture: true }
+  )
 
   const openCanvas = () => {
     const newEditingCanvasId = id === BLANK_DRAFT.id ? null : id
@@ -56,8 +85,8 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   }
 
   const editCanvasesHelper = () => ({
-    newCanvases: structuredClone(savedCanvasesRef.current),
-    canvasIndex: savedCanvasesRef.current.findIndex(c => c.id === id)
+    newCanvases: structuredClone(refs.current.savedCanvases),
+    canvasIndex: refs.current.savedCanvases.findIndex(c => c.id === id)
   })
 
   const cloneCanvas = () => {
