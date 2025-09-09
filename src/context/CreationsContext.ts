@@ -11,6 +11,7 @@ type CreationsContext = {
   draggingSelection: DraggingSelection
   setDraggingSelection: React.Dispatch<React.SetStateAction<DraggingSelection>>
 
+  selectedCanvases: string[]
   selectCanvas: (id: string) => void
   deselectCanvas: (id: string) => void
   toggleCanvas: (id: string) => void
@@ -28,6 +29,7 @@ export const CreationsContext = createContext<CreationsContext>({
   draggingSelection: null,
   setDraggingSelection: () => {},
 
+  selectedCanvases: [],
   selectCanvas: () => {},
   deselectCanvas: () => {},
   toggleCanvas: () => {},

@@ -2,6 +2,7 @@ import { BLANK_DRAFT } from '@consts'
 import type { GalleryCanvas } from '@types'
 import { useRouter } from 'next/navigation'
 import { useContext, useMemo, useRef } from 'react'
+import { twMerge } from 'tailwind-merge'
 import { CreationsContext, type DraggingSelection } from '@/context/CreationsContext'
 import { useContextMenu } from '@/hooks/useContextMenu'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
@@ -120,7 +121,7 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   }
 
   const downloadPaintings = () => {
-    openMenu(<DownloadPaintingsMenu canvasId={id} />)
+    openMenu(<DownloadPaintingsMenu canvasIds={[id]} />)
   }
 
   const openFeatureNotImplemented = () =>
@@ -169,17 +170,18 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
 
   const visibilityStyle = !isVisible ? 'brightness-150 blur-[4px] scale-75 opacity-0' : ''
   const pressedStyle = isPressed ? 'brightness-90 scale-97' : 'hover:brightness-115'
+  const disabledStyle = isDisabled && isVisible ? 'pointer-events-none opacity-7.5' : ''
+
+  const itemStyle = 'bg-theme-bg/80 backdrop-blur-xs rounded-md shadow-card'
   const selectedStyle =
     canvasIsSelected || !isOnSelectionMode ? 'border-theme-10' : 'border-theme-10/10 brightness-70'
-  const itemStyle = 'bg-theme-bg/80 backdrop-blur-xs rounded-md shadow-card'
-  const disableStyle = isDisabled ? 'pointer-events-none opacity-7.5' : ''
 
   return (
     <li
-      className={`
+      className={twMerge(`
         relative w-full aspect-square transition-all duration-200
-        ${pressedStyle} ${visibilityStyle} ${disableStyle}
-      `}
+        ${pressedStyle} ${disabledStyle} ${visibilityStyle} 
+      `)}
       key={id}
       onClick={handleClick}
       ref={canvasRef}

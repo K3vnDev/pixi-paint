@@ -47,6 +47,7 @@ export const useCanvasesSelection = () => {
   console.log(draggingSelection)
 
   return {
+    selectedCanvases: Array.from(selectedCanvases),
     isOnSelectionMode,
     enableSelectionMode,
     disableSelectionMode,

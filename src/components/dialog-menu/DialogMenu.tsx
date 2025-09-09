@@ -15,7 +15,7 @@ export const DialogMenu = () => {
   const { isOpen, openMenu, closeMenu, style } = useMenuBase({
     elementRef,
     transformOrigins: ['center'],
-    horizontal: true,
+    horizontal: false,
     closeOn: { leaveDocument: false },
     elementSelector: `#${HTML_IDS.DIALOG_MENU}`,
     events: {

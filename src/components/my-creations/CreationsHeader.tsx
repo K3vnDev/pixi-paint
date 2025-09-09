@@ -12,9 +12,11 @@ import { useCanvasStore } from '@/store/useCanvasStore'
 import { canvasParser } from '@/utils/canvasParser'
 import { generateId } from '@/utils/generateId'
 import { CreationsHeaderButton } from './CreationsHeaderButton'
+import { DownloadPaintingsMenu } from './DownloadPaintingsMenu'
 
 export const CreationsHeader = ({ className = '', ...props }: ReusableComponent) => {
   const { openMenu, closeMenu, menuIsOpen } = useDialogMenu()
+  const { selectedCanvases } = useContext(CreationsContext)
   const pushToSavedCanvases = useCanvasStore(s => s.pushToSavedCanvases)
 
   const {
@@ -104,11 +106,14 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
         },
         {
           label: 'Download selected',
-          icon: 'download'
+          icon: 'download',
+          disabled: !selectedCanvases.length,
+          action: () => openMenu(<DownloadPaintingsMenu canvasIds={selectedCanvases} />)
         },
         {
           label: 'Delete selected',
-          icon: 'trash'
+          icon: 'trash',
+          disabled: !selectedCanvases.length
         }
       ]
     : [
@@ -144,4 +149,5 @@ export interface CreationsButtonType {
   label: string
   icon: IconName
   action?: () => void
+  disabled?: boolean
 }

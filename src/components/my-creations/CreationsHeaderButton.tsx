@@ -3,9 +3,10 @@ import type { CreationsButtonType } from './CreationsHeader'
 
 type Props = {
   index: number
+  disabled?: boolean
 } & CreationsButtonType
 
-export const CreationsHeaderButton = ({ label, action, icon, index }: Props) => {
+export const CreationsHeaderButton = ({ label, action, icon, index, disabled = false }: Props) => {
   const animationDelay = `${100 * index}ms`
 
   return (
@@ -16,6 +17,7 @@ export const CreationsHeaderButton = ({ label, action, icon, index }: Props) => 
       `}
       onClick={action}
       style={{ animationDelay }}
+      disabled={disabled}
     >
       <ColoredPixelatedImage icon={icon} className='size-8' />
       <span className='text-2xl text-theme-10 font-semibold'>{label}</span>
