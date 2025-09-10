@@ -14,8 +14,7 @@ import { CanvasImage } from '../CanvasImage'
 import { ColoredPixelatedImage } from '../ColoredPixelatedImage'
 import { DMButton } from '../dialog-menu/DMButton'
 import { DMHeader } from '../dialog-menu/DMHeader'
-import { DMParagraph } from '../dialog-menu/DMParagraph'
-import { DMZoneButtons } from '../dialog-menu/DMZoneButtons'
+import { DeletePaintingsMenu } from './DeletePaintingsMenu'
 import { DownloadPaintingsMenu } from './DownloadPaintingsMenu'
 import { SelectionBox } from './SelectionBox'
 
@@ -85,50 +84,28 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
     router.push('/paint')
   }
 
-  const editCanvasesHelper = () => ({
-    newCanvases: structuredClone(refs.current.savedCanvases),
-    canvasIndex: refs.current.savedCanvases.findIndex(c => c.id === id)
-  })
-
   const cloneCanvas = () => {
-    const { newCanvases, canvasIndex } = editCanvasesHelper()
+    const newCanvases = structuredClone(refs.current.savedCanvases)
+    const canvasIndex = newCanvases.findIndex(c => c.id === id)
+
     const newCanvas = { ...newCanvases[canvasIndex], id: getNewCanvasId() }
     newCanvases.splice(canvasIndex + 1, 0, newCanvas)
     setSavedCanvases(newCanvases)
   }
 
-  const deleteCanvas = () => {
-    const deleteAction = () => {
-      const { newCanvases, canvasIndex } = editCanvasesHelper()
-      newCanvases.splice(canvasIndex, 1)
-      setSavedCanvases(newCanvases)
-    }
-
-    openMenu(
-      <>
-        <DMHeader icon='warning'>Delete painting?</DMHeader>
-        <DMParagraph className='w-xl'>
-          Do you really want to delete your painting? You won't see it ever again (that's a long time).
-        </DMParagraph>
-        <DMZoneButtons>
-          <DMButton icon='trash' empty onClick={deleteAction}>
-            Yes, I don't care
-          </DMButton>
-          <DMButton>No, wait!</DMButton>
-        </DMZoneButtons>
-      </>
-    )
+  const openDeletePaintingsMenu = () => {
+    openMenu(<DeletePaintingsMenu canvasesIds={[id]} />)
   }
 
-  const downloadPaintings = () => {
-    openMenu(<DownloadPaintingsMenu canvasIds={[id]} />)
+  const openDownloadPaintingsMenu = () => {
+    openMenu(<DownloadPaintingsMenu canvasesIds={[id]} />)
   }
 
   const openFeatureNotImplemented = () =>
     openMenu(
       <>
-        <DMHeader icon='code'>Feature not implemented yet :(</DMHeader>
-        <DMButton>...Okay</DMButton>
+        <DMHeader icon='code'>Feature not implemented yet !!</DMHeader>
+        <DMButton>Okay :(</DMButton>
       </>
     )
 
@@ -152,12 +129,12 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
       {
         label: 'Download',
         icon: 'download',
-        action: downloadPaintings
+        action: openDownloadPaintingsMenu
       },
       {
         label: 'Delete',
         icon: 'trash',
-        action: deleteCanvas
+        action: openDeletePaintingsMenu
       }
     ],
     ref: canvasRef,

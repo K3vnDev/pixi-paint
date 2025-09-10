@@ -72,6 +72,22 @@ export const CURSORS: Cursor[] = [
 export const SPRITES_RESOLUTION = 16
 export const SPRITES_SIZE = 96
 
+export const ICON_NAMES = [
+  'check',
+  'clone',
+  'cross',
+  'download',
+  'pencil',
+  'trash',
+  'arrows-corner',
+  'warning',
+  'save',
+  'upload',
+  'heart',
+  'image',
+  'code'
+] as const
+
 export const EVENTS = {
   OPEN_CONTEXT_MENU: '$open-context-menu',
   CLOSE_CONTEXT_MENU: '$close-context-menu',

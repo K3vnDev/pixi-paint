@@ -10,7 +10,7 @@ interface Params {
   cooldown?: number
 }
 
-export const useCanvasesGallery = ({ canvases, loaded, cooldown = 16 }: Params) => {
+export const useCanvasesGallery = ({ canvases, loaded, cooldown = 10 }: Params) => {
   const [canvasesGallery, setCanvasesGallery] = useState<GalleryCanvas[]>([])
   const { startInterval, stopInterval } = useInterval()
   const { startTimeout, stopTimeout } = useTimeout([], () => {
@@ -19,8 +19,8 @@ export const useCanvasesGallery = ({ canvases, loaded, cooldown = 16 }: Params) 
   const isAnimatingCanvases = useRef(true)
 
   const ANIM_TIMES = {
-    SHOW: 25,
-    HIDE: 250
+    SHOW: 15,
+    HIDE: 100
   } as const
 
   useEffect(() => {

@@ -1,9 +1,9 @@
-import { DMButton } from '@@/dialog-menu/DMButton'
-import { DMHeader } from '@@/dialog-menu/DMHeader'
-import { DMParagraph } from '@@/dialog-menu/DMParagraph'
-import { DMRadio } from '@@/dialog-menu/DMRadio'
-import { DMSlider } from '@@/dialog-menu/DMSlider'
 import { LS_KEYS } from '@consts'
+import { DMButton } from '@dialog-menu/DMButton'
+import { DMHeader } from '@dialog-menu/DMHeader'
+import { DMParagraph } from '@dialog-menu/DMParagraph'
+import { DMRadio } from '@dialog-menu/DMRadio'
+import { DMSlider } from '@dialog-menu/DMSlider'
 import type { DownloadSettings, JSONCanvas } from '@types'
 import JSZip from 'jszip'
 import { useEffect, useState } from 'react'
@@ -13,10 +13,10 @@ import { getLocalStorageItem } from '@/utils/getLocalStorageItem'
 import { getPixelsDataUrl } from '@/utils/getPixelsDataUrl'
 
 interface Props {
-  canvasIds: string[]
+  canvasesIds: string[]
 }
 
-export const DownloadPaintingsMenu = ({ canvasIds }: Props) => {
+export const DownloadPaintingsMenu = ({ canvasesIds }: Props) => {
   const initState = getLocalStorageItem<DownloadSettings>(LS_KEYS.DOWNLOAD_SETTINGS, {
     formatIndex: 0,
     sizeIndex: 0
@@ -51,7 +51,7 @@ export const DownloadPaintingsMenu = ({ canvasIds }: Props) => {
       savedPixelsMap[id] = pixels
     })
     const canvasesPixels: string[][] = []
-    for (const canvasId of canvasIds) {
+    for (const canvasId of canvasesIds) {
       canvasesPixels.push(savedPixelsMap[canvasId])
     }
 
@@ -78,6 +78,8 @@ export const DownloadPaintingsMenu = ({ canvasIds }: Props) => {
         dataUrls.forEach((dataUrl, index) => {
           // Convert DataURL to binary blob
           const base64 = dataUrl.split(',')[1]
+          if (!base64) return
+
           const binary = atob(base64)
           const bytes = new Uint8Array(binary.length)
 
@@ -113,11 +115,11 @@ export const DownloadPaintingsMenu = ({ canvasIds }: Props) => {
     }
   }
 
-  const title = canvasIds.length <= 1 ? 'Download Painting' : 'Download Paintings'
+  const title = canvasesIds.length <= 1 ? 'Download Painting' : 'Download Paintings'
   const paragraph1 =
-    canvasIds.length <= 1 ? 'Export your painting.' : `Export the selected ${canvasIds.length} paintings.`
+    canvasesIds.length <= 1 ? 'Export your painting.' : `Export the selected ${canvasesIds.length} paintings.`
   const paragraph2 = ' JSON files can be imported back later.'
-  const buttonLabel = formatIsPNG && canvasIds.length > 1 ? 'Download ZIP' : 'Download'
+  const buttonLabel = formatIsPNG && canvasesIds.length > 1 ? 'Download ZIP' : 'Download'
 
   return (
     <>

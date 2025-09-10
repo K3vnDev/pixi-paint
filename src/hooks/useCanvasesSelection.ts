@@ -44,8 +44,6 @@ export const useCanvasesSelection = () => {
 
   const isCanvasSelected = (id: string) => selectedCanvases.has(id)
 
-  console.log(draggingSelection)
-
   return {
     selectedCanvases: Array.from(selectedCanvases),
     isOnSelectionMode,

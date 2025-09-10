@@ -1,9 +1,9 @@
-import { DMButton } from '@/components/dialog-menu/DMButton'
-import { DMCanvasImage } from '@/components/dialog-menu/DMCanvasImage'
-import { DMHeader } from '@/components/dialog-menu/DMHeader'
-import { DMParagraph } from '@/components/dialog-menu/DMParagraph'
-import { DMZone } from '@/components/dialog-menu/DMZone'
-import { DMZoneButtons } from '@/components/dialog-menu/DMZoneButtons'
+import { DMButton } from '@dialog-menu/DMButton'
+import { DMCanvasImage } from '@dialog-menu/DMCanvasImage'
+import { DMHeader } from '@dialog-menu/DMHeader'
+import { DMParagraph } from '@dialog-menu/DMParagraph'
+import { DMZone } from '@dialog-menu/DMZone'
+import { DMZoneButtons } from '@dialog-menu/DMZoneButtons'
 
 interface Option {
   label: string
@@ -18,7 +18,7 @@ interface Props {
   paragraph: string
 }
 
-export const DeleteMenuBuilder = ({ header, paragraph, pixels, goodOption, badOption }: Props) => (
+export const WarningMenu = ({ header, paragraph, pixels, goodOption, badOption }: Props) => (
   <>
     <DMHeader icon='warning'>{header}</DMHeader>
     <DMZone className='pt-2 pb-0 items-start gap-8'>

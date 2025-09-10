@@ -1,7 +1,7 @@
-import { DMButton } from '@@/dialog-menu/DMButton'
-import { DMDragNDrop } from '@@/dialog-menu/DMDragNDrop'
-import { DMHeader } from '@@/dialog-menu/DMHeader'
 import { Z_INDEX } from '@consts'
+import { DMButton } from '@dialog-menu/DMButton'
+import { DMDragNDrop } from '@dialog-menu/DMDragNDrop'
+import { DMHeader } from '@dialog-menu/DMHeader'
 import type { IconName, JSONCanvas, ReusableComponent, SavedCanvas } from '@types'
 import { useContext } from 'react'
 import { twMerge } from 'tailwind-merge'
@@ -12,14 +12,15 @@ import { useCanvasStore } from '@/store/useCanvasStore'
 import { canvasParser } from '@/utils/canvasParser'
 import { generateId } from '@/utils/generateId'
 import { CreationsHeaderButton } from './CreationsHeaderButton'
+import { DeletePaintingsMenu } from './DeletePaintingsMenu'
 import { DownloadPaintingsMenu } from './DownloadPaintingsMenu'
 
 export const CreationsHeader = ({ className = '', ...props }: ReusableComponent) => {
   const { openMenu, closeMenu, menuIsOpen } = useDialogMenu()
-  const { selectedCanvases } = useContext(CreationsContext)
   const pushToSavedCanvases = useCanvasStore(s => s.pushToSavedCanvases)
 
   const {
+    selectedCanvases,
     isOnSelectionMode,
     enableSelectionMode,
     selectAllCanvases,
@@ -65,8 +66,25 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
       )
     }
 
+    scrollToBottom()
     pushToSavedCanvases(...importedCanvases)
     closeMenu()
+  }
+
+  const scrollToBottom = () => {
+    let scrolled = false
+    window.onscroll = () => {
+      scrolled = true
+      window.onscroll = null
+    }
+
+    setTimeout(() => {
+      if (!scrolled)
+        window.scrollTo({
+          top: document.body.clientHeight,
+          behavior: 'smooth'
+        })
+    }, 666)
   }
 
   const openImportMenu = () =>
@@ -108,12 +126,14 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
           label: 'Download selected',
           icon: 'download',
           disabled: !selectedCanvases.length,
-          action: () => openMenu(<DownloadPaintingsMenu canvasIds={selectedCanvases} />)
+          action: () => openMenu(<DownloadPaintingsMenu canvasesIds={selectedCanvases} />)
         },
         {
           label: 'Delete selected',
           icon: 'trash',
-          disabled: !selectedCanvases.length
+          disabled: !selectedCanvases.length,
+          action: () =>
+            openMenu(<DeletePaintingsMenu canvasesIds={selectedCanvases} onDelete={disableSelectionMode} />)
         }
       ]
     : [

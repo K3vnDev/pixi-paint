@@ -1,11 +1,14 @@
 import { CustomCursor } from '@@/CustomCursor'
 import { ContextMenu } from '@@/context-menu/ContextMenu'
+import { Navbar } from '@@/navbar/Navbar'
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
-import { Navbar } from '@/components/navbar/Navbar'
 import './globals.css'
 import { Tooltip } from '@@/Tooltip'
-import { DialogMenu } from '@/components/dialog-menu/DialogMenu'
+import { DialogMenu } from '@dialog-menu/DialogMenu'
+import Head from 'next/head'
+import { ICON_NAMES } from '@/consts'
+import { getIconPath } from '@/utils/getIconPath'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -22,6 +25,8 @@ export const metadata: Metadata = {
   description: 'A cool 16x pixel art paint tool.'
 }
 
+const toPreloadImages = [...ICON_NAMES.map(getIconPath), '/imgs/tools/save.png']
+
 export default function RootLayout({
   children
 }: Readonly<{
@@ -29,6 +34,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
+      <Head>
+        {toPreloadImages.map(src => (
+          <link key={src} rel='preload' as='image' href={src} />
+        ))}
+      </Head>
       <body
         className={`
           ${geistSans.variable} ${geistMono.variable} antialiased
