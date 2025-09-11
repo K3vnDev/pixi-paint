@@ -5,8 +5,10 @@ import { useEvent } from './useEvent'
 
 interface Params {
   ref: React.RefObject<HTMLElement | null>
+  onPressStart?: () => void
   onPressStartDown?: () => void
   onPressStartEnter?: () => void
+  onPressEnd?: () => void
   onPressEndUp?: () => void
   onPressEndLeave?: () => void
   clickButtons?: Array<CLICK_BUTTON.LEFT | CLICK_BUTTON.RIGHT>
@@ -14,8 +16,10 @@ interface Params {
 
 export const usePressed = ({
   ref: target,
+  onPressStart,
   onPressStartDown,
   onPressStartEnter,
+  onPressEnd,
   onPressEndUp,
   onPressEndLeave,
   clickButtons = [CLICK_BUTTON.LEFT, CLICK_BUTTON.RIGHT]
@@ -35,6 +39,7 @@ export const usePressed = ({
       if (clicked(e)) {
         setIsPressed(true)
         onPressStartEnter?.()
+        onPressStart?.()
       }
     },
     { target }
@@ -46,6 +51,7 @@ export const usePressed = ({
       if (clicked(e)) {
         setIsPressed(true)
         onPressStartDown?.()
+        onPressStart?.()
       }
     },
     { target }
@@ -56,6 +62,7 @@ export const usePressed = ({
       e.stopPropagation()
       setIsPressed(false)
       onPressEndUp?.()
+      onPressEnd?.()
     },
     { target }
   )
@@ -65,6 +72,7 @@ export const usePressed = ({
       e.stopPropagation()
       setIsPressed(false)
       onPressEndLeave?.()
+      onPressEnd?.()
     },
     { target }
   )

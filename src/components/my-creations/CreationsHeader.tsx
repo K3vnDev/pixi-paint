@@ -92,9 +92,8 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
       </>
     )
 
-  const buttons: CreationsButtonType[] = (() => {
-    if (isOnSelectionMode) {
-      return [
+  const buttons: CreationsButtonType[] = isOnSelectionMode
+    ? [
         {
           label: 'Exit selection',
           icon: 'cross',
@@ -125,26 +124,19 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
             openMenu(<DeletePaintingsMenu canvasesIds={selectedCanvases} onDelete={disableSelectionMode} />)
         }
       ]
-    }
-
-    const defaultButtons: CreationsButtonType[] = [
-      {
-        label: 'Import',
-        icon: 'upload',
-        action: openImportMenu
-      }
-    ]
-
-    if (savedCanvases.length > 1) {
-      defaultButtons.unshift({
-        label: 'Selection mode',
-        icon: 'check',
-        action: enableSelectionMode
-      })
-    }
-
-    return defaultButtons
-  })()
+    : [
+        {
+          label: 'Selection mode',
+          icon: 'selection-mode',
+          action: enableSelectionMode,
+          disabled: savedCanvases.length < 2
+        },
+        {
+          label: 'Import',
+          icon: 'upload',
+          action: openImportMenu
+        }
+      ]
 
   return (
     <header

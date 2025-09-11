@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { HTML_DATA_IDS } from '@/consts'
 import type { DraggingSelection } from '@/context/CreationsContext'
 import { useCanvasStore } from '@/store/useCanvasStore'
+import { useEvent } from './useEvent'
 
 export const useCanvasesSelection = () => {
   const [isOnSelectionMode, setIsOnSelectionMode] = useState(false)
@@ -43,6 +45,22 @@ export const useCanvasesSelection = () => {
   }
 
   const isCanvasSelected = (id: string) => selectedCanvases.has(id)
+
+  // Deselect all canvases when double clicking outside any canvas
+  useEvent(
+    'dblclick',
+    (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      if (!target || !isOnSelectionMode) return
+
+      const clickedOnCanvasTarget = !!target.closest(`.${HTML_DATA_IDS.CREATION_CANVAS_TARGET}`)
+      if (!clickedOnCanvasTarget) {
+        disableSelectionMode()
+        deselectAllCanvases()
+      }
+    },
+    { deps: [isOnSelectionMode] }
+  )
 
   return {
     selectedCanvases: Array.from(selectedCanvases),

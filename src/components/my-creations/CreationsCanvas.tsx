@@ -1,4 +1,4 @@
-import { BLANK_DRAFT, CANVASES_TRANSITION_MS as CANVASES_TRANSITION_DURATION } from '@consts'
+import { BLANK_DRAFT, CANVASES_TRANSITION_MS as CANVASES_TRANSITION_DURATION, HTML_DATA_IDS } from '@consts'
 import type { GalleryCanvas } from '@types'
 import { useRouter } from 'next/navigation'
 import { useContext, useMemo, useRef } from 'react'
@@ -50,21 +50,17 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   const { openMenu } = useDialogMenu()
   const { isPressed } = usePressed({
     ref: canvasRef,
-    onPressStartDown: () => {
-      const { isOnSelectionMode, canvasIsSelected } = refs.current
+    onPressStart: () => {
+      const { isOnSelectionMode, canvasIsSelected, draggingSelection } = refs.current
       if (!isOnSelectionMode) return
 
+      if (draggingSelection) {
+        draggingSelection === 'selecting' ? selectCanvas(id) : deselectCanvas(id)
+        return
+      }
       const newDraggingSelection: DraggingSelection = canvasIsSelected ? 'deselecting' : 'selecting'
       setDraggingSelection(newDraggingSelection)
       toggleCanvas(id)
-    },
-    onPressStartEnter: () => {
-      const { isOnSelectionMode, draggingSelection } = refs.current
-
-      if (isOnSelectionMode && draggingSelection) {
-        if (draggingSelection === 'selecting') selectCanvas(id)
-        else deselectCanvas(id)
-      }
     }
   })
 
@@ -156,7 +152,7 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   return (
     <li
       className={twMerge(`
-        relative w-full aspect-square transition-all
+        relative w-full aspect-square transition-all ${HTML_DATA_IDS.CREATION_CANVAS_TARGET}
         ${pressedStyle} ${disabledStyle} ${visibilityStyle} 
       `)}
       key={id}
