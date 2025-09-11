@@ -17,7 +17,9 @@ import { DownloadPaintingsMenu } from './DownloadPaintingsMenu'
 
 export const CreationsHeader = ({ className = '', ...props }: ReusableComponent) => {
   const { openMenu, closeMenu, menuIsOpen } = useDialogMenu()
+  const savedCanvases = useCanvasStore(s => s.savedCanvases)
   const pushToSavedCanvases = useCanvasStore(s => s.pushToSavedCanvases)
+  const hydrated = useCanvasStore(s => s.hydrated)
 
   const {
     selectedCanvases,
@@ -66,25 +68,8 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
       )
     }
 
-    scrollToBottom()
     pushToSavedCanvases(...importedCanvases)
     closeMenu()
-  }
-
-  const scrollToBottom = () => {
-    let scrolled = false
-    window.onscroll = () => {
-      scrolled = true
-      window.onscroll = null
-    }
-
-    setTimeout(() => {
-      if (!scrolled)
-        window.scrollTo({
-          top: document.body.clientHeight,
-          behavior: 'smooth'
-        })
-    }, 666)
   }
 
   const openImportMenu = () =>
@@ -107,8 +92,9 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
       </>
     )
 
-  const buttons: CreationsButtonType[] = isOnSelectionMode
-    ? [
+  const buttons: CreationsButtonType[] = (() => {
+    if (isOnSelectionMode) {
+      return [
         {
           label: 'Exit selection',
           icon: 'cross',
@@ -126,7 +112,10 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
           label: 'Download selected',
           icon: 'download',
           disabled: !selectedCanvases.length,
-          action: () => openMenu(<DownloadPaintingsMenu canvasesIds={selectedCanvases} />)
+          action: () =>
+            openMenu(
+              <DownloadPaintingsMenu canvasesIds={selectedCanvases} onDownload={disableSelectionMode} />
+            )
         },
         {
           label: 'Delete selected',
@@ -136,18 +125,26 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
             openMenu(<DeletePaintingsMenu canvasesIds={selectedCanvases} onDelete={disableSelectionMode} />)
         }
       ]
-    : [
-        {
-          label: 'Selection mode',
-          icon: 'check',
-          action: enableSelectionMode
-        },
-        {
-          label: 'Import',
-          icon: 'upload',
-          action: openImportMenu
-        }
-      ]
+    }
+
+    const defaultButtons: CreationsButtonType[] = [
+      {
+        label: 'Import',
+        icon: 'upload',
+        action: openImportMenu
+      }
+    ]
+
+    if (savedCanvases.length > 1) {
+      defaultButtons.unshift({
+        label: 'Selection mode',
+        icon: 'check',
+        action: enableSelectionMode
+      })
+    }
+
+    return defaultButtons
+  })()
 
   return (
     <header
@@ -158,9 +155,7 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
       `)}
       {...props}
     >
-      {buttons.map((button, i) => (
-        <CreationsHeaderButton {...button} key={i} index={i} />
-      ))}
+      {hydrated && buttons.map((button, i) => <CreationsHeaderButton {...button} key={i} index={i} />)}
     </header>
   )
 }

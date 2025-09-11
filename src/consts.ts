@@ -72,6 +72,8 @@ export const CURSORS: Cursor[] = [
 export const SPRITES_RESOLUTION = 16
 export const SPRITES_SIZE = 96
 
+export const CANVASES_TRANSITION_MS = 350
+
 export const ICON_NAMES = [
   'check',
   'clone',

@@ -44,7 +44,7 @@ export const PickerMenu = ({ parentRef }: Props) => {
 
   const refs = useFreshRefs({ isOpen, primaryColor })
   const COLOR_DELAY = 75
-  const debouncedPickerColor = useDebounce(pickerColor, COLOR_DELAY, true)
+  const debouncedPickerColor = useDebounce(pickerColor, COLOR_DELAY)
 
   // Pair state input value
   useEffect(() => {

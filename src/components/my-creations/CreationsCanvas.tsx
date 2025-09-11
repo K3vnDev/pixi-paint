@@ -1,4 +1,4 @@
-import { BLANK_DRAFT } from '@consts'
+import { BLANK_DRAFT, CANVASES_TRANSITION_MS as CANVASES_TRANSITION_DURATION } from '@consts'
 import type { GalleryCanvas } from '@types'
 import { useRouter } from 'next/navigation'
 import { useContext, useMemo, useRef } from 'react'
@@ -156,12 +156,13 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   return (
     <li
       className={twMerge(`
-        relative w-full aspect-square transition-all duration-200
+        relative w-full aspect-square transition-all
         ${pressedStyle} ${disabledStyle} ${visibilityStyle} 
       `)}
       key={id}
       onClick={handleClick}
       ref={canvasRef}
+      style={{ transitionDuration: `${CANVASES_TRANSITION_DURATION}ms` }}
     >
       <CanvasImage className={`size-full rounded-xl border-4 ${selectedStyle}`} dataUrl={dataUrl} />
 

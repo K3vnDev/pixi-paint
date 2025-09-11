@@ -14,9 +14,10 @@ import { getPixelsDataUrl } from '@/utils/getPixelsDataUrl'
 
 interface Props {
   canvasesIds: string[]
+  onDownload?: () => void
 }
 
-export const DownloadPaintingsMenu = ({ canvasesIds }: Props) => {
+export const DownloadPaintingsMenu = ({ canvasesIds, onDownload }: Props) => {
   const initState = getLocalStorageItem<DownloadSettings>(LS_KEYS.DOWNLOAD_SETTINGS, {
     formatIndex: 0,
     sizeIndex: 0
@@ -113,6 +114,8 @@ export const DownloadPaintingsMenu = ({ canvasesIds }: Props) => {
       const url = URL.createObjectURL(blob)
       downloadUtility(url, `${fileName}${s}.json`)
     }
+
+    onDownload?.()
   }
 
   const title = canvasesIds.length <= 1 ? 'Download Painting' : 'Download Paintings'

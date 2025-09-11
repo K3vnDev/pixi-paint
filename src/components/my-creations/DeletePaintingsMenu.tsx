@@ -15,7 +15,7 @@ export const DeletePaintingsMenu = ({ canvasesIds, onDelete }: Props) => {
 
   const handleClick = () => {
     const idSet = new Set(canvasesIds)
-    const newSavedCanvases = savedCanvases.filter(c => !idSet.has(c.id))
+    const newSavedCanvases = [...savedCanvases.filter(c => !idSet.has(c.id))]
     setSavedCanvases(newSavedCanvases)
     onDelete?.()
   }
