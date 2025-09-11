@@ -1,21 +1,25 @@
+import { HTML_DATA_IDS } from '@consts'
 import { ColoredPixelatedImage } from '../ColoredPixelatedImage'
 import type { CreationsButtonType } from './CreationsHeader'
 
 type Props = {
   index: number
+  disabled?: boolean
 } & CreationsButtonType
 
-export const CreationsHeaderButton = ({ label, action, icon, index }: Props) => {
-  const animationDelay = `${200 * index}ms`
+export const CreationsHeaderButton = ({ label, action, icon, index, disabled = false }: Props) => {
+  const animationDelay = `${100 * index}ms`
 
   return (
     <button
       className={`
         flex gap-2 items-center border-2 border-theme-10/70 bg-theme-20/25
         px-7 py-2 rounded-full animate-appear button text-nowrap
+        ${HTML_DATA_IDS.CREATION_CANVAS_TARGET}
       `}
       onClick={action}
       style={{ animationDelay }}
+      disabled={disabled}
     >
       <ColoredPixelatedImage icon={icon} className='size-8' />
       <span className='text-2xl text-theme-10 font-semibold'>{label}</span>

@@ -1,4 +1,4 @@
-import type { EVENTS, TOOLS } from '@consts'
+import type { EVENTS, ICON_NAMES, TOOLS } from '@consts'
 
 export type CustomEventName = (typeof EVENTS)[keyof typeof EVENTS]
 
@@ -55,20 +55,7 @@ export type ReusableComponent = {
   ref?: React.RefObject<any>
 }
 
-export type IconName =
-  | 'check'
-  | 'clone'
-  | 'cross'
-  | 'download'
-  | 'pencil'
-  | 'trash'
-  | 'arrows-corner'
-  | 'warning'
-  | 'save'
-  | 'upload'
-  | 'heart'
-  | 'image'
-  | 'code'
+export type IconName = (typeof ICON_NAMES)[number]
 
 export type TransformOrigin =
   | 'top-left'

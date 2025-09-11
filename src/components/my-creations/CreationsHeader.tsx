@@ -1,19 +1,34 @@
-import { DMButton } from '@@/dialog-menu/DMButton'
-import { DMDragNDrop } from '@@/dialog-menu/DMDragNDrop'
-import { DMHeader } from '@@/dialog-menu/DMHeader'
 import { Z_INDEX } from '@consts'
+import { DMButton } from '@dialog-menu/DMButton'
+import { DMDragNDrop } from '@dialog-menu/DMDragNDrop'
+import { DMHeader } from '@dialog-menu/DMHeader'
 import type { IconName, JSONCanvas, ReusableComponent, SavedCanvas } from '@types'
+import { useContext } from 'react'
 import { twMerge } from 'tailwind-merge'
+import { CreationsContext } from '@/context/CreationsContext'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useEvent } from '@/hooks/useEvent'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { canvasParser } from '@/utils/canvasParser'
 import { generateId } from '@/utils/generateId'
 import { CreationsHeaderButton } from './CreationsHeaderButton'
+import { DeletePaintingsMenu } from './DeletePaintingsMenu'
+import { DownloadPaintingsMenu } from './DownloadPaintingsMenu'
 
 export const CreationsHeader = ({ className = '', ...props }: ReusableComponent) => {
   const { openMenu, closeMenu, menuIsOpen } = useDialogMenu()
-  const addToSavedCanvases = useCanvasStore(s => s.addToSavedCanvases)
+  const savedCanvases = useCanvasStore(s => s.savedCanvases)
+  const pushToSavedCanvases = useCanvasStore(s => s.pushToSavedCanvases)
+  const hydrated = useCanvasStore(s => s.hydrated)
+
+  const {
+    selectedCanvases,
+    isOnSelectionMode,
+    enableSelectionMode,
+    selectAllCanvases,
+    deselectAllCanvases,
+    disableSelectionMode
+  } = useContext(CreationsContext)
 
   useEvent(
     'dragenter',
@@ -53,7 +68,7 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
       )
     }
 
-    addToSavedCanvases(...importedCanvases)
+    pushToSavedCanvases(...importedCanvases)
     closeMenu()
   }
 
@@ -77,13 +92,51 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
       </>
     )
 
-  const buttons: CreationsButtonType[] = [
-    {
-      label: 'Import',
-      icon: 'upload',
-      action: openImportMenu
-    }
-  ]
+  const buttons: CreationsButtonType[] = isOnSelectionMode
+    ? [
+        {
+          label: 'Exit selection',
+          icon: 'cross',
+          action: () => {
+            deselectAllCanvases()
+            disableSelectionMode()
+          }
+        },
+        {
+          label: 'Select all',
+          icon: 'check',
+          action: selectAllCanvases
+        },
+        {
+          label: 'Download selected',
+          icon: 'download',
+          disabled: !selectedCanvases.length,
+          action: () =>
+            openMenu(
+              <DownloadPaintingsMenu canvasesIds={selectedCanvases} onDownload={disableSelectionMode} />
+            )
+        },
+        {
+          label: 'Delete selected',
+          icon: 'trash',
+          disabled: !selectedCanvases.length,
+          action: () =>
+            openMenu(<DeletePaintingsMenu canvasesIds={selectedCanvases} onDelete={disableSelectionMode} />)
+        }
+      ]
+    : [
+        {
+          label: 'Selection mode',
+          icon: 'selection-mode',
+          action: enableSelectionMode,
+          disabled: savedCanvases.length < 2
+        },
+        {
+          label: 'Import',
+          icon: 'upload',
+          action: openImportMenu
+        }
+      ]
 
   return (
     <header
@@ -94,9 +147,7 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
       `)}
       {...props}
     >
-      {buttons.map((button, i) => (
-        <CreationsHeaderButton {...button} key={i} index={i} />
-      ))}
+      {hydrated && buttons.map((button, i) => <CreationsHeaderButton {...button} key={i} index={i} />)}
     </header>
   )
 }
@@ -105,4 +156,5 @@ export interface CreationsButtonType {
   label: string
   icon: IconName
   action?: () => void
+  disabled?: boolean
 }

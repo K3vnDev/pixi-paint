@@ -72,6 +72,25 @@ export const CURSORS: Cursor[] = [
 export const SPRITES_RESOLUTION = 16
 export const SPRITES_SIZE = 96
 
+export const CANVASES_TRANSITION_MS = 350
+
+export const ICON_NAMES = [
+  'check',
+  'clone',
+  'cross',
+  'download',
+  'pencil',
+  'trash',
+  'arrows-corner',
+  'warning',
+  'save',
+  'upload',
+  'heart',
+  'image',
+  'code',
+  'selection-mode'
+] as const
+
 export const EVENTS = {
   OPEN_CONTEXT_MENU: '$open-context-menu',
   CLOSE_CONTEXT_MENU: '$close-context-menu',
@@ -104,4 +123,8 @@ export const HTML_IDS = {
   CONTEXT_MENU: 'context-menu',
   PICKER_MENU: 'picker-menu',
   DIALOG_MENU: 'dialog-menu'
+} as const
+
+export const HTML_DATA_IDS = {
+  CREATION_CANVAS_TARGET: 'creation-canvas-target'
 } as const

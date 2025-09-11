@@ -2,7 +2,14 @@ import { useEffect, useRef, useState } from 'react'
 import { useFreshRefs } from './useFreshRefs'
 import { useTimeout } from './useTimeout'
 
-export const useDebounce = <T>(value: T, wait: number, refresh = false) => {
+/**
+ * Debounce hook
+ * @param value Value to debounce
+ * @param wait Debounce time in milliseconds
+ * @param refresh If true, the debounce timer will not reset if the value changes while the timer is active
+ * @returns Debounced value
+ */
+export const useDebounce = <T>(value: T, wait: number, refresh = true) => {
   const { startTimeout, stopTimeout } = useTimeout()
   const isFirstTrigger = useRef(true)
   const [debouncedValue, setDebouncedValue] = useState(value)

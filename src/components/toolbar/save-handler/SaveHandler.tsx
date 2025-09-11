@@ -10,7 +10,7 @@ import { isCanvasEmpty } from '@/utils/isCanvasEmpty'
 import { ColoredPixelatedImage } from '../../ColoredPixelatedImage'
 import { PixelatedImage } from '../../PixelatedImage'
 import { Item } from '../Item'
-import { DeleteMenuBuilder } from './DeleteMenuBuilder'
+import { WarningMenu } from './WarningMenu'
 
 export const SaveHandler = () => {
   const { cloneToNewDraftAction, createNewSave, newBlankDraftAction, saveDraft, refs, isDraft, elementRef } =
@@ -33,7 +33,7 @@ export const SaveHandler = () => {
 
     if (draftIsNotEmpty) {
       openDialogMenu(
-        <DeleteMenuBuilder
+        <WarningMenu
           header='Overwrite your draft?'
           paragraph={`
             You've got this unsaved painting on your draft.
@@ -60,7 +60,7 @@ export const SaveHandler = () => {
 
     if (!isCanvasEmpty(draft)) {
       openDialogMenu(
-        <DeleteMenuBuilder
+        <WarningMenu
           header='Erase your draft?'
           paragraph={`
             You've got this unsaved painting on your draft.

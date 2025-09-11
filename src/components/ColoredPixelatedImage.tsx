@@ -1,5 +1,6 @@
 import { twMerge } from 'tailwind-merge'
 import type { IconName, ReusableComponent } from '@/types'
+import { getIconPath } from '@/utils/getIconPath'
 
 type Props = {
   src?: string
@@ -7,7 +8,7 @@ type Props = {
 } & ReusableComponent
 
 export const ColoredPixelatedImage = ({ src, icon, className = '', ref, style }: Props) => {
-  const imageUrl = src || icon ? (src ?? `/imgs/icons/${icon}.png`) : ''
+  const imageUrl = src || icon ? (src ?? getIconPath(icon ?? 'code')) : ''
 
   return (
     <div

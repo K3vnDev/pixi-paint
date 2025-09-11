@@ -11,6 +11,7 @@
   --sidebar-margin: 36px;
   --navbar-height: 90px;
   --galery-pad-x: 110px;
+  --creations-canvas-pad: 14px;
 
   /* Easing vars */
   --easing-back-out: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -40,7 +41,7 @@
 }
 
 .button {
-  @apply hover:brightness-[120%] transition-all active:scale-95 active:brightness-95 disabled:opacity-75 disabled:scale-100 disabled:brightness-75 disabled:pointer-events-none select-none;
+  @apply hover:brightness-[120%] transition-all active:scale-95 active:brightness-95 disabled:scale-100 disabled:brightness-50 disabled:pointer-events-none select-none;
 }
 
 .brightness-selected {
@@ -155,12 +156,10 @@
 @keyframes appear {
   from {
     opacity: 0;
-    scale: 0.75;
-    filter: blur(8px);
+    scale: 0.7 0.75;
   }
   to {
     scale: 1;
     opacity: 1;
-    filter: blur(0);
   }
 }

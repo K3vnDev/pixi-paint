@@ -9,7 +9,7 @@ interface Params<T> {
 }
 
 export const useSaveItem = <T>({ watchItem, key, getter = i => i, delay = 400 }: Params<T>) => {
-  const debouncedItem = useDebounce(watchItem, delay)
+  const debouncedItem = useDebounce(watchItem, delay, false)
   const isFirstTrigger = useRef(true)
 
   useEffect(() => {
