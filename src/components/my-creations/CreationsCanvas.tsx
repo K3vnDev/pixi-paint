@@ -12,10 +12,9 @@ import { usePressed } from '@/hooks/usePressed'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { CanvasImage } from '../CanvasImage'
 import { ColoredPixelatedImage } from '../ColoredPixelatedImage'
-import { DMButton } from '../dialog-menu/DMButton'
-import { DMHeader } from '../dialog-menu/DMHeader'
 import { DeletePaintingsMenu } from './DeletePaintingsMenu'
 import { DownloadPaintingsMenu } from './DownloadPaintingsMenu'
+import { PublishPaintingMenu } from './PublishPaintingMenu'
 import { SelectionBox } from './SelectionBox'
 
 export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
@@ -97,13 +96,9 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
     openMenu(<DownloadPaintingsMenu canvasesIds={[id]} />)
   }
 
-  const openFeatureNotImplemented = () =>
-    openMenu(
-      <>
-        <DMHeader icon='code'>Feature not implemented yet !!</DMHeader>
-        <DMButton>Okay :(</DMButton>
-      </>
-    )
+  const openPublishPaintingMenu = () => {
+    openMenu(<PublishPaintingMenu canvasId={id} dataUrl={dataUrl} />)
+  }
 
   useContextMenu({
     options: [
@@ -114,8 +109,8 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
       },
       {
         label: 'Publish',
-        icon: 'heart',
-        action: openFeatureNotImplemented
+        icon: 'publish',
+        action: openPublishPaintingMenu
       },
       {
         label: 'Duplicate',

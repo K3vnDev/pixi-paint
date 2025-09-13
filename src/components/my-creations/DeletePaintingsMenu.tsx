@@ -34,7 +34,7 @@ export const DeletePaintingsMenu = ({ canvasesIds, onDelete }: Props) => {
         <DMButton icon='trash' empty onClick={handleClick}>
           Yes, I don't care
         </DMButton>
-        <DMButton>No, wait!</DMButton>
+        <DMButton icon='cross'>No, wait!</DMButton>
       </DMZoneButtons>
     </>
   )

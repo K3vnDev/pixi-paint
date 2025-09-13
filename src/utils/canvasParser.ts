@@ -1,6 +1,6 @@
 import { CANVAS_RESOLUTION } from '@consts'
 import type { SavedCanvas, StorageCanvas } from '@types'
-import { JSONCanvas as JSONCanvasSchema } from '@/schemas/JSONCanvas'
+import { JSONCanvasSchema } from '@/schemas/JSONCanvas'
 import { generateId } from './generateId'
 import { validateColor } from './validateColor'
 

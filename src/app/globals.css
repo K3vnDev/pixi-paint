@@ -38,6 +38,8 @@
 
   --animate-slide-in-left: slide-in-left var(--slide-anim-timing);
   --animate-slide-in-right: slide-in-right var(--slide-anim-timing);
+
+  --animate-step-spin: step-spin 850ms steps(4) infinite;
 }
 
 .button {
@@ -161,5 +163,14 @@
   to {
     scale: 1;
     opacity: 1;
+  }
+}
+
+@keyframes step-spin {
+  from {
+    rotate: 0deg;
+  }
+  to {
+    rotate: 360deg;
   }
 }

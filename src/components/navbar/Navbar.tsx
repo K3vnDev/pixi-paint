@@ -12,6 +12,10 @@ export const Navbar = () => {
     {
       name: 'My Creations',
       route: '/mycreations'
+    },
+    {
+      name: 'Gallery',
+      route: '/gallery'
     }
   ]
 

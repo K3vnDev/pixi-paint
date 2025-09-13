@@ -28,12 +28,13 @@ export enum TOOLS {
 }
 
 export const CANVAS_RESOLUTION = 8
+export const CANVAS_PIXELS_LENGHT = CANVAS_RESOLUTION ** 2
 
 export const WHEEL_SWITCH_TOOL_COOLDOWN = 110
 export const BUCKET_INTERVAL_TIME = 55
 
 // Store
-export const BLANK_PIXELS = Array.from({ length: CANVAS_RESOLUTION ** 2 }, () => COLOR_PALETTE.WHITE)
+export const BLANK_PIXELS = Array.from({ length: CANVAS_PIXELS_LENGHT }, () => COLOR_PALETTE.WHITE)
 export const BLANK_DRAFT: SavedCanvas = { id: 'draft', pixels: BLANK_PIXELS } as const
 
 export const LS_KEYS = {
@@ -85,10 +86,12 @@ export const ICON_NAMES = [
   'warning',
   'save',
   'upload',
+  'publish',
   'heart',
   'image',
   'code',
-  'selection-mode'
+  'selection-mode',
+  'loading'
 ] as const
 
 export const EVENTS = {

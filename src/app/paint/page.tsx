@@ -8,7 +8,7 @@ import { useBodyClassName } from '@/hooks/useBodyClassName'
 import { useSaveCanvases } from '@/hooks/useSaveCanvases'
 import { useScroll } from '@/hooks/useScroll'
 
-export default function Home() {
+export default function PaintPage() {
   useScroll({ resetOnLoad: true })
   useBodyClassName('overflow-hidden')
   useSaveCanvases()

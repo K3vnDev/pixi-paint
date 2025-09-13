@@ -10,7 +10,7 @@ import { useCanvasesSelection } from '@/hooks/useCanvasesSelection'
 import { useSaveCanvases } from '@/hooks/useSaveCanvases'
 import { useScroll } from '@/hooks/useScroll'
 
-export default function Home() {
+export default function MyCreationsPage() {
   const { savedCanvases, draft, hydrated } = useSaveCanvases()
   const stateCanvases = useMemo(() => [draft, ...savedCanvases], [draft, savedCanvases])
   const { canvasesGallery } = useCanvasesGallery({ stateCanvases, loaded: hydrated })
