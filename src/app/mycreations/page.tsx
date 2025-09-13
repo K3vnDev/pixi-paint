@@ -3,6 +3,7 @@
 import { CreationsCanvas } from '@@/my-creations/CreationsCanvas'
 import { CreationsHeader } from '@@/my-creations/CreationsHeader'
 import { useMemo } from 'react'
+import { CanvasesGrid } from '@/components/canvases-grid/CanvasesGrid'
 import { CreationsContext } from '@/context/CreationsContext'
 import { useBasicPrevention } from '@/hooks/useBasicPrevention'
 import { useCanvasesGallery } from '@/hooks/useCanvasesGallery'
@@ -21,17 +22,12 @@ export default function MyCreationsPage() {
 
   return (
     <CreationsContext.Provider value={canvasesSelection}>
-      <main className='mt-48 w-screen flex flex-col gap-8 justify-center items-center relative'>
+      <main className='mt-[calc(var(--navbar-height)+6rem)] w-screen flex flex-col gap-8 justify-center items-center relative'>
         <CreationsHeader />
 
-        <ul
-          className={`
-            grid 2xl:grid-cols-6 lg:grid-cols-4 md:grid-cols-3 grid-cols-2 w-full gap-5 
-            px-[var(--galery-pad-x)] place-content-center pt-4 pb-20
-          `}
-        >
+        <CanvasesGrid>
           {hydrated && canvasesGallery.map(c => <CreationsCanvas key={c.id} {...c} />)}
-        </ul>
+        </CanvasesGrid>
       </main>
     </CreationsContext.Provider>
   )

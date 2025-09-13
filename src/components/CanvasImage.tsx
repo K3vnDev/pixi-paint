@@ -15,6 +15,7 @@ export const CanvasImage = ({ dataUrl, className = '', ref, style }: Props) => (
     src={dataUrl}
     alt={`A pixelated painting with a resolution of ${CANVAS_RESOLUTION}x${CANVAS_RESOLUTION}.`}
     className={twMerge(`rounded-sm ${className}`)}
+    draggable={false}
     style={{ imageRendering: 'pixelated', ...style }}
   />
 )

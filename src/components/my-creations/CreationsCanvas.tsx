@@ -8,6 +8,7 @@ import { useContextMenu } from '@/hooks/useContextMenu'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useEvent } from '@/hooks/useEvent'
 import { useFreshRefs } from '@/hooks/useFreshRefs'
+import { useGridCanvasStyles } from '@/hooks/useGridCanvasStyles'
 import { usePressed } from '@/hooks/usePressed'
 import { useCanvasStore } from '@/store/useCanvasStore'
 import { CanvasImage } from '../CanvasImage'
@@ -73,6 +74,8 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
     { capture: true }
   )
 
+  const { classNameStyles } = useGridCanvasStyles({ isVisible, isPressed, isDisabled })
+
   const openCanvas = () => {
     const newEditingCanvasId = id === BLANK_DRAFT.id ? null : id
     setEditingCanvasId(newEditingCanvasId)
@@ -136,11 +139,6 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
     !isOnSelectionMode && openCanvas()
   }
 
-  const visibilityStyle = !isVisible ? 'brightness-150 blur-[4px] scale-75 opacity-0' : ''
-  const pressedStyle = isPressed ? 'brightness-90 scale-97' : 'hover:brightness-115'
-  const disabledStyle = isDisabled && isVisible ? 'pointer-events-none opacity-7.5' : ''
-
-  const itemStyle = 'bg-theme-bg/80 backdrop-blur-xs rounded-md shadow-card'
   const selectedStyle =
     canvasIsSelected || !isOnSelectionMode ? 'border-theme-10' : 'border-theme-10/10 brightness-70'
 
@@ -148,7 +146,7 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
     <li
       className={twMerge(`
         relative w-full aspect-square transition-all ${HTML_DATA_IDS.CREATION_CANVAS_TARGET}
-        ${pressedStyle} ${disabledStyle} ${visibilityStyle} 
+        ${classNameStyles.canvasState} 
       `)}
       key={id}
       onClick={handleClick}
@@ -163,7 +161,7 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
           className={`
             absolute h-10 px-3 flex items-center text-2xl font-bold 
             left-[var(--creations-canvas-pad)] bottom-[var(--creations-canvas-pad)] 
-            animate-appear text-theme-10 ${itemStyle}
+            animate-appear text-theme-10 ${classNameStyles.canvasItem}
           `}
         >
           DRAFT
@@ -175,7 +173,7 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
         <span
           className={`
             absolute ml-auto animate-appear opacity-100 
-            right-[var(--creations-canvas-pad)] bottom-[var(--creations-canvas-pad)] ${itemStyle}
+            right-[var(--creations-canvas-pad)] bottom-[var(--creations-canvas-pad)] ${classNameStyles.canvasItem}
           `}
         >
           <ColoredPixelatedImage icon='pencil' className='bg-theme-10 size-10' />

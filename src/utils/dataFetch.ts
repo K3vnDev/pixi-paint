@@ -37,7 +37,7 @@ export const dataFetch = async <T>({
 }: Params<T>): Promise<T | undefined> => {
   try {
     const body = json ? JSON.stringify(json) : undefined
-    const headers = { 'Content-Type': 'application/json' }
+    const headers = method !== 'GET' ? { 'Content-Type': 'application/json' } : undefined
 
     const res = await fetch(url, { method, body, headers, ...options })
     const { success, data, message } = (await res.json()) as JSONResponse<T>
