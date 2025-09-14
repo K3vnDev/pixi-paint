@@ -4,6 +4,7 @@ import { DMHeader } from '@dialog-menu/DMHeader'
 import { DMParagraph } from '@dialog-menu/DMParagraph'
 import { DMZone } from '@dialog-menu/DMZone'
 import { DMZoneButtons } from '@dialog-menu/DMZoneButtons'
+import { DMParagraphsZone } from '@/components/dialog-menu/DMParagraphsZone'
 
 interface Option {
   label: string
@@ -15,14 +16,18 @@ interface Props {
   badOption: Option
   pixels: string[]
   header: string
-  paragraph: string
+  paragraph1: string
+  paragraph2: string
 }
 
-export const WarningMenu = ({ header, paragraph, pixels, goodOption, badOption }: Props) => (
+export const WarningMenu = ({ header, paragraph1, paragraph2, pixels, goodOption, badOption }: Props) => (
   <>
     <DMHeader icon='warning'>{header}</DMHeader>
     <DMZone className='pt-2 pb-0 items-start gap-8'>
-      <DMParagraph className='w-96'>{paragraph}</DMParagraph>
+      <DMParagraphsZone className='w-96'>
+        <DMParagraph>{paragraph1}</DMParagraph>
+        <DMParagraph remark>{paragraph2}</DMParagraph>
+      </DMParagraphsZone>
       <DMCanvasImage pixels={pixels} />
     </DMZone>
     <DMZoneButtons>

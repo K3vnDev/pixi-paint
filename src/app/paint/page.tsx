@@ -3,16 +3,17 @@
 import { PaintCanvas } from '@@/PaintCanvas'
 import { Colorbar } from '@/components/colorbar/Colorbar'
 import { ToolBar } from '@/components/toolbar/Toolbar'
-import { useBasicPrevention } from '@/hooks/useBasicPrevention'
 import { useBodyClassName } from '@/hooks/useBodyClassName'
+import { useDefaultPrevention } from '@/hooks/useDefaultPrevention'
+import { useResetScroll } from '@/hooks/useResetScroll'
 import { useSaveCanvases } from '@/hooks/useSaveCanvases'
-import { useScroll } from '@/hooks/useScroll'
 
 export default function PaintPage() {
-  useScroll({ resetOnLoad: true })
   useBodyClassName('overflow-hidden')
+  useDefaultPrevention()
+  useResetScroll()
+
   useSaveCanvases()
-  useBasicPrevention()
 
   return (
     <main

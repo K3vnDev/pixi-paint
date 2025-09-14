@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from 'react'
 import { CANVASES_TRANSITION_MS } from '@/consts'
 import { createIdRecordFrom } from '@/utils/createIdRecordFrom'
 import { getPixelsDataUrl } from '@/utils/getPixelsDataUrl'
-import { getSafeWinDoc } from '@/utils/getSafeWinDoc'
 import { useDebounce } from './useDebounce'
 import { useEvent } from './useEvent'
 import { useFreshRefs } from './useFreshRefs'
@@ -72,7 +71,7 @@ export const useCanvasesGallery = ({ stateCanvases, loaded, appearCooldown = 20 
         setCanvasesGallery(newCanvasesGallery)
       }
     },
-    { target: getSafeWinDoc().window }
+    { target: 'window' }
   )
 
   // Handle initial canvases appear animation

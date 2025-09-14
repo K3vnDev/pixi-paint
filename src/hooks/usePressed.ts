@@ -36,6 +36,7 @@ export const usePressed = ({
     'pointerenter',
     (e: PointerEvent) => {
       e.stopPropagation()
+
       if (clicked(e)) {
         setIsPressed(true)
         onPressStartEnter?.()
@@ -47,7 +48,6 @@ export const usePressed = ({
   useEvent(
     'pointerdown',
     (e: PointerEvent) => {
-      e.stopPropagation()
       if (clicked(e)) {
         setIsPressed(true)
         onPressStartDown?.()
@@ -58,8 +58,7 @@ export const usePressed = ({
   )
   useEvent(
     'pointerup',
-    (e: PointerEvent) => {
-      e.stopPropagation()
+    () => {
       setIsPressed(false)
       onPressEndUp?.()
       onPressEnd?.()
@@ -70,6 +69,7 @@ export const usePressed = ({
     'pointerleave',
     (e: PointerEvent) => {
       e.stopPropagation()
+
       setIsPressed(false)
       onPressEndLeave?.()
       onPressEnd?.()

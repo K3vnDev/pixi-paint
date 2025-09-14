@@ -80,7 +80,6 @@ export const usePaintCanvas = () => {
 
   // Triggered on move and click
   const handlePointer = (e: PointerEvent) => {
-    e.preventDefault()
     e.stopPropagation()
 
     // Dont proceed if it wasn't a valid click

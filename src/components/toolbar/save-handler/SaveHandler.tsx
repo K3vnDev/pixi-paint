@@ -35,10 +35,8 @@ export const SaveHandler = () => {
       openDialogMenu(
         <WarningMenu
           header='Overwrite your draft?'
-          paragraph={`
-            You've got this unsaved painting on your draft.
-            Cloning into it will overwrite it.
-          `}
+          paragraph1="You've got this unsaved painting on your draft."
+          paragraph2='Cloning into it will overwrite it.'
           pixels={draft.pixels}
           goodOption={{
             label: 'Save it, then clone',
@@ -62,10 +60,8 @@ export const SaveHandler = () => {
       openDialogMenu(
         <WarningMenu
           header='Erase your draft?'
-          paragraph={`
-            You've got this unsaved painting on your draft.
-            Continuing will erase it.
-          `}
+          paragraph1="You've got this unsaved painting on your draft."
+          paragraph2='Creating a new blank draft will erase it.'
           pixels={draft.pixels}
           goodOption={{
             action: () => {

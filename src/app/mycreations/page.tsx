@@ -5,11 +5,11 @@ import { CreationsHeader } from '@@/my-creations/CreationsHeader'
 import { useMemo } from 'react'
 import { CanvasesGrid } from '@/components/canvases-grid/CanvasesGrid'
 import { CreationsContext } from '@/context/CreationsContext'
-import { useBasicPrevention } from '@/hooks/useBasicPrevention'
 import { useCanvasesGallery } from '@/hooks/useCanvasesGallery'
 import { useCanvasesSelection } from '@/hooks/useCanvasesSelection'
+import { useDefaultPrevention } from '@/hooks/useDefaultPrevention'
+import { useResetScroll } from '@/hooks/useResetScroll'
 import { useSaveCanvases } from '@/hooks/useSaveCanvases'
-import { useScroll } from '@/hooks/useScroll'
 
 export default function MyCreationsPage() {
   const { savedCanvases, draft, hydrated } = useSaveCanvases()
@@ -17,8 +17,8 @@ export default function MyCreationsPage() {
   const { canvasesGallery } = useCanvasesGallery({ stateCanvases, loaded: hydrated })
   const canvasesSelection = useCanvasesSelection()
 
-  useBasicPrevention()
-  useScroll()
+  useDefaultPrevention()
+  useResetScroll()
 
   return (
     <CreationsContext.Provider value={canvasesSelection}>

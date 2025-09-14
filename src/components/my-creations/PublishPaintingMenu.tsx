@@ -9,6 +9,7 @@ import { DMButton } from '../dialog-menu/DMButton'
 import { DMCanvasImage } from '../dialog-menu/DMCanvasImage'
 import { DMHeader } from '../dialog-menu/DMHeader'
 import { DMParagraph } from '../dialog-menu/DMParagraph'
+import { DMParagraphsZone } from '../dialog-menu/DMParagraphsZone'
 import { DMZone } from '../dialog-menu/DMZone'
 import { DMZoneButtons } from '../dialog-menu/DMZoneButtons'
 
@@ -68,14 +69,12 @@ export const PublishPaintingMenu = ({ canvasRef, canvasId, dataUrl }: Props) => 
         openMenu(
           <>
             <DMHeader icon='cross'>Oops! we had an error...</DMHeader>
-            <DMZone className='w-xl flex-col gap-3'>
+            <DMParagraphsZone className='w-xl'>
               <DMParagraph>
                 Something unexpected happened from our side when trying to publish your canvas.
               </DMParagraph>
-              <DMParagraph className='italic'>
-                We encourage you to wait a few minutes and try again.
-              </DMParagraph>
-            </DMZone>
+              <DMParagraph remark>We encourage you to wait a few minutes and try again.</DMParagraph>
+            </DMParagraphsZone>
             <DMButton className='mt-3.5'>Sure, whatever...</DMButton>
           </>
         )

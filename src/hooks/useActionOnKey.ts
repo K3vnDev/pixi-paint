@@ -1,5 +1,4 @@
 import { useGeneralStore } from '@/store/useGeneralStore'
-import { getSafeWinDoc } from '@/utils/getSafeWinDoc'
 import { useEvent } from './useEvent'
 import { useFreshRefs } from './useFreshRefs'
 
@@ -37,7 +36,7 @@ export const useActionOnKey = ({ key, action, deps = [], options = {} }: Params)
       }
     },
     {
-      target: getSafeWinDoc().window,
+      target: 'window',
       deps
     }
   )
