@@ -1,25 +1,29 @@
 import { BLANK_DRAFT, LS_KEYS } from '@consts'
 import type { SavedCanvas, StorageCanvas } from '@types'
 import { useEffect } from 'react'
-import { useCanvasStore } from '@/store/useCanvasStore'
+import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { usePaintStore } from '@/store/usePaintStore'
 import { canvasParser } from '@/utils/canvasParser'
+import { dataFetch } from '@/utils/dataFetch'
 import { getLocalStorageItem } from '@/utils/getLocalStorageItem'
 import { useSaveItem } from './useSaveItem'
 
 export const useSaveCanvases = () => {
-  const editingCanvasId = useCanvasStore(s => s.editingCanvasId)
-  const setEditingCanvasId = useCanvasStore(s => s.setEditingCanvasId)
+  const editingCanvasId = useCanvasesStore(s => s.editingCanvasId)
+  const setEditingCanvasId = useCanvasesStore(s => s.setEditingCanvasId)
 
-  const savedCanvases = useCanvasStore(s => s.savedCanvases)
-  const setSavedCanvases = useCanvasStore(s => s.setSavedCanvases)
+  const savedCanvases = useCanvasesStore(s => s.savedCanvases)
+  const setSavedCanvases = useCanvasesStore(s => s.setSavedCanvases)
 
-  const draft = useCanvasStore(s => s.draftCanvas)
-  const setDraftPixels = useCanvasStore(s => s.setDraftCanvasPixels)
+  const draft = useCanvasesStore(s => s.draftCanvas)
+  const setDraftPixels = useCanvasesStore(s => s.setDraftCanvasPixels)
 
-  const hydrated = useCanvasStore(s => s.hydrated)
-  const setHydrated = useCanvasStore(s => s.setHydrated)
+  const hydrated = useCanvasesStore(s => s.hydrated)
+  const setHydrated = useCanvasesStore(s => s.setHydrated)
   const editingPixels = usePaintStore(s => s.pixels)
+
+  const userPublishedCanvasesIds = useCanvasesStore(s => s.userPublishedCanvasesIds)
+  const setUserPublishedCanvasesIds = useCanvasesStore(s => s.setUserPublishedCanvasesIds)
 
   // Hydrate by loading data from local storage
   useEffect(() => {
@@ -96,6 +100,20 @@ export const useSaveCanvases = () => {
     }
     setSavedCanvases(newCanvases)
   }, [editingPixels])
+
+  // Handle user published canvases
+  useEffect(() => {
+    if (!hydrated && !savedCanvases.length && userPublishedCanvasesIds === null) return
+
+    dataFetch<string[]>({
+      url: 'api/paintings/check',
+      method: 'POST',
+      json: savedCanvases,
+      onSuccess: ids => {
+        setUserPublishedCanvasesIds(new Set(ids))
+      }
+    })
+  }, [hydrated])
 
   return { savedCanvases, draft, hydrated }
 }

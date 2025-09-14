@@ -1,6 +1,6 @@
 import { CLICK_BUTTON as CB, TOOLS, WHEEL_SWITCH_TOOL_COOLDOWN } from '@consts'
 import { useEffect, useRef } from 'react'
-import { useCanvasStore } from '@/store/useCanvasStore'
+import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { usePaintStore } from '@/store/usePaintStore'
 import { clickIncludes } from '@/utils/clickIncludes'
 import { colorComparison } from '@/utils/colorComparison'
@@ -21,11 +21,11 @@ export const usePaintCanvas = () => {
   const tool = usePaintStore(s => s.tool)
   const setTool = usePaintStore(s => s.setTool)
 
-  const draft = useCanvasStore(s => s.draftCanvas)
-  const hydrated = useCanvasStore(s => s.hydrated)
-  const editingCanvasId = useCanvasStore(s => s.editingCanvasId)
-  const setEditingCanvasId = useCanvasStore(s => s.setEditingCanvasId)
-  const savedCanvases = useCanvasStore(s => s.savedCanvases)
+  const draft = useCanvasesStore(s => s.draftCanvas)
+  const hydrated = useCanvasesStore(s => s.hydrated)
+  const editingCanvasId = useCanvasesStore(s => s.editingCanvasId)
+  const setEditingCanvasId = useCanvasesStore(s => s.setEditingCanvasId)
+  const savedCanvases = useCanvasesStore(s => s.savedCanvases)
 
   const canvasRef = useRef<HTMLDivElement | null>(null)
   const usingSecondClickOnEraser = useRef(false)

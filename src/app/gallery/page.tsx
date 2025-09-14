@@ -1,41 +1,52 @@
 'use client'
 
-import type { GalleryCanvas, StorageCanvas } from '@types'
-import { useEffect, useState } from 'react'
-import { CanvasImage } from '@/components/CanvasImage'
+import type { SavedCanvas, StorageCanvas } from '@types'
+import { useEffect } from 'react'
 import { CanvasesGrid } from '@/components/canvases-grid/CanvasesGrid'
+import { GalleryCanvas } from '@/components/gallery/GalleryCanvas'
+import { useCanvasesGallery } from '@/hooks/useCanvasesGallery'
+import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { canvasParser } from '@/utils/canvasParser'
 import { dataFetch } from '@/utils/dataFetch'
-import { getPixelsDataUrl } from '@/utils/getPixelsDataUrl'
 
 export default function GalleryPage() {
-  const [uplodadedCanvases, setUploadedCanvases] = useState<GalleryCanvas[]>()
+  const publisedCanvases = useCanvasesStore(s => s.publishedCanvases)
+  const setPublishedCanvases = useCanvasesStore(s => s.setPublishedCanvases)
+
+  const { canvasesGallery } = useCanvasesGallery({
+    stateCanvases: publisedCanvases,
+    loaded: !!publisedCanvases.length
+  })
 
   useEffect(() => {
+    if (publisedCanvases.length) return
+
     dataFetch<StorageCanvas[]>({
-      url: '/api',
+      url: '/api/paintings',
       onSuccess: canvases => {
-        const newUploadedCanvases: GalleryCanvas[] = []
+        const newUploadedCanvases: SavedCanvas[] = []
 
         for (const { id, bg, pixels } of canvases) {
           const parsedPixels = canvasParser.fromStorage({ id, bg, pixels })?.pixels
           if (!parsedPixels) continue
 
-          const dataUrl = getPixelsDataUrl(parsedPixels)
-          newUploadedCanvases.push({ id, dataUrl, isVisible: true })
+          newUploadedCanvases.push({ id, pixels: parsedPixels })
         }
-        setUploadedCanvases(newUploadedCanvases)
+        setPublishedCanvases(newUploadedCanvases)
       }
     })
   }, [])
 
   return (
-    <main className='mt-[calc(var(--navbar-height)+3rem)] w-screen flex flex-col gap-8 justify-center items-center relative'>
+    <main
+      className={`
+        mt-[calc(var(--navbar-height)+3rem)] w-screen flex flex-col 
+        gap-8 justify-center items-center relative
+      `}
+    >
       <CanvasesGrid>
-        {uplodadedCanvases?.map(({ id, dataUrl }) => (
-          <li key={id} className='relative w-full aspect-square transition-all'>
-            <CanvasImage className='size-full' dataUrl={dataUrl} />
-          </li>
+        {canvasesGallery.map(c => (
+          <GalleryCanvas key={c.id} {...c} />
         ))}
       </CanvasesGrid>
     </main>

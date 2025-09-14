@@ -1,14 +1,14 @@
 import type { ReusableComponent } from '@types'
 import { useEffect, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
-import { useCanvasStore } from '@/store/useCanvasStore'
+import { useCanvasesStore } from '@/store/useCanvasesStore'
 
 type Props = {
   children?: React.ReactNode
 } & ReusableComponent
 
 export const CanvasOutline = ({ children, className = '' }: Props) => {
-  const editingCanvasId = useCanvasStore(s => s.editingCanvasId)
+  const editingCanvasId = useCanvasesStore(s => s.editingCanvasId)
   const [backgroundSize, setBackgroundSize] = useState(BG_SIZES.HIDDEN)
 
   useEffect(() => {

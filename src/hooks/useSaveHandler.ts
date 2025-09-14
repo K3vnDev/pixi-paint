@@ -1,18 +1,18 @@
 import { useRef } from 'react'
 import { BLANK_DRAFT, COLOR_PALETTE } from '@/consts'
-import { useCanvasStore } from '@/store/useCanvasStore'
+import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { usePaintStore } from '@/store/usePaintStore'
 import { calcMiddlePixelsIndexes } from '@/utils/calcMiddlePixels'
 import { useBucketPixels } from './useBucketPixels'
 import { useFreshRefs } from './useFreshRefs'
 
 export const useSaveHandler = () => {
-  const setDraftPixels = useCanvasStore(s => s.setDraftCanvasPixels)
-  const draft = useCanvasStore(s => s.draftCanvas)
-  const unshiftToSavedCanvases = useCanvasStore(s => s.unshiftToSavedCanvases)
-  const editingCanvasId = useCanvasStore(s => s.editingCanvasId)
-  const setEditingCanvasId = useCanvasStore(s => s.setEditingCanvasId)
-  const getNewCanvasId = useCanvasStore(s => s.getNewCanvasId)
+  const setDraftPixels = useCanvasesStore(s => s.setDraftCanvasPixels)
+  const draft = useCanvasesStore(s => s.draftCanvas)
+  const unshiftToSavedCanvases = useCanvasesStore(s => s.unshiftToSavedCanvases)
+  const editingCanvasId = useCanvasesStore(s => s.editingCanvasId)
+  const setEditingCanvasId = useCanvasesStore(s => s.setEditingCanvasId)
+  const getNewCanvasId = useCanvasesStore(s => s.getNewCanvasId)
   const editingPixels = usePaintStore(s => s.pixels)
   const paintPixels = usePaintStore(s => s.paintPixels)
   const elementRef = useRef<HTMLElement>(null)

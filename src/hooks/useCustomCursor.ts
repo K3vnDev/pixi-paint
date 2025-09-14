@@ -22,6 +22,18 @@ export const useCustomCursor = () => {
   const [isShowingCursor, setIsShowingCursor] = useState(false)
 
   useEvent(
+    'pointerenter',
+    (e: PointerEvent) => {
+      e.stopPropagation()
+
+      pointerPosition.current = { x: e.clientX, y: e.clientY }
+      refreshCursor()
+      setIsShowingCursor(true)
+    },
+    { capture: true, target: getSafeWinDoc().window }
+  )
+
+  useEvent(
     'pointermove',
     (e: PointerEvent) => {
       // Check if its hovering paint canvas and preseve its state when moving out while holding the button

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useEvent } from '@/hooks/useEvent'
-import { useCanvasStore } from '@/store/useCanvasStore'
+import { useCanvasesStore } from '@/store/useCanvasesStore'
 import type { SavedCanvas } from '@/types'
 import { dataFetch } from '@/utils/dataFetch'
 import { DMButton } from '../dialog-menu/DMButton'
@@ -19,7 +19,7 @@ interface Props {
 export const PublishPaintingMenu = ({ canvasId, dataUrl }: Props) => {
   const [isLoading, setIsLoading] = useState(false)
   useEvent('$context-menu-closed', () => setIsLoading(false))
-  const savedCanvases = useCanvasStore(s => s.savedCanvases)
+  const savedCanvases = useCanvasesStore(s => s.savedCanvases)
   const { closeMenu } = useDialogMenu()
 
   const publishPainting = () => {
@@ -29,7 +29,7 @@ export const PublishPaintingMenu = ({ canvasId, dataUrl }: Props) => {
     if (!pixels) return closeMenu()
 
     dataFetch({
-      url: '/api',
+      url: '/api/paintings',
       method: 'POST',
       json: pixels,
       onSuccess: () => {

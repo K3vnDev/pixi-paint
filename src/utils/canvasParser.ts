@@ -27,7 +27,8 @@ export const canvasParser = {
       return { id, pixels: pixelsArr }
     } catch {
       console.error(
-        `canvasParser.fromStorage: Error when attempting to parse canvas (id: ${rawId}) from local storage.`
+        `canvasParser.fromStorage: Error when attempting to parse canvas (id: ${rawId}) from storage. Canvas recieved:`,
+        { rawId, ...jsonCanvas }
       )
       return null
     }

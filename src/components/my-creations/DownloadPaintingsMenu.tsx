@@ -7,7 +7,7 @@ import { DMSlider } from '@dialog-menu/DMSlider'
 import type { DownloadSettings, JSONCanvas } from '@types'
 import JSZip from 'jszip'
 import { useEffect, useState } from 'react'
-import { useCanvasStore } from '@/store/useCanvasStore'
+import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { canvasParser } from '@/utils/canvasParser'
 import { getLocalStorageItem } from '@/utils/getLocalStorageItem'
 import { getPixelsDataUrl } from '@/utils/getPixelsDataUrl'
@@ -26,7 +26,7 @@ export const DownloadPaintingsMenu = ({ canvasesIds, onDownload }: Props) => {
   const [formatIndex, setFormatIndex] = useState(initState.formatIndex)
   const [sizeIndex, setSizeIndex] = useState(initState.sizeIndex)
 
-  const savedCanvases = useCanvasStore(s => s.savedCanvases)
+  const savedCanvases = useCanvasesStore(s => s.savedCanvases)
   const SIZES = [8, 16, 32, 64, 128, 256, 512, 1024]
   const formatIsPNG = formatIndex === 0
 

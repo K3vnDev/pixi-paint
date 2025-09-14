@@ -13,7 +13,5 @@ export const useGridCanvasStyles = ({ isVisible = true, isPressed = false, isDis
     return [visibilityStyle, pressedStyle, disabledStyle].join(' ')
   })()
 
-  const canvasItem = 'bg-theme-bg/80 backdrop-blur-xs rounded-md shadow-card'
-
-  return { classNameStyles: { canvasState, canvasItem } }
+  return { classNameStyles: { canvasState } }
 }

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTimeout } from '@/hooks/useTimeout'
-import { useCanvasStore } from '@/store/useCanvasStore'
+import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { colorComparison } from '@/utils/colorComparison'
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export const Pixel = ({ color, index, isVisible }: Props) => {
-  const showGrid = useCanvasStore(s => s.showGrid)
+  const showGrid = useCanvasesStore(s => s.showGrid)
   const [outerPadding, innerRoundness] = showGrid ? ['p-[2px]', 'rounded-[1px]'] : ['', '']
 
   const prevColor = useRef(color)
