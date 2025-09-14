@@ -111,7 +111,8 @@ export const useSaveCanvases = () => {
       json: savedCanvases,
       onSuccess: ids => {
         setUserPublishedCanvasesIds(new Set(ids))
-      }
+      },
+      onError: () => setUserPublishedCanvasesIds(null)
     })
   }, [hydrated])
 

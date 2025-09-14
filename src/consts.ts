@@ -91,7 +91,8 @@ export const ICON_NAMES = [
   'image',
   'code',
   'selection-mode',
-  'loading'
+  'loading',
+  'share'
 ] as const
 
 export const EVENTS = {
@@ -131,3 +132,7 @@ export const HTML_IDS = {
 export const HTML_DATA_IDS = {
   CREATION_CANVAS_TARGET: 'creation-canvas-target'
 } as const
+
+export const API_ERRORS = {
+  CANVAS_ALREADY_EXISTS: 'canvas-already-exists'
+}

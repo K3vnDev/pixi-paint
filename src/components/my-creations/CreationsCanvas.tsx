@@ -1,5 +1,5 @@
 import { BLANK_DRAFT, CANVASES_TRANSITION_MS as CANVASES_TRANSITION_DURATION, HTML_DATA_IDS } from '@consts'
-import type { GalleryCanvas } from '@types'
+import type { ContextMenuOption, GalleryCanvas } from '@types'
 import { useRouter } from 'next/navigation'
 import { useContext, useMemo, useRef } from 'react'
 import { twMerge } from 'tailwind-merge'
@@ -103,8 +103,20 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   }
 
   const openPublishPaintingMenu = () => {
-    openMenu(<PublishPaintingMenu canvasId={id} dataUrl={dataUrl} />)
+    openMenu(<PublishPaintingMenu {...{ canvasId: id, canvasRef, dataUrl }} />)
   }
+
+  const publishOrShareOption: ContextMenuOption = isPublished
+    ? {
+        label: 'Share',
+        icon: 'share',
+        action: () => {}
+      }
+    : {
+        label: 'Publish',
+        icon: 'publish',
+        action: openPublishPaintingMenu
+      }
 
   useContextMenu({
     options: [
@@ -113,11 +125,7 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
         icon: 'pencil',
         action: openCanvas
       },
-      {
-        label: 'Publish',
-        icon: 'publish',
-        action: openPublishPaintingMenu
-      },
+      publishOrShareOption,
       {
         label: 'Duplicate',
         icon: 'clone',
@@ -161,10 +169,12 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
       {/* Indicators */}
       <div className='absolute w-full p-[var(--creations-canvas-pad)] pt-0 flex items-center bottom-0'>
         {isDraft && <CreationCanvasIndicator className='px-3'>DRAFT</CreationCanvasIndicator>}
-        <div className='flex ml-auto gap-2.5'>
-          {isCurrentlyEditing && userPublishedCanvasesIds && <CreationCanvasIndicator icon='pencil' />}
-          {isPublished && <CreationCanvasIndicator icon='heart' />}
-        </div>
+        {userPublishedCanvasesIds !== undefined && (
+          <div className='flex ml-auto gap-2.5'>
+            {isCurrentlyEditing && <CreationCanvasIndicator icon='pencil' />}
+            {isPublished && <CreationCanvasIndicator icon='heart' />}
+          </div>
+        )}
       </div>
 
       {/*Selection box*/}

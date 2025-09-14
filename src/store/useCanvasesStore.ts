@@ -12,8 +12,8 @@ interface CanvasStore {
   publishedCanvases: SavedCanvas[]
   setPublishedCanvases: (value: SavedCanvas[]) => void
 
-  userPublishedCanvasesIds: Set<string> | null
-  setUserPublishedCanvasesIds: (value: Set<string>) => void
+  userPublishedCanvasesIds: Set<string> | null | undefined
+  setUserPublishedCanvasesIds: (value: Set<string> | null) => void
 
   draftCanvas: SavedCanvas
   setDraftCanvas: (value: SavedCanvas) => void
@@ -62,7 +62,7 @@ export const useCanvasesStore = create<CanvasStore>((set, get) => ({
   publishedCanvases: [],
   setPublishedCanvases: value => set(() => ({ publishedCanvases: value })),
 
-  userPublishedCanvasesIds: null,
+  userPublishedCanvasesIds: undefined,
   setUserPublishedCanvasesIds: value => set(() => ({ userPublishedCanvasesIds: value })),
 
   draftCanvas: BLANK_DRAFT,

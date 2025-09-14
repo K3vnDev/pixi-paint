@@ -4,6 +4,7 @@ import type { SavedCanvas, StorageCanvas } from '@types'
 import { useEffect } from 'react'
 import { CanvasesGrid } from '@/components/canvases-grid/CanvasesGrid'
 import { GalleryCanvas } from '@/components/gallery/GalleryCanvas'
+import { useBasicPrevention } from '@/hooks/useBasicPrevention'
 import { useCanvasesGallery } from '@/hooks/useCanvasesGallery'
 import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { canvasParser } from '@/utils/canvasParser'
@@ -12,6 +13,7 @@ import { dataFetch } from '@/utils/dataFetch'
 export default function GalleryPage() {
   const publisedCanvases = useCanvasesStore(s => s.publishedCanvases)
   const setPublishedCanvases = useCanvasesStore(s => s.setPublishedCanvases)
+  useBasicPrevention()
 
   const { canvasesGallery } = useCanvasesGallery({
     stateCanvases: publisedCanvases,

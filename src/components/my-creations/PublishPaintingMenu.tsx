@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useConfetti } from '@/hooks/useConfetti'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useEvent } from '@/hooks/useEvent'
 import { useCanvasesStore } from '@/store/useCanvasesStore'
@@ -13,14 +14,28 @@ import { DMZoneButtons } from '../dialog-menu/DMZoneButtons'
 
 interface Props {
   canvasId: string
+  canvasRef: React.RefObject<HTMLLIElement | null>
   dataUrl: string
 }
 
-export const PublishPaintingMenu = ({ canvasId, dataUrl }: Props) => {
+export const PublishPaintingMenu = ({ canvasRef, canvasId, dataUrl }: Props) => {
   const [isLoading, setIsLoading] = useState(false)
   useEvent('$context-menu-closed', () => setIsLoading(false))
+
+  const userPublishedCanvasesIds = useCanvasesStore(s => s.userPublishedCanvasesIds)
+  const setUserPublishedCanvasesIds = useCanvasesStore(s => s.setUserPublishedCanvasesIds)
+
+  const publishedCanvases = useCanvasesStore(s => s.publishedCanvases)
+  const setPublishedCanvases = useCanvasesStore(s => s.setPublishedCanvases)
+
+  const { throwConfetti } = useConfetti({
+    ref: canvasRef,
+    options: { startVelocity: 30, particleCount: 30 },
+    position: { fromTop: 1 }
+  })
+
   const savedCanvases = useCanvasesStore(s => s.savedCanvases)
-  const { closeMenu } = useDialogMenu()
+  const { closeMenu, openMenu } = useDialogMenu()
 
   const publishPainting = () => {
     setIsLoading(true)
@@ -28,16 +43,42 @@ export const PublishPaintingMenu = ({ canvasId, dataUrl }: Props) => {
     const { pixels } = savedCanvases.find(c => c.id === canvasId) as SavedCanvas
     if (!pixels) return closeMenu()
 
-    dataFetch({
+    dataFetch<string>({
       url: '/api/paintings',
       method: 'POST',
       json: pixels,
-      onSuccess: () => {
-        // TODO: Throw confetti and show golden border
+      onSuccess: publishedId => {
+        throwConfetti()
         closeMenu()
+
+        // Add local id to userPublishedCanvasesIds
+        if (userPublishedCanvasesIds) {
+          const publishedIds = new Set(userPublishedCanvasesIds)
+          publishedIds.add(canvasId)
+          setUserPublishedCanvasesIds(publishedIds)
+        }
+
+        // Add published canvas to publishedCanvases
+        if (publishedCanvases.length) {
+          const publishedCanvas: SavedCanvas = { id: publishedId, pixels }
+          setPublishedCanvases([publishedCanvas, ...publishedCanvases])
+        }
       },
-      onError: m => {
-        console.log('Error :(', m)
+      onError: () => {
+        openMenu(
+          <>
+            <DMHeader icon='cross'>Oops! we had an error...</DMHeader>
+            <DMZone className='w-xl flex-col gap-3'>
+              <DMParagraph>
+                Something unexpected happened from our side when trying to publish your canvas.
+              </DMParagraph>
+              <DMParagraph className='italic'>
+                We encourage you to wait a few minutes and try again.
+              </DMParagraph>
+            </DMZone>
+            <DMButton className='mt-3.5'>Sure, whatever...</DMButton>
+          </>
+        )
       }
     })
   }

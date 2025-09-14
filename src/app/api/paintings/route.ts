@@ -30,22 +30,27 @@ export const POST = async (req: NextRequest) => {
     return response(false, 400, { msg: 'Invalid canvas data' })
   }
 
-  // TODO: Check if there are canvas duplicates
+  // TODO: Check if a similar canvas is already published
+  /////////////////////////////////////////////
 
   // Parse canvas
   const storageCanvas = canvasParser.toStorage({ id: 'no-id', pixels: validatedPixels })
   if (!storageCanvas) return response(false, 500, { msg: 'Error parsing canvas data' })
 
-  // TODO: Check for id duplicates
+  let attemptsCount = 0
+  const MAX_ATTEMPTS = 7
 
-  try {
-    const newCanvas = new CanvasModel({
-      ...storageCanvas,
-      id: generateId()
-    })
-    await newCanvas.save()
-    return response(true, 201)
-  } catch {
-    return response(false, 500)
+  // Save canvas with generated id until its unique
+  while (attemptsCount++ < MAX_ATTEMPTS) {
+    try {
+      const id = generateId()
+      const newCanvas = new CanvasModel({ ...storageCanvas, id })
+      await newCanvas.save()
+
+      return response(true, 201, { data: id })
+    } catch (err: any) {
+      if (err?.code !== 11000) break
+    }
   }
+  return response(false, 500)
 }
