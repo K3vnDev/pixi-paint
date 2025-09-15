@@ -2,82 +2,61 @@ import { BLANK_DRAFT } from '@consts'
 import type { SavedCanvas } from '@types'
 import { create } from 'zustand'
 import { generateId } from '@/utils/generateId'
+import { setState, type ValueOrCallback } from '@/utils/setState'
 
 interface CanvasStore {
   savedCanvases: SavedCanvas[]
-  setSavedCanvases: (value: SavedCanvas[]) => void
-  pushToSavedCanvases: (...canvases: SavedCanvas[]) => void
-  unshiftToSavedCanvases: (...canvases: SavedCanvas[]) => void
-
-  publishedCanvases: SavedCanvas[]
-  setPublishedCanvases: (value: SavedCanvas[]) => void
-
-  userPublishedCanvasesIds: Set<string> | null | undefined
-  setUserPublishedCanvasesIds: (value: Set<string> | null) => void
+  setSavedCanvases: (state: ValueOrCallback<SavedCanvas[]>) => void
 
   draftCanvas: SavedCanvas
-  setDraftCanvas: (value: SavedCanvas) => void
+  setDraftCanvas: (state: ValueOrCallback<SavedCanvas>) => void
+
   setDraftCanvasPixels: (value: string[]) => void
 
   hydrated: boolean
-  setHydrated: (value: boolean) => void
+  setHydrated: (state: ValueOrCallback<boolean>) => void
 
   editingCanvasId: string | null
-  setEditingCanvasId: (value: string | null) => void
+  setEditingCanvasId: (state: ValueOrCallback<string | null>) => void
 
   showGrid: boolean
-  setShowGrid: (value: boolean) => void
+  setShowGrid: (state: ValueOrCallback<boolean>) => void
 
   getNewCanvasId: () => string
 }
 
 export const useCanvasesStore = create<CanvasStore>((set, get) => ({
   savedCanvases: [],
-  setSavedCanvases: value =>
-    set(() => {
-      const seenIds = new Set<string>()
-      const newCanvases = value.map(canvas => {
-        let { id } = canvas
-        while (seenIds.has(id)) {
-          id = generateId()
-        }
-        seenIds.add(id)
-        return { ...canvas, id }
+  setSavedCanvases: state =>
+    set(s =>
+      setState(s, 'savedCanvases', state, value => {
+        const seenIds = new Set<string>()
+        const newCanvases = value.map(canvas => {
+          let { id } = canvas
+          while (seenIds.has(id)) {
+            id = generateId()
+          }
+          seenIds.add(id)
+          return { ...canvas, id }
+        })
+        return newCanvases
       })
-      return { savedCanvases: newCanvases }
-    }),
-
-  pushToSavedCanvases: (...newCanvases) =>
-    set(({ savedCanvases, setSavedCanvases }) => {
-      setSavedCanvases([...savedCanvases, ...newCanvases])
-      return {}
-    }),
-
-  unshiftToSavedCanvases: (...newCanvases) =>
-    set(({ savedCanvases, setSavedCanvases }) => {
-      setSavedCanvases([...newCanvases, ...savedCanvases])
-      return {}
-    }),
-
-  publishedCanvases: [],
-  setPublishedCanvases: value => set(() => ({ publishedCanvases: value })),
-
-  userPublishedCanvasesIds: undefined,
-  setUserPublishedCanvasesIds: value => set(() => ({ userPublishedCanvasesIds: value })),
+    ),
 
   draftCanvas: BLANK_DRAFT,
-  setDraftCanvas: value => set(() => ({ draftCanvas: value })),
+  setDraftCanvas: state => set(s => setState(s, 'draftCanvas', state)),
+
   setDraftCanvasPixels: value =>
     set(({ draftCanvas }) => ({ draftCanvas: { ...draftCanvas, pixels: value } })),
 
   editingCanvasId: null,
-  setEditingCanvasId: value => set(() => ({ editingCanvasId: value })),
+  setEditingCanvasId: state => set(s => setState(s, 'editingCanvasId', state)),
 
   hydrated: false,
-  setHydrated: value => set(() => ({ hydrated: value })),
+  setHydrated: state => set(s => setState(s, 'hydrated', state)),
 
   showGrid: false,
-  setShowGrid: value => set(() => ({ showGrid: value })),
+  setShowGrid: state => set(s => setState(s, 'showGrid', state)),
 
   getNewCanvasId: () => {
     const { savedCanvases } = get()

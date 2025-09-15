@@ -22,7 +22,12 @@ export default function MyCreationsPage() {
 
   return (
     <CreationsContext.Provider value={canvasesSelection}>
-      <main className='mt-[calc(var(--navbar-height)+6rem)] w-screen flex flex-col gap-8 justify-center items-center relative'>
+      <main
+        className={`
+          mt-[calc(var(--navbar-height)+6rem)] w-screen flex flex-col gap-8
+          justify-center items-center relative
+        `}
+      >
         <CreationsHeader />
 
         <CanvasesGrid>

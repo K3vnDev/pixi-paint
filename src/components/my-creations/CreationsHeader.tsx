@@ -17,7 +17,7 @@ import { DownloadPaintingsMenu } from './DownloadPaintingsMenu'
 export const CreationsHeader = ({ className = '', ...props }: ReusableComponent) => {
   const { openMenu, closeMenu, menuIsOpen } = useDialogMenu()
   const savedCanvases = useCanvasesStore(s => s.savedCanvases)
-  const pushToSavedCanvases = useCanvasesStore(s => s.pushToSavedCanvases)
+  const setSavedCanvases = useCanvasesStore(s => s.setSavedCanvases)
   const hydrated = useCanvasesStore(s => s.hydrated)
 
   const {
@@ -64,7 +64,7 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
       )
     }
 
-    pushToSavedCanvases(...importedCanvases)
+    setSavedCanvases(s => [...s, ...importedCanvases])
     closeMenu()
   }
 

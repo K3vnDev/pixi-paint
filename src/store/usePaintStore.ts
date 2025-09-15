@@ -1,34 +1,35 @@
 import { DEFAULT_PRI_COLOR, DEFAULT_SEC_COLOR, TOOLS } from '@consts'
 import type { PaintPixelData } from '@types'
 import { create } from 'zustand'
+import { setState, type ValueOrCallback } from '@/utils/setState'
 
 interface PaintStore {
   tool: TOOLS
-  setTool: (value: TOOLS) => void
+  setTool: (state: ValueOrCallback<TOOLS>) => void
 
   primaryColor: string
-  setPrimaryColor: (value: string) => void
+  setPrimaryColor: (state: ValueOrCallback<string>) => void
 
   secondaryColor: string
-  setSecondaryColor: (value: string) => void
+  setSecondaryColor: (state: ValueOrCallback<string>) => void
 
   pixels: string[]
-  setPixels: (value: string[]) => void
+  setPixels: (state: ValueOrCallback<string[]>) => void
   paintPixels: (...data: PaintPixelData[]) => void
 }
 
 export const usePaintStore = create<PaintStore>(set => ({
   tool: TOOLS.BRUSH,
-  setTool: value => set(() => ({ tool: value })),
+  setTool: state => set(s => setState(s, 'tool', state)),
 
   primaryColor: DEFAULT_PRI_COLOR,
-  setPrimaryColor: value => set(() => ({ primaryColor: value })),
+  setPrimaryColor: state => set(s => setState(s, 'primaryColor', state)),
 
   secondaryColor: DEFAULT_SEC_COLOR,
-  setSecondaryColor: value => set(() => ({ secondaryColor: value })),
+  setSecondaryColor: state => set(s => setState(s, 'secondaryColor', state)),
 
   pixels: [],
-  setPixels: value => set(() => ({ pixels: value })),
+  setPixels: state => set(s => setState(s, 'pixels', state)),
 
   paintPixels: (...data) =>
     set(({ pixels }) => {

@@ -11,6 +11,7 @@ import { useFreshRefs } from '@/hooks/useFreshRefs'
 import { useGridCanvasStyles } from '@/hooks/useGridCanvasStyles'
 import { usePressed } from '@/hooks/usePressed'
 import { useCanvasesStore } from '@/store/useCanvasesStore'
+import { useRemoteStore } from '@/store/useRemoteStore'
 import { CanvasImage } from '../CanvasImage'
 import { CreationCanvasIndicator } from './CreationCanvasIndicator'
 import { DeletePaintingsMenu } from './DeletePaintingsMenu'
@@ -30,7 +31,7 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   const savedCanvases = useCanvasesStore(s => s.savedCanvases)
   const setSavedCanvases = useCanvasesStore(s => s.setSavedCanvases)
   const getNewCanvasId = useCanvasesStore(s => s.getNewCanvasId)
-  const userPublishedCanvasesIds = useCanvasesStore(s => s.userPublishedCanvasesIds)
+  const userPublishedCanvasesIds = useRemoteStore(s => s.userPublishedCanvasesIds)
 
   const isPublished = useMemo(() => !!userPublishedCanvasesIds?.has(id), [userPublishedCanvasesIds])
 

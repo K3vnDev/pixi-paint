@@ -1,18 +1,18 @@
 'use client'
 
+import { CanvasesGrid } from '@@/canvases-grid/CanvasesGrid'
+import { GalleryCanvas } from '@@/gallery/GalleryCanvas'
 import type { SavedCanvas, StorageCanvas } from '@types'
 import { useEffect } from 'react'
-import { CanvasesGrid } from '@/components/canvases-grid/CanvasesGrid'
-import { GalleryCanvas } from '@/components/gallery/GalleryCanvas'
 import { useCanvasesGallery } from '@/hooks/useCanvasesGallery'
 import { useDefaultPrevention } from '@/hooks/useDefaultPrevention'
-import { useCanvasesStore } from '@/store/useCanvasesStore'
+import { useRemoteStore } from '@/store/useRemoteStore'
 import { canvasParser } from '@/utils/canvasParser'
 import { dataFetch } from '@/utils/dataFetch'
 
 export default function GalleryPage() {
-  const publisedCanvases = useCanvasesStore(s => s.publishedCanvases)
-  const setPublishedCanvases = useCanvasesStore(s => s.setPublishedCanvases)
+  const publisedCanvases = useRemoteStore(s => s.publishedCanvases)
+  const setPublishedCanvases = useRemoteStore(s => s.setPublishedCanvases)
   useDefaultPrevention()
 
   const { canvasesGallery } = useCanvasesGallery({

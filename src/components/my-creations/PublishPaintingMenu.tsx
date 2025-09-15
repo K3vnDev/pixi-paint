@@ -3,6 +3,7 @@ import { useConfetti } from '@/hooks/useConfetti'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useEvent } from '@/hooks/useEvent'
 import { useCanvasesStore } from '@/store/useCanvasesStore'
+import { useRemoteStore } from '@/store/useRemoteStore'
 import type { SavedCanvas } from '@/types'
 import { dataFetch } from '@/utils/dataFetch'
 import { DMButton } from '../dialog-menu/DMButton'
@@ -23,11 +24,11 @@ export const PublishPaintingMenu = ({ canvasRef, canvasId, dataUrl }: Props) => 
   const [isLoading, setIsLoading] = useState(false)
   useEvent('$context-menu-closed', () => setIsLoading(false))
 
-  const userPublishedCanvasesIds = useCanvasesStore(s => s.userPublishedCanvasesIds)
-  const setUserPublishedCanvasesIds = useCanvasesStore(s => s.setUserPublishedCanvasesIds)
+  const userPublishedCanvasesIds = useRemoteStore(s => s.userPublishedCanvasesIds)
+  const setUserPublishedCanvasesIds = useRemoteStore(s => s.setUserPublishedCanvasesIds)
 
-  const publishedCanvases = useCanvasesStore(s => s.publishedCanvases)
-  const setPublishedCanvases = useCanvasesStore(s => s.setPublishedCanvases)
+  const publishedCanvases = useRemoteStore(s => s.publishedCanvases)
+  const setPublishedCanvases = useRemoteStore(s => s.setPublishedCanvases)
 
   const { throwConfetti } = useConfetti({
     ref: canvasRef,
@@ -54,9 +55,10 @@ export const PublishPaintingMenu = ({ canvasRef, canvasId, dataUrl }: Props) => 
 
         // Add local id to userPublishedCanvasesIds
         if (userPublishedCanvasesIds) {
-          const publishedIds = new Set(userPublishedCanvasesIds)
-          publishedIds.add(canvasId)
-          setUserPublishedCanvasesIds(publishedIds)
+          setUserPublishedCanvasesIds(p => {
+            p?.add(canvasId)
+            return new Set(p)
+          })
         }
 
         // Add published canvas to publishedCanvases
