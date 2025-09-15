@@ -13,6 +13,8 @@ export const POST = async (req: NextRequest) => {
   let clientCanvases: SavedCanvas[]
   const dbCanvases: SavedCanvas[] = []
 
+  console.log('Check request!')
+
   try {
     // Extract canvases from client
     const data = await req.json()

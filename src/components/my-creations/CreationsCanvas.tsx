@@ -31,7 +31,9 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
   const savedCanvases = useCanvasesStore(s => s.savedCanvases)
   const setSavedCanvases = useCanvasesStore(s => s.setSavedCanvases)
   const getNewCanvasId = useCanvasesStore(s => s.getNewCanvasId)
-  const userPublishedCanvasesIds = useRemoteStore(s => s.userPublishedCanvasesIds)
+
+  const userPublishedCanvasesIds = useRemoteStore(s => s.userPublishedIds)
+  const setUserPublishedCanvasesIds = useRemoteStore(s => s.setUserPublishedIds)
 
   const isPublished = useMemo(() => !!userPublishedCanvasesIds?.has(id), [userPublishedCanvasesIds])
 
@@ -86,13 +88,24 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
     router.push('/paint')
   }
 
-  const cloneCanvas = () => {
-    const newCanvases = structuredClone(refs.current.savedCanvases)
-    const canvasIndex = newCanvases.findIndex(c => c.id === id)
+  const duplicateCanvas = () => {
+    const canvasIndex = savedCanvases.findIndex(c => c.id === id)
+    if (canvasIndex === -1) return
 
-    const newCanvas = { ...newCanvases[canvasIndex], id: getNewCanvasId() }
-    newCanvases.splice(canvasIndex + 1, 0, newCanvas)
-    setSavedCanvases(newCanvases)
+    // Create and add new canvas
+    const nextCanvasIndex = canvasIndex + 1
+    const newCanvas = { ...savedCanvases[canvasIndex], id: getNewCanvasId() }
+
+    setSavedCanvases(c => {
+      c.splice(nextCanvasIndex, 0, newCanvas)
+      return c
+    })
+
+    // Add new id to user published canvases ids
+    requestAnimationFrame(() => {
+      const { id } = refs.current.savedCanvases[nextCanvasIndex]
+      setUserPublishedCanvasesIds(ids => ids?.add(id))
+    })
   }
 
   const openDeletePaintingsMenu = () => {
@@ -130,7 +143,7 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
       {
         label: 'Duplicate',
         icon: 'clone',
-        action: cloneCanvas
+        action: duplicateCanvas
       },
       {
         label: 'Download',

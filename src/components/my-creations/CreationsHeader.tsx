@@ -1,23 +1,19 @@
 import { Z_INDEX } from '@consts'
-import { DMButton } from '@dialog-menu/DMButton'
-import { DMDragNDrop } from '@dialog-menu/DMDragNDrop'
-import { DMHeader } from '@dialog-menu/DMHeader'
-import type { IconName, JSONCanvas, ReusableComponent, SavedCanvas } from '@types'
+import type { IconName, ReusableComponent } from '@types'
 import { useContext } from 'react'
 import { twMerge } from 'tailwind-merge'
 import { CreationsContext } from '@/context/CreationsContext'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useEvent } from '@/hooks/useEvent'
 import { useCanvasesStore } from '@/store/useCanvasesStore'
-import { canvasParser } from '@/utils/canvasParser'
 import { CreationsHeaderButton } from './CreationsHeaderButton'
 import { DeletePaintingsMenu } from './DeletePaintingsMenu'
 import { DownloadPaintingsMenu } from './DownloadPaintingsMenu'
+import { ImportPaintingsMenu } from './ImportPaintingsMenu'
 
 export const CreationsHeader = ({ className = '', ...props }: ReusableComponent) => {
   const { openMenu, closeMenu, menuIsOpen } = useDialogMenu()
   const savedCanvases = useCanvasesStore(s => s.savedCanvases)
-  const setSavedCanvases = useCanvasesStore(s => s.setSavedCanvases)
   const hydrated = useCanvasesStore(s => s.hydrated)
 
   const {
@@ -34,59 +30,13 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
     (e: DragEvent) => {
       if (!menuIsOpen) {
         e.stopPropagation()
-        openImportMenu()
+        openImportPaintingsMenu()
       }
     },
     { deps: [menuIsOpen] }
   )
 
-  const onDropOrSelect = (contents: string[]) => {
-    const jsonCanvases: JSONCanvas[] = []
-
-    // Parse and contents into an one level array
-    for (const content of contents) {
-      try {
-        const raw: JSONCanvas | JSONCanvas[] = JSON.parse(content)
-        Array.isArray(raw) ? jsonCanvases.push(...raw) : jsonCanvases.push(raw)
-      } catch (err) {
-        console.error('Tried to import an invalid file!', err)
-      }
-    }
-
-    // Filter valid imported canvases
-    const importedCanvases: SavedCanvas[] = canvasParser.batch.fromStorage(jsonCanvases)
-
-    // Log warning for invalid ones
-    const invalidCanvasesCount = jsonCanvases.length - importedCanvases.length
-    if (invalidCanvasesCount) {
-      console.warn(
-        `${invalidCanvasesCount} of the imported paintings were not valid so we are skipping them...`
-      )
-    }
-
-    setSavedCanvases(s => [...s, ...importedCanvases])
-    closeMenu()
-  }
-
-  const openImportMenu = () =>
-    openMenu(
-      <>
-        <DMHeader icon='code' className='border-none mb-0'>
-          Paintings importer
-        </DMHeader>
-        <DMDragNDrop
-          className='w-128 my-1 px-10'
-          acceptedFormats={['application/json']}
-          allowMultipleFiles
-          {...{ onDropOrSelect }}
-        >
-          Drag & Drop compatible JSON files here, or click to choose...
-        </DMDragNDrop>
-        <DMButton icon='cross' empty className='mt-4'>
-          Nah, I'm good
-        </DMButton>
-      </>
-    )
+  const openImportPaintingsMenu = () => openMenu(<ImportPaintingsMenu {...{ closeMenu }} />)
 
   const buttons: CreationsButtonType[] = isOnSelectionMode
     ? [
@@ -130,7 +80,7 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
         {
           label: 'Import',
           icon: 'upload',
-          action: openImportMenu
+          action: openImportPaintingsMenu
         }
       ]
 

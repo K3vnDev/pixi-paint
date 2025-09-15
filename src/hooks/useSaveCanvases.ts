@@ -3,9 +3,7 @@ import type { SavedCanvas, StorageCanvas } from '@types'
 import { useEffect } from 'react'
 import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { usePaintStore } from '@/store/usePaintStore'
-import { useRemoteStore } from '@/store/useRemoteStore'
 import { canvasParser } from '@/utils/canvasParser'
-import { dataFetch } from '@/utils/dataFetch'
 import { getLocalStorageItem } from '@/utils/getLocalStorageItem'
 import { useSaveItem } from './useSaveItem'
 
@@ -22,9 +20,6 @@ export const useSaveCanvases = () => {
   const hydrated = useCanvasesStore(s => s.hydrated)
   const setHydrated = useCanvasesStore(s => s.setHydrated)
   const editingPixels = usePaintStore(s => s.pixels)
-
-  const userPublishedCanvasesIds = useRemoteStore(s => s.userPublishedCanvasesIds)
-  const setUserPublishedCanvasesIds = useRemoteStore(s => s.setUserPublishedCanvasesIds)
 
   // Hydrate by loading data from local storage
   useEffect(() => {
@@ -98,21 +93,6 @@ export const useSaveCanvases = () => {
     }
     setSavedCanvases(newCanvases)
   }, [editingPixels])
-
-  // Handle user published canvases
-  useEffect(() => {
-    if (!hydrated || !!userPublishedCanvasesIds || !savedCanvases.length) {
-      return
-    }
-
-    dataFetch<string[]>({
-      url: 'api/paintings/check',
-      method: 'POST',
-      json: savedCanvases,
-      onSuccess: ids => setUserPublishedCanvasesIds(new Set(ids)),
-      onError: () => setUserPublishedCanvasesIds(null)
-    })
-  }, [hydrated, userPublishedCanvasesIds, savedCanvases])
 
   return { savedCanvases, draft, hydrated }
 }

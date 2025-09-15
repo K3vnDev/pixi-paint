@@ -10,6 +10,7 @@ import { useCanvasesSelection } from '@/hooks/useCanvasesSelection'
 import { useDefaultPrevention } from '@/hooks/useDefaultPrevention'
 import { useResetScroll } from '@/hooks/useResetScroll'
 import { useSaveCanvases } from '@/hooks/useSaveCanvases'
+import { useUserPublishedIds } from '@/hooks/useUserPublishedIds'
 
 export default function MyCreationsPage() {
   const { savedCanvases, draft, hydrated } = useSaveCanvases()
@@ -17,6 +18,7 @@ export default function MyCreationsPage() {
   const { canvasesGallery } = useCanvasesGallery({ stateCanvases, loaded: hydrated })
   const canvasesSelection = useCanvasesSelection()
 
+  useUserPublishedIds(true)
   useDefaultPrevention()
   useResetScroll()
 

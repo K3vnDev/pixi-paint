@@ -24,8 +24,8 @@ export const PublishPaintingMenu = ({ canvasRef, canvasId, dataUrl }: Props) => 
   const [isLoading, setIsLoading] = useState(false)
   useEvent('$context-menu-closed', () => setIsLoading(false))
 
-  const userPublishedCanvasesIds = useRemoteStore(s => s.userPublishedCanvasesIds)
-  const setUserPublishedCanvasesIds = useRemoteStore(s => s.setUserPublishedCanvasesIds)
+  const userPublishedCanvasesIds = useRemoteStore(s => s.userPublishedIds)
+  const setUserPublishedCanvasesIds = useRemoteStore(s => s.setUserPublishedIds)
 
   const publishedCanvases = useRemoteStore(s => s.publishedCanvases)
   const setPublishedCanvases = useRemoteStore(s => s.setPublishedCanvases)
@@ -55,10 +55,7 @@ export const PublishPaintingMenu = ({ canvasRef, canvasId, dataUrl }: Props) => 
 
         // Add local id to userPublishedCanvasesIds
         if (userPublishedCanvasesIds) {
-          setUserPublishedCanvasesIds(p => {
-            p?.add(canvasId)
-            return new Set(p)
-          })
+          setUserPublishedCanvasesIds(p => p?.add(canvasId))
         }
 
         // Add published canvas to publishedCanvases

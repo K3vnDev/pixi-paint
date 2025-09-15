@@ -1,4 +1,4 @@
-import { CLICK_BUTTON as CB, TOOLS, WHEEL_SWITCH_TOOL_COOLDOWN } from '@consts'
+import { CLICK_BUTTON as CB, EVENTS, TOOLS, WHEEL_SWITCH_TOOL_COOLDOWN } from '@consts'
 import { useEffect, useRef } from 'react'
 import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { usePaintStore } from '@/store/usePaintStore'
@@ -124,6 +124,7 @@ export const usePaintCanvas = () => {
       }
       case TOOLS.BUCKET: {
         if (colorComparison(pixelColor, selectedColor)) break
+        dispatchPaintedEvent()
 
         paintBucketPixels({
           autoIntervalTime: true,
@@ -175,6 +176,7 @@ export const usePaintCanvas = () => {
     const { selectedColor } = stateRefs.current
     if (!colorComparison(pixelColor, selectedColor)) {
       paintPixels({ index, color: selectedColor })
+      dispatchPaintedEvent()
     }
   }
 
@@ -182,6 +184,7 @@ export const usePaintCanvas = () => {
     const { secondaryColor } = stateRefs.current
     if (!colorComparison(pixelColor, secondaryColor)) {
       paintPixels({ index, color: secondaryColor })
+      dispatchPaintedEvent()
     }
   }
 
@@ -204,6 +207,10 @@ export const usePaintCanvas = () => {
 
     setTool(newSelectedTool)
   })
+
+  const dispatchPaintedEvent = () => {
+    document.dispatchEvent(new Event(EVENTS.PAINTED))
+  }
 
   return { pixels, canvasRef }
 }

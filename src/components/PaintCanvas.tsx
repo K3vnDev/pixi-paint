@@ -1,6 +1,7 @@
 import { CANVAS_RESOLUTION, HTML_IDS } from '@consts'
 import { usePaintCanvas } from '@/hooks/usePaintCanvas'
 import { useCanvasPixelsAppearing } from '@/hooks/usePixelsAppearing'
+import { useUserPublishedIds } from '@/hooks/useUserPublishedIds'
 import { CanvasOutline } from './CanvasOutline'
 import { Pixel } from './Pixel'
 
@@ -9,6 +10,7 @@ export const PaintCanvas = () => {
   const { visiblePixelsMap } = useCanvasPixelsAppearing(pixels)
 
   const gridTemplateColumns = `repeat(${CANVAS_RESOLUTION}, minmax(0, 1fr))`
+  useUserPublishedIds()
 
   return (
     <CanvasOutline>
