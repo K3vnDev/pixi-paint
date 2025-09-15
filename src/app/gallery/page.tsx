@@ -26,14 +26,7 @@ export default function GalleryPage() {
     dataFetch<StorageCanvas[]>({
       url: '/api/paintings',
       onSuccess: canvases => {
-        const newUploadedCanvases: SavedCanvas[] = []
-
-        for (const { id, bg, pixels } of canvases) {
-          const parsedPixels = canvasParser.fromStorage({ id, bg, pixels })?.pixels
-          if (!parsedPixels) continue
-
-          newUploadedCanvases.push({ id, pixels: parsedPixels })
-        }
+        const newUploadedCanvases: SavedCanvas[] = canvasParser.batch.fromStorage(canvases)
         setPublishedCanvases(newUploadedCanvases)
       }
     })

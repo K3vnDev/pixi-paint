@@ -34,7 +34,7 @@ export const POST = async (req: NextRequest) => {
   /////////////////////////////////////////////
 
   // Parse canvas
-  const storageCanvas = canvasParser.toStorage({ id: 'no-id', pixels: validatedPixels })
+  const storageCanvas = canvasParser.toStorage(validatedPixels)
   if (!storageCanvas) return response(false, 500, { msg: 'Error parsing canvas data' })
 
   let attemptsCount = 0

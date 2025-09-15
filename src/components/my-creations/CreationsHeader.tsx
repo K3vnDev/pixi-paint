@@ -10,7 +10,6 @@ import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useEvent } from '@/hooks/useEvent'
 import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { canvasParser } from '@/utils/canvasParser'
-import { generateId } from '@/utils/generateId'
 import { CreationsHeaderButton } from './CreationsHeaderButton'
 import { DeletePaintingsMenu } from './DeletePaintingsMenu'
 import { DownloadPaintingsMenu } from './DownloadPaintingsMenu'
@@ -55,10 +54,7 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
     }
 
     // Filter valid imported canvases
-    const replaceableId = generateId()
-    const importedCanvases: SavedCanvas[] = jsonCanvases
-      .map(c => canvasParser.fromStorage({ ...c, id: replaceableId }))
-      .filter(c => !!c)
+    const importedCanvases: SavedCanvas[] = canvasParser.batch.fromStorage(jsonCanvases)
 
     // Log warning for invalid ones
     const invalidCanvasesCount = jsonCanvases.length - importedCanvases.length

@@ -3,12 +3,18 @@ import { twMerge } from 'tailwind-merge'
 
 type Props = {
   children?: React.ReactNode
-} & ReusableComponent
+} & ReusableComponent &
+  React.HTMLAttributes<HTMLDivElement>
 
-export const ZoneWrapper = ({ children, className = '', ref }: Props) => {
-  return (
-    <div className={twMerge(`bg-theme-20 outline-2 outline-theme-10 rounded-2xl ${className}`)} ref={ref}>
-      {children}
-    </div>
-  )
-}
+export const ZoneWrapper = ({ children, className = '', ref, ...reactProps }: Props) => (
+  <div
+    className={twMerge(`
+      bg-theme-20 outline-2 outline-theme-10 rounded-2xl
+      ${className}
+    `)}
+    ref={ref}
+    {...reactProps}
+  >
+    {children}
+  </div>
+)

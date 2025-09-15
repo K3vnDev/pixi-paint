@@ -39,10 +39,7 @@ export const useSaveCanvases = () => {
         LS_KEYS.SAVED_CANVASES,
         []
       )
-      const validatedStorageCanvases: SavedCanvas[] = rawStorageCanvases
-        .map(c => canvasParser.fromStorage(c))
-        .filter(c => !!c)
-
+      const validatedStorageCanvases: SavedCanvas[] = canvasParser.batch.fromStorage(rawStorageCanvases)
       setSavedCanvases(validatedStorageCanvases)
     } catch (err) {
       console.error('There was an error parsing saved canvases!', err)
@@ -50,7 +47,7 @@ export const useSaveCanvases = () => {
 
     // Load and validate draft canvas
     const rawStoredDraftCanvas = getLocalStorageItem<StorageCanvas | null>(LS_KEYS.DRAFT_CANVAS, null)
-    const validatedDraftCanvas = rawStoredDraftCanvas ? canvasParser.fromStorage(rawStoredDraftCanvas) : null
+    const validatedDraftCanvas = canvasParser.fromStorage(rawStoredDraftCanvas)
     validatedDraftCanvas && setDraftPixels(validatedDraftCanvas.pixels)
 
     setHydrated(true)
@@ -68,7 +65,7 @@ export const useSaveCanvases = () => {
     watchItem: draft,
     key: LS_KEYS.DRAFT_CANVAS,
     getter: ({ pixels }) => {
-      return pixels.length ? canvasParser.toStorage({ ...BLANK_DRAFT, pixels }) : undefined
+      return canvasParser.toStorage({ ...BLANK_DRAFT, pixels }) ?? undefined
     }
   })
 
@@ -76,7 +73,7 @@ export const useSaveCanvases = () => {
   useSaveItem({
     watchItem: savedCanvases,
     key: LS_KEYS.SAVED_CANVASES,
-    getter: s => s.map(c => (c.pixels.length ? canvasParser.toStorage(c) : null)).filter(c => !!c)
+    getter: c => canvasParser.batch.toStorage(c)
   })
 
   // Handle draft or saved canvas update

@@ -110,22 +110,24 @@ export const SaveHandler = () => {
     : ['bg-theme-20/40 outline-theme-20', '']
 
   return (
-    <Item className={`flex items-center justify-center relative ${colorOverride}`} ref={elementRef}>
-      <button className='px-2' onClick={handleClick}>
-        <PixelatedImage
-          resolution={SPRITES_RESOLUTION}
-          src='/imgs/save.png'
-          imageSize={SPRITES_SIZE}
-          alt='Save icon'
-        />
-        <ColoredPixelatedImage
-          icon='check'
-          className={`
-            absolute size-20 bg-theme-10 left-1/2 top-1/2 -translate-1/3
-            transition-all duration-200 ${checkOverride}
-          `}
-        />
-      </button>
+    <Item
+      onClick={handleClick}
+      className={`flex items-center justify-center relative ${colorOverride}`}
+      ref={elementRef}
+    >
+      <PixelatedImage
+        resolution={SPRITES_RESOLUTION}
+        src='/imgs/save.png'
+        imageSize={SPRITES_SIZE}
+        alt='Save icon'
+      />
+      <ColoredPixelatedImage
+        icon='check'
+        className={`
+          absolute size-20 bg-theme-10 left-1/2 top-1/2 -translate-1/3
+          transition-all duration-200 ${checkOverride}
+        `}
+      />
     </Item>
   )
 }

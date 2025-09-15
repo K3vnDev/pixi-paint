@@ -86,7 +86,7 @@ export const DownloadPaintingsMenu = ({ canvasesIds, onDownload }: Props) => {
 
           for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
 
-          // Add to ZIP as "image-1.png", "image-2.png", etc.
+          // Add to ZIP as "image-1.png", "image-2.png", ...
           zip.file(`${fileName}-${index + 1}.png`, bytes)
         })
 
@@ -97,14 +97,7 @@ export const DownloadPaintingsMenu = ({ canvasesIds, onDownload }: Props) => {
       }
     } else {
       // Download json
-      const jsonCanvases: JSONCanvas[] = []
-      canvasesPixels.forEach((pixels, i) => {
-        const parsed = canvasParser.toStorage({ id: i.toString(), pixels })
-        if (!parsed) return
-
-        const { id: _, ...json } = parsed
-        jsonCanvases.push(json)
-      })
+      const jsonCanvases: JSONCanvas[] = canvasParser.batch.toStorage(canvasesPixels)
 
       // Prevent single element arrays
       const downloadJson = singleCanvas ? jsonCanvases[0] : jsonCanvases

@@ -11,7 +11,7 @@ import { response } from '@/utils/response'
 export const POST = async (req: NextRequest) => {
   await mongodb()
   let clientCanvases: SavedCanvas[]
-  let dbCanvases: SavedCanvas[]
+  const dbCanvases: SavedCanvas[] = []
 
   try {
     // Extract canvases from client
@@ -25,12 +25,11 @@ export const POST = async (req: NextRequest) => {
     // Extract canvases from database
     const rawDBCanvases: StorageCanvas[] = await CanvasModel.find({})
 
-    dbCanvases = rawDBCanvases
-      .map(({ id, bg, pixels: rawPixels }) => {
-        const pixels = Object.fromEntries(rawPixels as any)
-        return canvasParser.fromStorage({ id, bg, pixels })
-      })
-      .filter(c => !!c)
+    for (const { id, bg, pixels: rawPixels } of rawDBCanvases) {
+      const pixels = Object.fromEntries(rawPixels as any)
+      const parsed = canvasParser.fromStorage({ id, bg, pixels })
+      parsed && dbCanvases.push(parsed)
+    }
   } catch {
     return response(false, 500)
   }
