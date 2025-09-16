@@ -30,6 +30,7 @@ export const CanvasViewMenu = ({ dataUrl, id, closeMenu, pixels, openInDraft }: 
   const savedCanvases = useCanvasesStore(s => s.savedCanvases)
   const setSavedCanvases = useCanvasesStore(s => s.setSavedCanvases)
   const publishedCanvases = useRemoteStore(s => s.publishedCanvases)
+  const setUserPublishedCanvasesIds = useRemoteStore(s => s.setUserPublishedIds)
 
   const refs = useFreshRefs({ id, pixels, savedCanvases, publishedCanvases })
   const { startTimeout, stopTimeout } = useTimeout()
@@ -72,6 +73,12 @@ export const CanvasViewMenu = ({ dataUrl, id, closeMenu, pixels, openInDraft }: 
       const newCanvas = { id: generateId(), pixels }
       setSavedCanvases(s => [newCanvas, ...s])
       startTimeout(closeMenu, 450)
+
+      // Add new id to user published canvases ids
+      requestAnimationFrame(() => {
+        const { id } = refs.current.savedCanvases[0]
+        setUserPublishedCanvasesIds(ids => ids?.add(id))
+      })
     }
   }
 

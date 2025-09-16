@@ -64,17 +64,41 @@ export const PublishPaintingMenu = ({ canvasRef, canvasId, dataUrl }: Props) => 
           setPublishedCanvases([publishedCanvas, ...publishedCanvases])
         }
       },
-      onError: () => {
+      onError: (possibleId, code) => {
+        const isConflictError = code === 409
+
+        if (isConflictError && possibleId) {
+          setUserPublishedCanvasesIds(ids => ids?.add(possibleId))
+        }
+
+        const { header, button, paragraphs } = isConflictError
+          ? {
+              header: 'Sorry, but your canvas...',
+              paragraphs: [
+                "It's nothing personal, but a very similar painting has already been published.",
+                "Published paintings must be unique, so we can't accept yours right now... unless you tweak it a bit."
+              ],
+              button: 'Okay, I guess...'
+            }
+          : {
+              header: 'Oops! Something went wrong...',
+              paragraphs: [
+                'Something unexpected happened on our side while trying to publish your canvas.',
+                'Please wait a few minutes and try again.'
+              ],
+              button: 'Sure, whatever...'
+            }
+
         openMenu(
           <>
-            <DMHeader icon='cross'>Oops! we had an error...</DMHeader>
+            <DMHeader icon='warning'>{header}</DMHeader>
             <DMParagraphsZone className='w-xl'>
-              <DMParagraph>
-                Something unexpected happened from our side when trying to publish your canvas.
-              </DMParagraph>
-              <DMParagraph remark>We encourage you to wait a few minutes and try again.</DMParagraph>
+              <DMParagraph>{paragraphs[0]}</DMParagraph>
+              <DMParagraph remark>{paragraphs[1]}</DMParagraph>
             </DMParagraphsZone>
-            <DMButton className='mt-3.5'>Sure, whatever...</DMButton>
+            <DMZoneButtons>
+              <DMButton>{button}</DMButton>
+            </DMZoneButtons>
           </>
         )
       }

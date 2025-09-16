@@ -1,18 +1,19 @@
 import type { NextRequest } from 'next/server'
+import { mongodb } from '@/app/api/utils/mongodb'
+import { response } from '@/app/api/utils/response'
 import { CanvasModel } from '@/models/Canvas'
 import { PixelsSchema } from '@/schemas/Pixels'
 import { canvasParser } from '@/utils/canvasParser'
 import { generateId } from '@/utils/generateId'
-import { mongodb } from '@/utils/mongodb'
-import { response } from '@/utils/response'
+import { pixelsComparison } from '@/utils/pixelsComparison'
+import { getAllCanvases } from '../utils/getAllCanvases'
 
 export const GET = async () => {
   await mongodb()
 
   try {
-    const canvases = await CanvasModel.find({})
-    const data = canvases.map(({ id, bg, pixels }) => ({ id, bg, pixels }))
-    return response(true, 200, { data })
+    const canvases = await getAllCanvases()
+    return response(true, 200, { data: canvases })
   } catch {
     return response(false, 500)
   }
@@ -30,8 +31,22 @@ export const POST = async (req: NextRequest) => {
     return response(false, 400, { msg: 'Invalid canvas data' })
   }
 
-  // TODO: Check if a similar canvas is already published
-  /////////////////////////////////////////////
+  // Check if a similar canvas is already published
+  const canvases = await getAllCanvases()
+  let alreadyPublishedId: string | null = null
+
+  for (const storageCanvas of canvases) {
+    const parsed = canvasParser.fromStorage(storageCanvas)
+
+    if (parsed && pixelsComparison(parsed.pixels, validatedPixels)) {
+      alreadyPublishedId = parsed.id
+      break
+    }
+  }
+
+  if (alreadyPublishedId) {
+    return response(false, 409, { msg: alreadyPublishedId })
+  }
 
   // Parse canvas
   const storageCanvas = canvasParser.toStorage(validatedPixels)

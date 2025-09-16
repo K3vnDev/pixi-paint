@@ -1,19 +1,17 @@
-import type { SavedCanvas, StorageCanvas } from '@types'
+import type { SavedCanvas } from '@types'
 import type { NextRequest } from 'next/server'
 import z from 'zod'
-import { CanvasModel } from '@/models/Canvas'
+import { mongodb } from '@/app/api/utils/mongodb'
+import { response } from '@/app/api/utils/response'
 import { SavedCanvasSchema } from '@/schemas/SavedCanvas'
 import { canvasParser } from '@/utils/canvasParser'
-import { mongodb } from '@/utils/mongodb'
 import { pixelsComparison } from '@/utils/pixelsComparison'
-import { response } from '@/utils/response'
+import { getAllCanvases } from '../../utils/getAllCanvases'
 
 export const POST = async (req: NextRequest) => {
   await mongodb()
   let clientCanvases: SavedCanvas[]
-  const dbCanvases: SavedCanvas[] = []
-
-  console.log('Check request!')
+  let dbCanvases: SavedCanvas[]
 
   try {
     // Extract canvases from client
@@ -25,13 +23,8 @@ export const POST = async (req: NextRequest) => {
 
   try {
     // Extract canvases from database
-    const rawDBCanvases: StorageCanvas[] = await CanvasModel.find({})
-
-    for (const { id, bg, pixels: rawPixels } of rawDBCanvases) {
-      const pixels = Object.fromEntries(rawPixels as any)
-      const parsed = canvasParser.fromStorage({ id, bg, pixels })
-      parsed && dbCanvases.push(parsed)
-    }
+    const rawDBCanvases = await getAllCanvases()
+    dbCanvases = canvasParser.batch.fromStorage(rawDBCanvases)
   } catch {
     return response(false, 500)
   }
