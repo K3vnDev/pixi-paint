@@ -1,18 +1,24 @@
 import type { GalleryCanvas as GalleryCanvasType } from '@types'
+import { useRouter } from 'next/navigation'
 import { useEffect, useRef } from 'react'
 import { twMerge } from 'tailwind-merge'
+import { OverwriteDraftDMenu } from '@/components/OverwriteDraftDMenu'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useGridCanvasStyles } from '@/hooks/useGridCanvasStyles'
+import { useOverwriteDraft } from '@/hooks/useOverwriteDraft'
 import { usePressed } from '@/hooks/usePressed'
 import { CanvasImage } from '../CanvasImage'
 import { CanvasViewMenu } from './CanvasViewMenu'
 
 interface Props extends GalleryCanvasType {
   setSearchParamsId: (id: string) => void
+  pixels: string[]
 }
 
-export const GalleryCanvas = ({ id, dataUrl, isVisible, setSearchParamsId }: Props) => {
+export const GalleryCanvas = ({ id, dataUrl, isVisible, setSearchParamsId, pixels }: Props) => {
   const canvasRef = useRef<HTMLLIElement>(null)
+  const { canOverwriteDraft, overwriteDraft, saveDraft, draftPixels } = useOverwriteDraft(pixels)
+  const router = useRouter()
 
   // Automatically open menu if id matches url on load
   useEffect(() => {
@@ -25,7 +31,7 @@ export const GalleryCanvas = ({ id, dataUrl, isVisible, setSearchParamsId }: Pro
   }, [])
 
   const openViewMenu = () => {
-    openMenu(<CanvasViewMenu {...{ id, dataUrl }} />)
+    openMenu(<CanvasViewMenu {...{ id, dataUrl, closeMenu, pixels, openInDraft }} />)
     setSearchParamsId(id)
   }
 
@@ -35,7 +41,39 @@ export const GalleryCanvas = ({ id, dataUrl, isVisible, setSearchParamsId }: Pro
   })
 
   const { classNameStyles } = useGridCanvasStyles({ isVisible, isPressed })
-  const { openMenu } = useDialogMenu()
+  const { openMenu, closeMenu } = useDialogMenu()
+
+  const overwriteDraftTravel = () => {
+    overwriteDraft(true)
+
+    requestAnimationFrame(() => {
+      router.push('/paint')
+    })
+  }
+
+  const openInDraft = () => {
+    if (canOverwriteDraft()) {
+      overwriteDraftTravel()
+      closeMenu()
+    } else {
+      openMenu(
+        <OverwriteDraftDMenu
+          pixels={draftPixels}
+          goodOption={{
+            label: 'Save it, then clone',
+            action: () => {
+              saveDraft()
+              overwriteDraftTravel()
+            }
+          }}
+          badOption={{
+            label: 'Yeah, override',
+            action: overwriteDraftTravel
+          }}
+        />
+      )
+    }
+  }
 
   return (
     <li

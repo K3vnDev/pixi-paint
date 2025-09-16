@@ -10,6 +10,7 @@ import { CanvasesGridHeader } from '@/components/canvases-grid/CanvasesGridHeade
 import { useCanvasesGallery } from '@/hooks/useCanvasesGallery'
 import { useDefaultPrevention } from '@/hooks/useDefaultPrevention'
 import { useEvent } from '@/hooks/useEvent'
+import { useSaveCanvases } from '@/hooks/useSaveCanvases'
 import { useRemoteStore } from '@/store/useRemoteStore'
 import { canvasParser } from '@/utils/canvasParser'
 import { dataFetch } from '@/utils/dataFetch'
@@ -17,8 +18,10 @@ import { dataFetch } from '@/utils/dataFetch'
 export default function GalleryPage() {
   const publisedCanvases = useRemoteStore(s => s.publishedCanvases)
   const setPublishedCanvases = useRemoteStore(s => s.setPublishedCanvases)
-  useDefaultPrevention()
   const router = useRouter()
+
+  useDefaultPrevention()
+  useSaveCanvases()
 
   const { canvasesGallery } = useCanvasesGallery({
     stateCanvases: publisedCanvases,
@@ -62,7 +65,7 @@ export default function GalleryPage() {
           <CanvasesGridHeader className='h-16' />
           <CanvasesGrid className='2xl:grid-cols-5'>
             {canvasesGallery.map(c => (
-              <GalleryCanvas key={c.id} {...{ setSearchParamsId, ...c }} />
+              <GalleryCanvas {...c} setSearchParamsId={setSearchParamsId} key={c.id} />
             ))}
           </CanvasesGrid>
         </>

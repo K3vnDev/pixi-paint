@@ -22,12 +22,6 @@ export const useSaveHandler = () => {
 
   const isDraft = editingCanvasId === null
 
-  const cloneToNewDraftAction = () => {
-    const { editingPixels } = refs.current
-    setEditingCanvasId(null)
-    setDraftPixels(editingPixels)
-  }
-
   const newBlankDraftAction = () => {
     setEditingCanvasId(null)
     setDraftPixels(BLANK_DRAFT.pixels)
@@ -49,17 +43,10 @@ export const useSaveHandler = () => {
     setDraftPixels(BLANK_DRAFT.pixels)
   }
 
-  const saveDraft = () => {
-    const newCanvasId = getNewCanvasId()
-    const savingCanvas = { id: newCanvasId, pixels: refs.current.draft.pixels }
-    setSavedCanvases(s => [savingCanvas, ...s])
-  }
-
   return {
-    cloneToNewDraftAction,
     newBlankDraftAction,
     createNewSave,
-    saveDraft,
+
     refs,
     elementRef,
     isDraft

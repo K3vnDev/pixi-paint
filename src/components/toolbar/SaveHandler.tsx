@@ -3,22 +3,25 @@ import { useState } from 'react'
 import { useConfetti } from '@/hooks/useConfetti'
 import { useContextMenu } from '@/hooks/useContextMenu'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
+import { useOverwriteDraft } from '@/hooks/useOverwriteDraft'
 import { useSaveHandler } from '@/hooks/useSaveHandler'
 import { useTimeout } from '@/hooks/useTimeout'
 import { useTooltip } from '@/hooks/useTooltip'
-import { isCanvasEmpty } from '@/utils/isCanvasEmpty'
-import { ColoredPixelatedImage } from '../../ColoredPixelatedImage'
-import { PixelatedImage } from '../../PixelatedImage'
-import { Item } from '../Item'
-import { WarningMenu } from './WarningMenu'
+import { usePaintStore } from '@/store/usePaintStore'
+import { ColoredPixelatedImage } from '../ColoredPixelatedImage'
+import { OverwriteDraftDMenu } from '../OverwriteDraftDMenu'
+import { PixelatedImage } from '../PixelatedImage'
+import { Item } from './Item'
 
 export const SaveHandler = () => {
-  const { cloneToNewDraftAction, createNewSave, newBlankDraftAction, saveDraft, refs, isDraft, elementRef } =
-    useSaveHandler()
+  const { createNewSave, newBlankDraftAction, refs, isDraft, elementRef } = useSaveHandler()
 
   const { startTimeout, stopTimeout } = useTimeout()
   const [hasRecentlySaved, setHasRecentlySaved] = useState(false)
   const RECENTLY_SAVED_TIME = 500
+
+  const editingPixels = usePaintStore(s => s.pixels)
+  const { canOverwriteDraft, overwriteDraft, saveDraft } = useOverwriteDraft(editingPixels)
 
   const { throwConfetti } = useConfetti({
     ref: elementRef,
@@ -29,38 +32,38 @@ export const SaveHandler = () => {
 
   const cloneToNewDraft = () => {
     const { draft } = refs.current
-    const draftIsNotEmpty = !isCanvasEmpty(draft)
+    const cantOverrideDraft = !canOverwriteDraft(editingPixels)
 
-    if (draftIsNotEmpty) {
+    if (cantOverrideDraft) {
       openDialogMenu(
-        <WarningMenu
-          header='Overwrite your draft?'
-          paragraph1="You've got this unsaved painting on your draft."
-          paragraph2='Cloning into it will overwrite it.'
+        <OverwriteDraftDMenu
           pixels={draft.pixels}
           goodOption={{
             label: 'Save it, then clone',
             action: () => {
               saveDraft()
-              cloneToNewDraftAction()
+              overwriteDraft(true)
             }
           }}
-          badOption={{ label: 'Yes, overwrite it', action: cloneToNewDraftAction }}
+          badOption={{
+            label: 'Yes, overwrite it',
+            action: () => overwriteDraft(true)
+          }}
         />
       )
     } else {
-      cloneToNewDraftAction()
+      overwriteDraft(true)
     }
   }
 
   const newBlankDraft = () => {
     const { draft } = refs.current
+    const cantOverrideDraft = !canOverwriteDraft(editingPixels)
 
-    if (!isCanvasEmpty(draft)) {
+    if (cantOverrideDraft) {
       openDialogMenu(
-        <WarningMenu
+        <OverwriteDraftDMenu
           header='Erase your draft?'
-          paragraph1="You've got this unsaved painting on your draft."
           paragraph2='Creating a new blank draft will erase it.'
           pixels={draft.pixels}
           goodOption={{
