@@ -1,11 +1,10 @@
-import { Z_INDEX } from '@consts'
 import type { IconName, ReusableComponent } from '@types'
 import { useContext } from 'react'
-import { twMerge } from 'tailwind-merge'
 import { CreationsContext } from '@/context/CreationsContext'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useEvent } from '@/hooks/useEvent'
 import { useCanvasesStore } from '@/store/useCanvasesStore'
+import { CanvasesGridHeader } from '../canvases-grid/CanvasesGridHeader'
 import { CreationsHeaderButton } from './CreationsHeaderButton'
 import { DeletePaintingsMenu } from './DeletePaintingsMenu'
 import { DownloadPaintingsMenu } from './DownloadPaintingsMenu'
@@ -85,16 +84,9 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
       ]
 
   return (
-    <header
-      className={twMerge(`
-        fixed w-full left-0 top-[var(--navbar-height)] backdrop-blur-md ${Z_INDEX.NAVBAR}
-        bg-gradient-to-b from-25% from-theme-bg to-theme-bg/60
-        flex gap-5 py-6 px-[var(--galery-pad-x)] border-theme-20/50 ${className}
-      `)}
-      {...props}
-    >
+    <CanvasesGridHeader {...props}>
       {hydrated && buttons.map((button, i) => <CreationsHeaderButton {...button} key={i} index={i} />)}
-    </header>
+    </CanvasesGridHeader>
   )
 }
 

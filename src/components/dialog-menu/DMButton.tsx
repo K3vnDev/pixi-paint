@@ -38,7 +38,7 @@ export const DMButton = ({
     <button
       className={twMerge(`
         flex gap-2 items-center text-2xl font-semibold text-theme-10 px-6 py-2.5 border-2 
-        rounded-lg button text-nowrap ${bgStyle} ${className}
+        rounded-lg button text-nowrap ${bgStyle} disabled:animate-none ${className}
       `)}
       onClick={handleClick}
       disabled={disabled || isLoading}

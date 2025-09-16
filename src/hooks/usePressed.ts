@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { CLICK_BUTTON } from '@/consts'
 import { clickIncludes } from '@/utils/clickIncludes'
 import { useEvent } from './useEvent'
@@ -11,6 +11,7 @@ interface Params {
   onPressEnd?: () => void
   onPressEndUp?: () => void
   onPressEndLeave?: () => void
+  onClick?: () => void
   clickButtons?: Array<CLICK_BUTTON.LEFT | CLICK_BUTTON.RIGHT>
 }
 
@@ -22,9 +23,11 @@ export const usePressed = ({
   onPressEnd,
   onPressEndUp,
   onPressEndLeave,
+  onClick,
   clickButtons = [CLICK_BUTTON.LEFT, CLICK_BUTTON.RIGHT]
 }: Params) => {
   const [isPressed, setIsPressed] = useState(false)
+  const pointerDown = useRef(false)
 
   const clicked = (e: PointerEvent) => {
     const btn = (e.buttons - 1) * 2 // Normalize to 0 (left), 2 (right)
@@ -52,6 +55,7 @@ export const usePressed = ({
         setIsPressed(true)
         onPressStartDown?.()
         onPressStart?.()
+        pointerDown.current = true
       }
     },
     { target }
@@ -62,6 +66,11 @@ export const usePressed = ({
       setIsPressed(false)
       onPressEndUp?.()
       onPressEnd?.()
+
+      if (pointerDown.current) {
+        onClick?.()
+      }
+      pointerDown.current = false
     },
     { target }
   )
@@ -73,6 +82,7 @@ export const usePressed = ({
       setIsPressed(false)
       onPressEndLeave?.()
       onPressEnd?.()
+      pointerDown.current = false
     },
     { target }
   )
