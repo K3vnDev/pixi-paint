@@ -12,23 +12,26 @@ import { CanvasViewMenu } from './CanvasViewMenu'
 
 interface Props extends GalleryCanvasType {
   setSearchParamsId: (id: string) => void
+  initiallyOpenMenu: boolean
   pixels: string[]
 }
 
-export const GalleryCanvas = ({ id, dataUrl, isVisible, setSearchParamsId, pixels }: Props) => {
+export const GalleryCanvas = ({
+  id,
+  dataUrl,
+  initiallyOpenMenu,
+  setSearchParamsId,
+  pixels,
+  isVisible
+}: Props) => {
   const canvasRef = useRef<HTMLLIElement>(null)
   const { canOverwriteDraft, overwriteDraft, saveDraft, draftPixels } = useOverwriteDraft(pixels)
   const router = useRouter()
 
   // Automatically open menu if id matches url on load
   useEffect(() => {
-    const url = new URL(window.location.href)
-    const idFromParams = url.searchParams.get('id')
-
-    if (idFromParams === id) {
-      openViewMenu()
-    }
-  }, [])
+    initiallyOpenMenu && openViewMenu()
+  }, [initiallyOpenMenu])
 
   const openViewMenu = () => {
     openMenu(<CanvasViewMenu {...{ id, dataUrl, closeMenu, pixels, openInDraft }} />)
