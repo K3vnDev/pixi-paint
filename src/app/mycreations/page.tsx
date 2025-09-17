@@ -1,9 +1,9 @@
 'use client'
 
+import { CanvasesGrid } from '@@/canvases-grid/CanvasesGrid'
 import { CreationsCanvas } from '@@/my-creations/CreationsCanvas'
 import { CreationsHeader } from '@@/my-creations/CreationsHeader'
 import { useMemo } from 'react'
-import { CanvasesGrid } from '@/components/canvases-grid/CanvasesGrid'
 import { CreationsContext } from '@/context/CreationsContext'
 import { useCanvasesGallery } from '@/hooks/useCanvasesGallery'
 import { useCanvasesSelection } from '@/hooks/useCanvasesSelection'

@@ -30,16 +30,12 @@ export const useSaveCanvases = () => {
     if (typeof storedEditingCanvasId === 'string') setEditingCanvasId(storedEditingCanvasId)
 
     // Load and validate saved canvases
-    try {
-      const rawStorageCanvases: StorageCanvas[] = getLocalStorageItem<StorageCanvas[]>(
-        LS_KEYS.SAVED_CANVASES,
-        []
-      )
-      const validatedStorageCanvases: SavedCanvas[] = canvasParser.batch.fromStorage(rawStorageCanvases)
-      setSavedCanvases(validatedStorageCanvases)
-    } catch (err) {
-      console.error('There was an error parsing saved canvases!', err)
-    }
+    const rawStorageCanvases: StorageCanvas[] = getLocalStorageItem<StorageCanvas[]>(
+      LS_KEYS.SAVED_CANVASES,
+      []
+    )
+    const validatedStorageCanvases: SavedCanvas[] = canvasParser.batch.fromStorage(rawStorageCanvases)
+    setSavedCanvases(validatedStorageCanvases)
 
     // Load and validate draft canvas
     const rawStoredDraftCanvas = getLocalStorageItem<StorageCanvas | null>(LS_KEYS.DRAFT_CANVAS, null)
@@ -61,7 +57,9 @@ export const useSaveCanvases = () => {
     watchItem: draft,
     key: LS_KEYS.DRAFT_CANVAS,
     getter: ({ pixels }) => {
-      return canvasParser.toStorage({ ...BLANK_DRAFT, pixels }) ?? undefined
+      if (!pixels.length) return undefined
+      const parsed = canvasParser.toStorage({ ...BLANK_DRAFT, pixels })
+      return parsed ?? undefined
     }
   })
 

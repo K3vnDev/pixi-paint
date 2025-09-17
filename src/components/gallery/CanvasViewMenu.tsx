@@ -2,7 +2,6 @@
 
 import type { IconName } from '@types'
 import { useEffect, useState } from 'react'
-import { useEvent } from '@/hooks/useEvent'
 import { useFreshRefs } from '@/hooks/useFreshRefs'
 import { useTimeout } from '@/hooks/useTimeout'
 import { useCanvasesStore } from '@/store/useCanvasesStore'
@@ -48,8 +47,6 @@ export const CanvasViewMenu = ({ dataUrl, id, closeMenu, pixels, openInDraft }: 
     }, 1500)
   }
 
-  useEvent('$dialog-menu-closed', () => stopTimeout())
-
   const shareLinkButtonData: ButtonData = shareLinkCopied
     ? { icon: 'check', text: 'Share link copied!' }
     : { icon: 'share', text: 'Copy share link' }
@@ -63,7 +60,6 @@ export const CanvasViewMenu = ({ dataUrl, id, closeMenu, pixels, openInDraft }: 
   }
 
   useEffect(refreshSaveDisabled, [])
-  useEvent('$open-dialog-menu', refreshSaveDisabled)
 
   const saveToMyCreations = () => {
     setSaveDisabled(true)

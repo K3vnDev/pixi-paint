@@ -1,4 +1,5 @@
 import type { ReusableComponent } from '@types'
+import { useMemo } from 'react'
 import { twMerge } from 'tailwind-merge'
 import { getPixelsDataUrl } from '@/utils/getPixelsDataUrl'
 import { CanvasImage } from '../CanvasImage'
@@ -9,7 +10,7 @@ type Props = {
 } & ReusableComponent
 
 export const DMCanvasImage = ({ pixels, dataUrl, className = '', ...props }: Props) => {
-  const extractedDataUrl = dataUrl ?? (pixels ? getPixelsDataUrl(pixels) : null)
+  const extractedDataUrl = useMemo(() => dataUrl ?? (pixels ? getPixelsDataUrl(pixels) : null), [])
 
   return extractedDataUrl ? (
     <CanvasImage

@@ -14,12 +14,13 @@ import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { useRemoteStore } from '@/store/useRemoteStore'
 import { CanvasImage } from '../CanvasImage'
 import { CreationCanvasIndicator } from './CreationCanvasIndicator'
-import { DeletePaintingsMenu } from './DeletePaintingsMenu'
-import { DownloadPaintingsMenu } from './DownloadPaintingsMenu'
-import { PublishPaintingMenu } from './PublishPaintingMenu'
+import { DeletePaintingsMenu } from './menus/DeletePaintingsMenu'
+import { DownloadPaintingsMenu } from './menus/DownloadPaintingsMenu'
+import { PublishPaintingMenu } from './menus/PublishPaintingMenu'
+import { SharePaintingMenu } from './menus/SharePaintingMenu'
 import { SelectionBox } from './SelectionBox'
 
-export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
+export const CreationsCanvas = ({ id, pixels, dataUrl, isVisible }: GalleryCanvas) => {
   const router = useRouter()
   const setEditingCanvasId = useCanvasesStore(s => s.setEditingCanvasId)
   const canvasRef = useRef<HTMLLIElement>(null)
@@ -120,11 +121,15 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
     openMenu(<PublishPaintingMenu {...{ canvasId: id, canvasRef, dataUrl }} />)
   }
 
+  const openSharePaintingMenu = () => {
+    openMenu(<SharePaintingMenu {...{ dataUrl, pixels, localCanvasId: id }} />)
+  }
+
   const publishOrShareOption: ContextMenuOption = isPublished
     ? {
         label: 'Share',
         icon: 'share',
-        action: () => {}
+        action: openSharePaintingMenu
       }
     : {
         label: 'Publish',

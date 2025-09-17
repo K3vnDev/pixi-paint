@@ -3,6 +3,7 @@ import { DMHeader } from '@dialog-menu/DMHeader'
 import { DMParagraph } from '@dialog-menu/DMParagraph'
 import { DMZoneButtons } from '@dialog-menu/DMZoneButtons'
 import { useCanvasesStore } from '@/store/useCanvasesStore'
+import { useRemoteStore } from '@/store/useRemoteStore'
 
 interface Props {
   canvasesIds: string[]
@@ -13,10 +14,23 @@ export const DeletePaintingsMenu = ({ canvasesIds, onDelete }: Props) => {
   const savedCanvases = useCanvasesStore(s => s.savedCanvases)
   const setSavedCanvases = useCanvasesStore(s => s.setSavedCanvases)
 
+  const setUserPublishedIds = useRemoteStore(s => s.setUserPublishedIds)
+
   const handleClick = () => {
+    // Delete from saved canvases
     const idSet = new Set(canvasesIds)
     const newSavedCanvases = [...savedCanvases.filter(c => !idSet.has(c.id))]
     setSavedCanvases(newSavedCanvases)
+
+    // Delete from user published canvases id
+    setUserPublishedIds(ids => {
+      ids &&
+        canvasesIds.forEach(id => {
+          ids?.delete(id)
+        })
+      return ids
+    })
+
     onDelete?.()
   }
 

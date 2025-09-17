@@ -1,8 +1,8 @@
 'use client'
 
+import { Colorbar } from '@@/colorbar/Colorbar'
 import { PaintCanvas } from '@@/PaintCanvas'
-import { Colorbar } from '@/components/colorbar/Colorbar'
-import { ToolBar } from '@/components/toolbar/Toolbar'
+import { ToolBar } from '@@/toolbar/Toolbar'
 import { useBodyClassName } from '@/hooks/useBodyClassName'
 import { useDefaultPrevention } from '@/hooks/useDefaultPrevention'
 import { useResetScroll } from '@/hooks/useResetScroll'

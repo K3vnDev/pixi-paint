@@ -1,15 +1,15 @@
 'use client'
 
+import { ColoredPixelatedImage } from '@@/ColoredPixelatedImage'
 import { CanvasesGrid } from '@@/canvases-grid/CanvasesGrid'
+import { CanvasesGridHeader } from '@@/canvases-grid/CanvasesGridHeader'
+import { DMButton } from '@@/dialog-menu/DMButton'
+import { DMHeader } from '@@/dialog-menu/DMHeader'
+import { DMParagraph } from '@@/dialog-menu/DMParagraph'
 import { GalleryCanvas } from '@@/gallery/GalleryCanvas'
 import type { SavedCanvas, StorageCanvas } from '@types'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { ColoredPixelatedImage } from '@/components/ColoredPixelatedImage'
-import { CanvasesGridHeader } from '@/components/canvases-grid/CanvasesGridHeader'
-import { DMButton } from '@/components/dialog-menu/DMButton'
-import { DMHeader } from '@/components/dialog-menu/DMHeader'
-import { DMParagraph } from '@/components/dialog-menu/DMParagraph'
 import { useCanvasesGallery } from '@/hooks/useCanvasesGallery'
 import { useDefaultPrevention } from '@/hooks/useDefaultPrevention'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
@@ -18,6 +18,7 @@ import { useSaveCanvases } from '@/hooks/useSaveCanvases'
 import { useRemoteStore } from '@/store/useRemoteStore'
 import { canvasParser } from '@/utils/canvasParser'
 import { dataFetch } from '@/utils/dataFetch'
+import { shuffleArray } from '@/utils/shuffleArray'
 
 export default function GalleryPage() {
   const publisedCanvases = useRemoteStore(s => s.publishedCanvases)
@@ -41,7 +42,8 @@ export default function GalleryPage() {
       url: '/api/paintings',
       onSuccess: canvases => {
         const newUploadedCanvases: SavedCanvas[] = canvasParser.batch.fromStorage(canvases)
-        setPublishedCanvases(newUploadedCanvases)
+        const shuffled = shuffleArray(newUploadedCanvases)
+        setPublishedCanvases(shuffled)
       }
     })
   }, [])

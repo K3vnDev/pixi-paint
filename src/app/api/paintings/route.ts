@@ -5,7 +5,7 @@ import { CanvasModel } from '@/models/Canvas'
 import { PixelsSchema } from '@/schemas/Pixels'
 import { canvasParser } from '@/utils/canvasParser'
 import { generateId } from '@/utils/generateId'
-import { pixelsComparison } from '@/utils/pixelsComparison'
+import { findSimilarCanvas } from '../utils/findSimilarCanvas'
 import { getAllCanvases } from '../utils/getAllCanvases'
 
 export const GET = async () => {
@@ -28,24 +28,12 @@ export const POST = async (req: NextRequest) => {
     const reqCanvas = await req.json()
     validatedPixels = await PixelsSchema.parseAsync(reqCanvas)
   } catch {
-    return response(false, 400, { msg: 'Invalid canvas data' })
+    return response(false, 400, { msg: 'Invalid canvas pixels data' })
   }
 
   // Check if a similar canvas is already published
-  const canvases = await getAllCanvases()
-  let alreadyPublishedId: string | null = null
-
-  for (const storageCanvas of canvases) {
-    const parsed = canvasParser.fromStorage(storageCanvas)
-
-    if (parsed && pixelsComparison(parsed.pixels, validatedPixels)) {
-      alreadyPublishedId = parsed.id
-      break
-    }
-  }
-
-  if (alreadyPublishedId) {
-    return response(false, 409, { msg: alreadyPublishedId })
+  if (await findSimilarCanvas(validatedPixels)) {
+    return response(false, 409, { msg: 'Canvas was already published' })
   }
 
   // Parse canvas

@@ -50,6 +50,7 @@ export const DialogMenu = () => {
       `}
     >
       <MenuBase
+        key={menuId.current}
         id={HTML_IDS.DIALOG_MENU}
         style={style}
         className={`

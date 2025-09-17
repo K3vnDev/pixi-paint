@@ -47,7 +47,10 @@ export const useCanvasesStore = create<CanvasStore>((set, get) => ({
   setDraftCanvas: state => set(s => setState(s, 'draftCanvas', state)),
 
   setDraftCanvasPixels: value =>
-    set(({ draftCanvas }) => ({ draftCanvas: { ...draftCanvas, pixels: value } })),
+    set(({ draftCanvas }) => {
+      if (!value.length) return {}
+      return { draftCanvas: { ...draftCanvas, pixels: value } }
+    }),
 
   editingCanvasId: null,
   setEditingCanvasId: state => set(s => setState(s, 'editingCanvasId', state)),

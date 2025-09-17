@@ -1,18 +1,17 @@
 import { useState } from 'react'
 import { useConfetti } from '@/hooks/useConfetti'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
-import { useEvent } from '@/hooks/useEvent'
 import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { useRemoteStore } from '@/store/useRemoteStore'
 import type { SavedCanvas } from '@/types'
 import { dataFetch } from '@/utils/dataFetch'
-import { DMButton } from '../dialog-menu/DMButton'
-import { DMCanvasImage } from '../dialog-menu/DMCanvasImage'
-import { DMHeader } from '../dialog-menu/DMHeader'
-import { DMParagraph } from '../dialog-menu/DMParagraph'
-import { DMParagraphsZone } from '../dialog-menu/DMParagraphsZone'
-import { DMZone } from '../dialog-menu/DMZone'
-import { DMZoneButtons } from '../dialog-menu/DMZoneButtons'
+import { DMButton } from '../../dialog-menu/DMButton'
+import { DMCanvasImage } from '../../dialog-menu/DMCanvasImage'
+import { DMHeader } from '../../dialog-menu/DMHeader'
+import { DMParagraph } from '../../dialog-menu/DMParagraph'
+import { DMParagraphsZone } from '../../dialog-menu/DMParagraphsZone'
+import { DMZone } from '../../dialog-menu/DMZone'
+import { DMZoneButtons } from '../../dialog-menu/DMZoneButtons'
 
 interface Props {
   canvasId: string
@@ -22,7 +21,6 @@ interface Props {
 
 export const PublishPaintingMenu = ({ canvasRef, canvasId, dataUrl }: Props) => {
   const [isLoading, setIsLoading] = useState(false)
-  useEvent('$context-menu-closed', () => setIsLoading(false))
 
   const userPublishedCanvasesIds = useRemoteStore(s => s.userPublishedIds)
   const setUserPublishedCanvasesIds = useRemoteStore(s => s.setUserPublishedIds)
@@ -64,11 +62,11 @@ export const PublishPaintingMenu = ({ canvasRef, canvasId, dataUrl }: Props) => 
           setPublishedCanvases([publishedCanvas, ...publishedCanvases])
         }
       },
-      onError: (possibleId, code) => {
+      onError: (_, code) => {
         const isConflictError = code === 409
 
-        if (isConflictError && possibleId) {
-          setUserPublishedCanvasesIds(ids => ids?.add(possibleId))
+        if (isConflictError) {
+          setUserPublishedCanvasesIds(ids => ids?.add(canvasId))
         }
 
         const { header, button, paragraphs } = isConflictError

@@ -19,7 +19,7 @@ export const useOverwriteDraft = (overwritingPixels: string[]) => {
 
   const saveDraft = () => {
     const newCanvasId = generateId()
-    const savingCanvas = { id: newCanvasId, pixels: overwritingPixels }
+    const savingCanvas = { ...draftCanvas, id: newCanvasId }
     setSavedCanvases(s => [savingCanvas, ...s])
   }
 

@@ -81,8 +81,14 @@ const batch =
     for (const canvas of canvases) {
       try {
         const res = parser(canvas)
-        if (res) parsed.push(res)
-      } catch {}
+        if (!res) throw new Error('')
+        parsed.push(res)
+      } catch {
+        console.error('canvasParser:', 'Error when attempting to parse canvas. Skipping it...', {
+          id: (canvas as any).id,
+          parser
+        })
+      }
     }
     return parsed
   }

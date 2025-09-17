@@ -3,9 +3,9 @@ import { useFreshRefs } from '@/hooks/useFreshRefs'
 import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { useRemoteStore } from '@/store/useRemoteStore'
 import { canvasParser } from '@/utils/canvasParser'
-import { DMButton } from '../dialog-menu/DMButton'
-import { DMDragNDrop } from '../dialog-menu/DMDragNDrop'
-import { DMHeader } from '../dialog-menu/DMHeader'
+import { DMButton } from '../../dialog-menu/DMButton'
+import { DMDragNDrop } from '../../dialog-menu/DMDragNDrop'
+import { DMHeader } from '../../dialog-menu/DMHeader'
 
 interface Props {
   closeMenu: () => void

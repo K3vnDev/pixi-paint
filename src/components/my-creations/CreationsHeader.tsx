@@ -6,9 +6,9 @@ import { useEvent } from '@/hooks/useEvent'
 import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { CanvasesGridHeader } from '../canvases-grid/CanvasesGridHeader'
 import { CreationsHeaderButton } from './CreationsHeaderButton'
-import { DeletePaintingsMenu } from './DeletePaintingsMenu'
-import { DownloadPaintingsMenu } from './DownloadPaintingsMenu'
-import { ImportPaintingsMenu } from './ImportPaintingsMenu'
+import { DeletePaintingsMenu } from './menus/DeletePaintingsMenu'
+import { DownloadPaintingsMenu } from './menus/DownloadPaintingsMenu'
+import { ImportPaintingsMenu } from './menus/ImportPaintingsMenu'
 
 export const CreationsHeader = ({ className = '', ...props }: ReusableComponent) => {
   const { openMenu, closeMenu, menuIsOpen } = useDialogMenu()
