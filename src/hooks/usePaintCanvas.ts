@@ -1,6 +1,6 @@
-import { CLICK_BUTTON as CB, TOOLS, WHEEL_SWITCH_TOOL_COOLDOWN } from '@consts'
+import { CLICK_BUTTON as CB, EVENTS, TOOLS, WHEEL_SWITCH_TOOL_COOLDOWN } from '@consts'
 import { useEffect, useRef } from 'react'
-import { useCanvasStore } from '@/store/useCanvasStore'
+import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { usePaintStore } from '@/store/usePaintStore'
 import { clickIncludes } from '@/utils/clickIncludes'
 import { colorComparison } from '@/utils/colorComparison'
@@ -21,11 +21,11 @@ export const usePaintCanvas = () => {
   const tool = usePaintStore(s => s.tool)
   const setTool = usePaintStore(s => s.setTool)
 
-  const draft = useCanvasStore(s => s.draftCanvas)
-  const hydrated = useCanvasStore(s => s.hydrated)
-  const editingCanvasId = useCanvasStore(s => s.editingCanvasId)
-  const setEditingCanvasId = useCanvasStore(s => s.setEditingCanvasId)
-  const savedCanvases = useCanvasStore(s => s.savedCanvases)
+  const draft = useCanvasesStore(s => s.draftCanvas)
+  const hydrated = useCanvasesStore(s => s.hydrated)
+  const editingCanvasId = useCanvasesStore(s => s.editingCanvasId)
+  const setEditingCanvasId = useCanvasesStore(s => s.setEditingCanvasId)
+  const savedCanvases = useCanvasesStore(s => s.savedCanvases)
 
   const canvasRef = useRef<HTMLDivElement | null>(null)
   const usingSecondClickOnEraser = useRef(false)
@@ -80,7 +80,6 @@ export const usePaintCanvas = () => {
 
   // Triggered on move and click
   const handlePointer = (e: PointerEvent) => {
-    e.preventDefault()
     e.stopPropagation()
 
     // Dont proceed if it wasn't a valid click
@@ -125,6 +124,7 @@ export const usePaintCanvas = () => {
       }
       case TOOLS.BUCKET: {
         if (colorComparison(pixelColor, selectedColor)) break
+        dispatchPaintedEvent()
 
         paintBucketPixels({
           autoIntervalTime: true,
@@ -176,6 +176,7 @@ export const usePaintCanvas = () => {
     const { selectedColor } = stateRefs.current
     if (!colorComparison(pixelColor, selectedColor)) {
       paintPixels({ index, color: selectedColor })
+      dispatchPaintedEvent()
     }
   }
 
@@ -183,6 +184,7 @@ export const usePaintCanvas = () => {
     const { secondaryColor } = stateRefs.current
     if (!colorComparison(pixelColor, secondaryColor)) {
       paintPixels({ index, color: secondaryColor })
+      dispatchPaintedEvent()
     }
   }
 
@@ -205,6 +207,10 @@ export const usePaintCanvas = () => {
 
     setTool(newSelectedTool)
   })
+
+  const dispatchPaintedEvent = () => {
+    document.dispatchEvent(new Event(EVENTS.PAINTED))
+  }
 
   return { pixels, canvasRef }
 }

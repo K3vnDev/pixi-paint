@@ -1,5 +1,5 @@
 import { BLANK_DRAFT, CANVASES_TRANSITION_MS as CANVASES_TRANSITION_DURATION, HTML_DATA_IDS } from '@consts'
-import type { GalleryCanvas } from '@types'
+import type { ContextMenuOption, GalleryCanvas } from '@types'
 import { useRouter } from 'next/navigation'
 import { useContext, useMemo, useRef } from 'react'
 import { twMerge } from 'tailwind-merge'
@@ -8,28 +8,35 @@ import { useContextMenu } from '@/hooks/useContextMenu'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useEvent } from '@/hooks/useEvent'
 import { useFreshRefs } from '@/hooks/useFreshRefs'
+import { useGridCanvasStyles } from '@/hooks/useGridCanvasStyles'
 import { usePressed } from '@/hooks/usePressed'
-import { useCanvasStore } from '@/store/useCanvasStore'
+import { useCanvasesStore } from '@/store/useCanvasesStore'
+import { useRemoteStore } from '@/store/useRemoteStore'
 import { CanvasImage } from '../CanvasImage'
-import { ColoredPixelatedImage } from '../ColoredPixelatedImage'
-import { DMButton } from '../dialog-menu/DMButton'
-import { DMHeader } from '../dialog-menu/DMHeader'
-import { DeletePaintingsMenu } from './DeletePaintingsMenu'
-import { DownloadPaintingsMenu } from './DownloadPaintingsMenu'
+import { CreationCanvasIndicator } from './CreationCanvasIndicator'
+import { DeletePaintingsMenu } from './menus/DeletePaintingsMenu'
+import { DownloadPaintingsMenu } from './menus/DownloadPaintingsMenu'
+import { PublishPaintingMenu } from './menus/PublishPaintingMenu'
+import { SharePaintingMenu } from './menus/SharePaintingMenu'
 import { SelectionBox } from './SelectionBox'
 
-export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
+export const CreationsCanvas = ({ id, pixels, dataUrl, isVisible }: GalleryCanvas) => {
   const router = useRouter()
-  const setEditingCanvasId = useCanvasStore(s => s.setEditingCanvasId)
+  const setEditingCanvasId = useCanvasesStore(s => s.setEditingCanvasId)
   const canvasRef = useRef<HTMLLIElement>(null)
-  const editingCavasId = useCanvasStore(s => s.editingCanvasId)
+  const editingCavasId = useCanvasesStore(s => s.editingCanvasId)
 
   const isDraft = useMemo(() => id === 'draft', [])
   const isCurrentlyEditing = useMemo(() => (isDraft && editingCavasId === null) || editingCavasId === id, [])
 
-  const savedCanvases = useCanvasStore(s => s.savedCanvases)
-  const setSavedCanvases = useCanvasStore(s => s.setSavedCanvases)
-  const getNewCanvasId = useCanvasStore(s => s.getNewCanvasId)
+  const savedCanvases = useCanvasesStore(s => s.savedCanvases)
+  const setSavedCanvases = useCanvasesStore(s => s.setSavedCanvases)
+  const getNewCanvasId = useCanvasesStore(s => s.getNewCanvasId)
+
+  const userPublishedCanvasesIds = useRemoteStore(s => s.userPublishedIds)
+  const setUserPublishedCanvasesIds = useRemoteStore(s => s.setUserPublishedIds)
+
+  const isPublished = useMemo(() => !!userPublishedCanvasesIds?.has(id), [userPublishedCanvasesIds])
 
   const {
     isOnSelectionMode: isOnGlobalSelectionMode,
@@ -74,19 +81,32 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
     { capture: true }
   )
 
+  const { classNameStyles } = useGridCanvasStyles({ isVisible, isPressed, isDisabled })
+
   const openCanvas = () => {
     const newEditingCanvasId = id === BLANK_DRAFT.id ? null : id
     setEditingCanvasId(newEditingCanvasId)
     router.push('/paint')
   }
 
-  const cloneCanvas = () => {
-    const newCanvases = structuredClone(refs.current.savedCanvases)
-    const canvasIndex = newCanvases.findIndex(c => c.id === id)
+  const duplicateCanvas = () => {
+    const canvasIndex = savedCanvases.findIndex(c => c.id === id)
+    if (canvasIndex === -1) return
 
-    const newCanvas = { ...newCanvases[canvasIndex], id: getNewCanvasId() }
-    newCanvases.splice(canvasIndex + 1, 0, newCanvas)
-    setSavedCanvases(newCanvases)
+    // Create and add new canvas
+    const nextCanvasIndex = canvasIndex + 1
+    const newCanvas = { ...savedCanvases[canvasIndex], id: getNewCanvasId() }
+
+    setSavedCanvases(c => {
+      c.splice(nextCanvasIndex, 0, newCanvas)
+      return c
+    })
+
+    // Add new id to user published canvases ids
+    requestAnimationFrame(() => {
+      const { id } = refs.current.savedCanvases[nextCanvasIndex]
+      setUserPublishedCanvasesIds(ids => ids?.add(id))
+    })
   }
 
   const openDeletePaintingsMenu = () => {
@@ -97,13 +117,25 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
     openMenu(<DownloadPaintingsMenu canvasesIds={[id]} />)
   }
 
-  const openFeatureNotImplemented = () =>
-    openMenu(
-      <>
-        <DMHeader icon='code'>Feature not implemented yet !!</DMHeader>
-        <DMButton>Okay :(</DMButton>
-      </>
-    )
+  const openPublishPaintingMenu = () => {
+    openMenu(<PublishPaintingMenu {...{ canvasId: id, canvasRef, dataUrl }} />)
+  }
+
+  const openSharePaintingMenu = () => {
+    openMenu(<SharePaintingMenu {...{ dataUrl, pixels, localCanvasId: id }} />)
+  }
+
+  const publishOrShareOption: ContextMenuOption = isPublished
+    ? {
+        label: 'Share',
+        icon: 'share',
+        action: openSharePaintingMenu
+      }
+    : {
+        label: 'Publish',
+        icon: 'publish',
+        action: openPublishPaintingMenu
+      }
 
   useContextMenu({
     options: [
@@ -112,15 +144,11 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
         icon: 'pencil',
         action: openCanvas
       },
-      {
-        label: 'Publish',
-        icon: 'heart',
-        action: openFeatureNotImplemented
-      },
+      publishOrShareOption,
       {
         label: 'Duplicate',
         icon: 'clone',
-        action: cloneCanvas
+        action: duplicateCanvas
       },
       {
         label: 'Download',
@@ -141,11 +169,6 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
     !isOnSelectionMode && openCanvas()
   }
 
-  const visibilityStyle = !isVisible ? 'brightness-150 blur-[4px] scale-75 opacity-0' : ''
-  const pressedStyle = isPressed ? 'brightness-90 scale-97' : 'hover:brightness-115'
-  const disabledStyle = isDisabled && isVisible ? 'pointer-events-none opacity-7.5' : ''
-
-  const itemStyle = 'bg-theme-bg/80 backdrop-blur-xs rounded-md shadow-card'
   const selectedStyle =
     canvasIsSelected || !isOnSelectionMode ? 'border-theme-10' : 'border-theme-10/10 brightness-70'
 
@@ -153,7 +176,7 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
     <li
       className={twMerge(`
         relative w-full aspect-square transition-all ${HTML_DATA_IDS.CREATION_CANVAS_TARGET}
-        ${pressedStyle} ${disabledStyle} ${visibilityStyle} 
+        ${classNameStyles.canvasState}
       `)}
       key={id}
       onClick={handleClick}
@@ -162,30 +185,16 @@ export const CreationsCanvas = ({ id, dataUrl, isVisible }: GalleryCanvas) => {
     >
       <CanvasImage className={`size-full rounded-xl border-4 ${selectedStyle}`} dataUrl={dataUrl} />
 
-      {/* Draft indicator */}
-      {isDraft && (
-        <span
-          className={`
-            absolute h-10 px-3 flex items-center text-2xl font-bold 
-            left-[var(--creations-canvas-pad)] bottom-[var(--creations-canvas-pad)] 
-            animate-appear text-theme-10 ${itemStyle}
-          `}
-        >
-          DRAFT
-        </span>
-      )}
-
-      {/* Editing indicator */}
-      {isCurrentlyEditing && (
-        <span
-          className={`
-            absolute ml-auto animate-appear opacity-100 
-            right-[var(--creations-canvas-pad)] bottom-[var(--creations-canvas-pad)] ${itemStyle}
-          `}
-        >
-          <ColoredPixelatedImage icon='pencil' className='bg-theme-10 size-10' />
-        </span>
-      )}
+      {/* Indicators */}
+      <div className='absolute w-full p-[var(--creations-canvas-pad)] pt-0 flex items-center bottom-0'>
+        {isDraft && <CreationCanvasIndicator className='px-3'>DRAFT</CreationCanvasIndicator>}
+        {userPublishedCanvasesIds !== undefined && (
+          <div className='flex ml-auto gap-2.5'>
+            {isCurrentlyEditing && <CreationCanvasIndicator icon='pencil' />}
+            {isPublished && <CreationCanvasIndicator icon='heart' />}
+          </div>
+        )}
+      </div>
 
       {/*Selection box*/}
       {isOnSelectionMode && <SelectionBox {...{ canvasIsSelected }} />}

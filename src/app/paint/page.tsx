@@ -1,18 +1,19 @@
 'use client'
 
+import { Colorbar } from '@@/colorbar/Colorbar'
 import { PaintCanvas } from '@@/PaintCanvas'
-import { Colorbar } from '@/components/colorbar/Colorbar'
-import { ToolBar } from '@/components/toolbar/Toolbar'
-import { useBasicPrevention } from '@/hooks/useBasicPrevention'
+import { ToolBar } from '@@/toolbar/Toolbar'
 import { useBodyClassName } from '@/hooks/useBodyClassName'
+import { useDefaultPrevention } from '@/hooks/useDefaultPrevention'
+import { useResetScroll } from '@/hooks/useResetScroll'
 import { useSaveCanvases } from '@/hooks/useSaveCanvases'
-import { useScroll } from '@/hooks/useScroll'
 
-export default function Home() {
-  useScroll({ resetOnLoad: true })
+export default function PaintPage() {
   useBodyClassName('overflow-hidden')
+  useDefaultPrevention()
+  useResetScroll()
+
   useSaveCanvases()
-  useBasicPrevention()
 
   return (
     <main

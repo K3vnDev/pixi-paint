@@ -23,6 +23,7 @@ export interface SavedCanvas {
 export interface GalleryCanvas {
   id: string
   dataUrl: string
+  pixels: string[]
   isVisible: boolean
 }
 

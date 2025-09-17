@@ -1,22 +1,25 @@
 import { COLOR_PALETTE } from '@consts'
 
+const { BLACK } = COLOR_PALETTE
+
 interface ValidateColorReturnType {
   value: string
   isValid: boolean
 }
 
 export const validateColor = (color: string): ValidateColorReturnType => {
-  let cleaned = ''
-  const hexLetters = ['a', 'b', 'c', 'd', 'e', 'f']
+  if (typeof color !== 'string') {
+    return { value: BLACK, isValid: false }
+  }
 
   // Clean color
+  let cleaned = ''
   for (const char of color.toLowerCase()) {
-    if (!Number.isNaN(+char) || hexLetters.includes(char)) {
+    if (!Number.isNaN(+char) || /[a-f]/i.test(char)) {
       cleaned += char
       if (cleaned.length >= 6) break
     }
   }
-  const { BLACK } = COLOR_PALETTE
 
   // Return black if theres no input but keep it valid
   if (!cleaned.length) {

@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { HTML_DATA_IDS } from '@/consts'
 import type { DraggingSelection } from '@/context/CreationsContext'
-import { useCanvasStore } from '@/store/useCanvasStore'
+import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { useEvent } from './useEvent'
 
 export const useCanvasesSelection = () => {
   const [isOnSelectionMode, setIsOnSelectionMode] = useState(false)
   const [selectedCanvases, setSelectedCanvases] = useState<Set<string>>(new Set())
   const [draggingSelection, setDraggingSelection] = useState<DraggingSelection>(null)
-  const savedCanvases = useCanvasStore(s => s.savedCanvases)
+  const savedCanvases = useCanvasesStore(s => s.savedCanvases)
 
   const enableSelectionMode = () => setIsOnSelectionMode(true)
   const disableSelectionMode = () => setIsOnSelectionMode(false)

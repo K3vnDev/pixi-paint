@@ -2,8 +2,8 @@
 
 import { CURSORS, TOOLS } from '@consts'
 import type { ToolbarTool as ToolbarToolType } from '@types'
+import { SaveHandler } from './SaveHandler'
 import { Separator } from './Separator'
-import { SaveHandler } from './save-handler/SaveHandler'
 import { Tool } from './Tool'
 
 export const ToolBar = () => {

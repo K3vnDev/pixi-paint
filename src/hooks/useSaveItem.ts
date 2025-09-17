@@ -18,6 +18,8 @@ export const useSaveItem = <T>({ watchItem, key, getter = i => i, delay = 400 }:
       return
     }
     const toSaveItem = getter(debouncedItem)
-    toSaveItem !== undefined && localStorage.setItem(key, JSON.stringify(toSaveItem))
+    if (toSaveItem === undefined) return
+
+    localStorage.setItem(key, JSON.stringify(toSaveItem))
   }, [debouncedItem])
 }

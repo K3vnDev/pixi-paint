@@ -8,7 +8,7 @@ type EventMapFor<T> = T extends Window
     : HTMLElementEventMap
 
 interface Options extends AddEventListenerOptions {
-  target?: ReusableComponent['ref'] | Window | Document | null
+  target?: ReusableComponent['ref'] | Window | Document | null | 'window'
   deps?: unknown[]
 }
 
@@ -27,7 +27,10 @@ export function useEvent<
     const { target } = options
     if (target === null) return
 
-    const targetElement = target === undefined ? document : 'current' in target ? target.current : target
+    // biome-ignore format: <>
+    const targetElement = target === 'window' ? window : target === undefined
+      ? document : 'current' in target ? target.current : target
+
     const listener: EventListener = (e: Event) => handler(e as any)
 
     targetElement?.addEventListener(eventName, listener, eventListenerOptions)

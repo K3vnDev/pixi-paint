@@ -1,7 +1,6 @@
 import type { Origin, Position as PositionType, TransformOrigin } from '@types'
 import { useRef, useState } from 'react'
 import { animationData as animData } from '@/utils/animationData'
-import { getSafeWinDoc } from '@/utils/getSafeWinDoc'
 import { wasInsideElement } from '@/utils/wasInsideElement'
 import { useActionOnKey } from './useActionOnKey'
 import { useAnimations } from './useAnimations'
@@ -150,7 +149,7 @@ export const useMenuBase = ({
       const origin = refs.current.defaultOriginGetter?.()
       origin && refreshPosition(origin)
     },
-    { target: getSafeWinDoc().window }
+    { target: 'window' }
   )
 
   const openMenu = (origin?: Origin) => {

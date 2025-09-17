@@ -1,8 +1,8 @@
 import type { GalleryCanvas, SavedCanvas } from '@types'
 import { useEffect, useRef, useState } from 'react'
 import { CANVASES_TRANSITION_MS } from '@/consts'
+import { createIdRecordFrom } from '@/utils/createIdRecordFrom'
 import { getPixelsDataUrl } from '@/utils/getPixelsDataUrl'
-import { getSafeWinDoc } from '@/utils/getSafeWinDoc'
 import { useDebounce } from './useDebounce'
 import { useEvent } from './useEvent'
 import { useFreshRefs } from './useFreshRefs'
@@ -71,7 +71,7 @@ export const useCanvasesGallery = ({ stateCanvases, loaded, appearCooldown = 20 
         setCanvasesGallery(newCanvasesGallery)
       }
     },
-    { target: getSafeWinDoc().window }
+    { target: 'window' }
   )
 
   // Handle initial canvases appear animation
@@ -84,7 +84,7 @@ export const useCanvasesGallery = ({ stateCanvases, loaded, appearCooldown = 20 
     // Create initial canvas gallery with all elements invisible
     const initialCanvasGallery: GalleryCanvas[] = stateCanvases.map(({ id, pixels }) => {
       const dataUrl = getPixelsDataUrl(pixels)
-      return { id, dataUrl, isVisible: false }
+      return { id, dataUrl, pixels, isVisible: false }
     })
 
     // Animate canvases
@@ -98,7 +98,7 @@ export const useCanvasesGallery = ({ stateCanvases, loaded, appearCooldown = 20 
     requestAnimationFrame(() => {
       if (stateCanvases.length > canvasesGallery.length) {
         // > New canvases were added <
-        const prevCanvasesGalleryMap = createRecordFrom(canvasesGallery)
+        const prevCanvasesGalleryMap = createIdRecordFrom(canvasesGallery)
 
         // Create new canvases gallery, recycling previous ones
         const newCanvasesGallery: GalleryCanvas[] = stateCanvases.map(({ id, pixels }) => {
@@ -106,18 +106,18 @@ export const useCanvasesGallery = ({ stateCanvases, loaded, appearCooldown = 20 
           if (existingCanvas) return existingCanvas
 
           const dataUrl = getPixelsDataUrl(pixels)
-          return { dataUrl, id, isVisible: false }
+          return { dataUrl, id, pixels, isVisible: false }
         })
         // Animate canvases
         animateCanvasesAppear(newCanvasesGallery)
       } else if (stateCanvases.length < canvasesGallery.length) {
         // > Some canvases were deleted <
-        const prevStateCanvasesMap = createRecordFrom(stateCanvases)
+        const prevStateCanvasesMap = createIdRecordFrom(stateCanvases)
 
         // Identify what canvases were deleted and hide them
-        const newCanvasesGallery: GalleryCanvas[] = canvasesGallery.map(({ id, dataUrl }) => {
-          const canvasWasDeleted = !prevStateCanvasesMap[id]
-          return { id, dataUrl, isVisible: !canvasWasDeleted }
+        const newCanvasesGallery: GalleryCanvas[] = canvasesGallery.map(c => {
+          const canvasWasDeleted = !prevStateCanvasesMap[c.id]
+          return { ...c, isVisible: !canvasWasDeleted }
         })
         setCanvasesGallery(newCanvasesGallery)
 
@@ -129,16 +129,16 @@ export const useCanvasesGallery = ({ stateCanvases, loaded, appearCooldown = 20 
         }, CANVASES_TRANSITION_MS)
       } else {
         // > Some canvases might've been replaced <
-        const prevCanvasesGalleryMap = createRecordFrom(canvasesGallery)
+        const prevCanvasesGalleryMap = createIdRecordFrom(canvasesGallery)
         let changesWereMade = false
 
-        const newCanvasesGallery: GalleryCanvas[] = stateCanvases.map(({ id, pixels }) => {
-          const { dataUrl: prevDataUrl } = prevCanvasesGalleryMap[id]
+        const newCanvasesGallery: GalleryCanvas[] = stateCanvases.map(c => {
+          const { dataUrl: prevDataUrl } = prevCanvasesGalleryMap[c.id]
           if (!prevDataUrl) {
             changesWereMade = true
           }
-          const dataUrl = prevDataUrl ?? getPixelsDataUrl(pixels)
-          return { dataUrl, id, isVisible: true }
+          const dataUrl = prevDataUrl ?? getPixelsDataUrl(c.pixels)
+          return { ...c, dataUrl, isVisible: true }
         })
 
         changesWereMade && setCanvasesGallery(newCanvasesGallery)
@@ -154,14 +154,6 @@ export const useCanvasesGallery = ({ stateCanvases, loaded, appearCooldown = 20 
     }
     refreshCanvases()
   }, [debouncedStateCanvases])
-
-  const createRecordFrom = <T>(arr: Array<{ id: string } & T>) => {
-    const record: Record<string, T> = {}
-    arr.forEach(item => {
-      record[item.id] = item
-    })
-    return record
-  }
 
   return {
     canvasesGallery,

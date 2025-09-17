@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   description: 'A cool 16x pixel art paint tool.'
 }
 
-const toPreloadImages = [...ICON_NAMES.map(getIconPath), '/imgs/tools/save.png']
+const toPreloadImages = [...ICON_NAMES.map(getIconPath), '/imgs/save.png']
 
 export default function RootLayout({
   children

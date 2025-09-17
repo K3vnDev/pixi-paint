@@ -4,16 +4,16 @@ import { ZoneWrapper } from '../ZoneWrapper'
 
 type Props = {
   children: React.ReactNode
-} & ReusableComponent
+} & ReusableComponent &
+  React.HTMLAttributes<HTMLDivElement>
 
-export const Item = ({ children, className, style, ref }: Props) => {
+export const Item = ({ children, className, style, ref, ...reactProps }: Props) => {
   return (
     <ZoneWrapper
       className={twMerge(`
         h-25 w-29 relative button transition-all ${className}
       `)}
-      style={style}
-      ref={ref}
+      {...{ style, ref, ...reactProps }}
     >
       {children}
     </ZoneWrapper>

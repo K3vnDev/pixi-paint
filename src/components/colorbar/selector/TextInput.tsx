@@ -5,6 +5,7 @@ import { ColorSelectorContext } from '@/context/ColorSelectorContext'
 import { useEvent } from '@/hooks/useEvent'
 import { useFreshRefs } from '@/hooks/useFreshRefs'
 import { useTimeout } from '@/hooks/useTimeout'
+import { usePaintStore } from '@/store/usePaintStore'
 import { validateColor } from '@/utils/validateColor'
 
 export const TextInput = () => {
@@ -16,15 +17,18 @@ export const TextInput = () => {
   const isFocused = useRef(false)
   const menuIsOpenRef = useFreshRefs(menuIsOpen)
 
+  const setPrimaryColor = usePaintStore(s => s.setPrimaryColor)
+
   const BUTTON_CHECK_TIME = 1000
   const MAX_LENGTH = 16
 
   useEvent(
     'paste',
     (e: ClipboardEvent) => {
-      if (!isFocused.current && menuIsOpenRef.current) {
-        const pastedText = e.clipboardData?.getData('text')
-        if (pastedText) inputUtils.select()
+      if (!isFocused.current) {
+        const pastedText = e.clipboardData?.getData('text') ?? ''
+        const { isValid, value } = validateColor(pastedText)
+        isValid && setPrimaryColor(value)
       }
     },
     { capture: true }
@@ -100,7 +104,7 @@ export const TextInput = () => {
       `}
     >
       <input
-        className='outline-none text-xl text-theme-10 w-full px-3 py-1'
+        className='outline-none text-xl text-theme-10 w-full px-3 py-1 font-mono'
         ref={inputRef}
         value={pickerColor}
         onFocus={handleTextFocus}

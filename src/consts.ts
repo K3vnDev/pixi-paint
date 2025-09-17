@@ -28,12 +28,13 @@ export enum TOOLS {
 }
 
 export const CANVAS_RESOLUTION = 8
+export const CANVAS_PIXELS_LENGHT = CANVAS_RESOLUTION ** 2
 
 export const WHEEL_SWITCH_TOOL_COOLDOWN = 110
 export const BUCKET_INTERVAL_TIME = 55
 
 // Store
-export const BLANK_PIXELS = Array.from({ length: CANVAS_RESOLUTION ** 2 }, () => COLOR_PALETTE.WHITE)
+export const BLANK_PIXELS = Array.from({ length: CANVAS_PIXELS_LENGHT }, () => COLOR_PALETTE.WHITE)
 export const BLANK_DRAFT: SavedCanvas = { id: 'draft', pixels: BLANK_PIXELS } as const
 
 export const LS_KEYS = {
@@ -85,10 +86,13 @@ export const ICON_NAMES = [
   'warning',
   'save',
   'upload',
+  'publish',
   'heart',
   'image',
   'code',
-  'selection-mode'
+  'selection-mode',
+  'loading',
+  'share'
 ] as const
 
 export const EVENTS = {
@@ -101,7 +105,9 @@ export const EVENTS = {
 
   OPEN_DIALOG_MENU: '$open-dialog-menu',
   CLOSE_DIALOG_MENU: '$close-dialog-menu',
-  DIALOG_MENU_CLOSED: '$dialog-menu-closed'
+  DIALOG_MENU_CLOSED: '$dialog-menu-closed',
+
+  PAINTED: '$painted'
 } as const
 
 export const Z_INDEX = {
@@ -128,3 +134,7 @@ export const HTML_IDS = {
 export const HTML_DATA_IDS = {
   CREATION_CANVAS_TARGET: 'creation-canvas-target'
 } as const
+
+export const API_ERRORS = {
+  CANVAS_ALREADY_EXISTS: 'canvas-already-exists'
+}

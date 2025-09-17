@@ -25,14 +25,17 @@ export const Tool = ({ cursor, tool, shortcut }: ToolbarTool) => {
   const selectedStyle = selectedTool === tool ? 'outline-5 brightness-selected translate-x-1.5' : ''
 
   return (
-    <Item ref={elementRef} className={selectedStyle}>
-      <button onClick={selectTool} onFocusCapture={e => e.preventDefault()}>
-        <CursorImage
-          className={{ both: 'left-1/2 top-1/2 -translate-1/2' }}
-          alt={`A pixel art of the ${toolName} tool.`}
-          {...cursor}
-        />
-      </button>
+    <Item
+      ref={elementRef}
+      className={selectedStyle}
+      onClick={selectTool}
+      onFocusCapture={e => e.preventDefault()}
+    >
+      <CursorImage
+        className={{ both: 'left-1/2 top-1/2 -translate-1/2' }}
+        alt={`A pixel art of the ${toolName} tool.`}
+        {...cursor}
+      />
     </Item>
   )
 }

@@ -7,7 +7,7 @@ import { DMSlider } from '@dialog-menu/DMSlider'
 import type { DownloadSettings, JSONCanvas } from '@types'
 import JSZip from 'jszip'
 import { useEffect, useState } from 'react'
-import { useCanvasStore } from '@/store/useCanvasStore'
+import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { canvasParser } from '@/utils/canvasParser'
 import { getLocalStorageItem } from '@/utils/getLocalStorageItem'
 import { getPixelsDataUrl } from '@/utils/getPixelsDataUrl'
@@ -26,7 +26,7 @@ export const DownloadPaintingsMenu = ({ canvasesIds, onDownload }: Props) => {
   const [formatIndex, setFormatIndex] = useState(initState.formatIndex)
   const [sizeIndex, setSizeIndex] = useState(initState.sizeIndex)
 
-  const savedCanvases = useCanvasStore(s => s.savedCanvases)
+  const savedCanvases = useCanvasesStore(s => s.savedCanvases)
   const SIZES = [8, 16, 32, 64, 128, 256, 512, 1024]
   const formatIsPNG = formatIndex === 0
 
@@ -86,7 +86,7 @@ export const DownloadPaintingsMenu = ({ canvasesIds, onDownload }: Props) => {
 
           for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
 
-          // Add to ZIP as "image-1.png", "image-2.png", etc.
+          // Add to ZIP as "image-1.png", "image-2.png", ...
           zip.file(`${fileName}-${index + 1}.png`, bytes)
         })
 
@@ -97,14 +97,7 @@ export const DownloadPaintingsMenu = ({ canvasesIds, onDownload }: Props) => {
       }
     } else {
       // Download json
-      const jsonCanvases: JSONCanvas[] = []
-      canvasesPixels.forEach((pixels, i) => {
-        const parsed = canvasParser.toStorage({ id: i.toString(), pixels })
-        if (!parsed) return
-
-        const { id: _, ...json } = parsed
-        jsonCanvases.push(json)
-      })
+      const jsonCanvases: JSONCanvas[] = canvasParser.batch.toStorage(canvasesPixels)
 
       // Prevent single element arrays
       const downloadJson = singleCanvas ? jsonCanvases[0] : jsonCanvases

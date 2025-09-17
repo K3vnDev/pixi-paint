@@ -1,7 +1,7 @@
+import { MenuBase } from '@@/MenuBase'
 import type { ReusableComponent } from '@types'
 import { useContext, useEffect, useRef } from 'react'
 import { HexColorPicker } from 'react-colorful'
-import { MenuBase } from '@/components/MenuBase'
 import { HTML_IDS } from '@/consts'
 import { ColorSelectorContext } from '@/context/ColorSelectorContext'
 import { useDebounce } from '@/hooks/useDebounce'

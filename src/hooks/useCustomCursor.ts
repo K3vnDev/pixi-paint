@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { HTML_IDS } from '@/consts'
 import { usePaintStore } from '@/store/usePaintStore'
-import { getSafeWinDoc } from '@/utils/getSafeWinDoc'
 import { wasInsideElement } from '@/utils/wasInsideElement'
 import { useEvent } from './useEvent'
 import { useFreshRefs } from './useFreshRefs'
@@ -20,6 +19,16 @@ export const useCustomCursor = () => {
   const [currentCursorIndex, setCurrentCursorIndex] = useState(0)
 
   const [isShowingCursor, setIsShowingCursor] = useState(false)
+
+  useEvent(
+    'pointerenter',
+    (e: PointerEvent) => {
+      pointerPosition.current = { x: e.clientX, y: e.clientY }
+      refreshCursor()
+      setIsShowingCursor(true)
+    },
+    { capture: true, target: 'window' }
+  )
 
   useEvent(
     'pointermove',
@@ -41,7 +50,7 @@ export const useCustomCursor = () => {
       refreshCursor()
       setIsShowingCursor(true)
     },
-    { capture: true, target: getSafeWinDoc().window }
+    { capture: true, target: 'window' }
   )
 
   useEvent(
@@ -49,7 +58,7 @@ export const useCustomCursor = () => {
     (e: PointerEvent) => {
       lastPointerDownWasCanvas.current = isAtPaintCanvas(e)
     },
-    { capture: true, target: getSafeWinDoc().window }
+    { capture: true, target: 'window' }
   )
 
   useEvent(
@@ -57,7 +66,7 @@ export const useCustomCursor = () => {
     () => {
       isPreservingHoveringState.current = false
     },
-    { capture: true, target: getSafeWinDoc().window }
+    { capture: true, target: 'window' }
   )
 
   const isAtPaintCanvas = (e: PointerEvent) => wasInsideElement(e.target).id(HTML_IDS.PAINT_CANVAS)
@@ -88,7 +97,7 @@ export const useCustomCursor = () => {
   }
 
   useEvent('pointerleave', hideCursor, { deps: [isShowingCursor] })
-  useEvent('blur', hideCursor, { deps: [isShowingCursor], target: getSafeWinDoc().window })
+  useEvent('blur', hideCursor, { deps: [isShowingCursor], target: 'window' })
   useEvent('pointerenter', showCusor, { deps: [isShowingCursor] })
 
   return { cursorsContainerRef, isShowingCursor, currentCursorIndex }
