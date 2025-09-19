@@ -5,6 +5,7 @@ import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { usePaintStore } from '@/store/usePaintStore'
 import { canvasParser } from '@/utils/canvasParser'
 import { getLocalStorageItem } from '@/utils/getLocalStorageItem'
+import { useFreshRefs } from './useFreshRefs'
 import { useSaveItem } from './useSaveItem'
 
 export const useSaveCanvases = () => {
@@ -20,6 +21,8 @@ export const useSaveCanvases = () => {
   const hydrated = useCanvasesStore(s => s.hydrated)
   const setHydrated = useCanvasesStore(s => s.setHydrated)
   const editingPixels = usePaintStore(s => s.pixels)
+
+  const refs = useFreshRefs({ hydrated, editingCanvasId })
 
   // Hydrate by loading data from local storage
   useEffect(() => {
@@ -72,10 +75,11 @@ export const useSaveCanvases = () => {
 
   // Handle draft or saved canvas update
   useEffect(() => {
-    const isDraft = editingCanvasId === null
+    const { editingCanvasId, hydrated } = refs.current
+    if (!hydrated) return
 
     // Update draft
-    if (isDraft && hydrated) {
+    if (editingCanvasId === null && hydrated) {
       setDraftPixels(editingPixels)
       return
     }
@@ -84,12 +88,13 @@ export const useSaveCanvases = () => {
     const index = savedCanvases.findIndex(c => c.id === editingCanvasId)
     if (index === -1) return
 
-    const newCanvases = structuredClone(savedCanvases)
-    newCanvases[index] = {
-      ...newCanvases[index],
-      pixels: editingPixels
-    }
-    setSavedCanvases(newCanvases)
+    setSavedCanvases(newCanvases => {
+      newCanvases[index] = {
+        ...newCanvases[index],
+        pixels: editingPixels
+      }
+      return newCanvases
+    })
   }, [editingPixels])
 
   return { savedCanvases, draft, hydrated }

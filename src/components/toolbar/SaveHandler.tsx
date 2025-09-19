@@ -9,7 +9,7 @@ import { useTimeout } from '@/hooks/useTimeout'
 import { useTooltip } from '@/hooks/useTooltip'
 import { usePaintStore } from '@/store/usePaintStore'
 import { ColoredPixelatedImage } from '../ColoredPixelatedImage'
-import { OverwriteDraftDMenu } from '../OverwriteDraftDMenu'
+import { OverwriteDraftMenu } from '../dialog-menu/premade-menus/OverwriteDraftMenu'
 import { PixelatedImage } from '../PixelatedImage'
 import { Item } from './Item'
 
@@ -36,7 +36,7 @@ export const SaveHandler = () => {
 
     if (cantOverrideDraft) {
       openDialogMenu(
-        <OverwriteDraftDMenu
+        <OverwriteDraftMenu
           pixels={draft.pixels}
           goodOption={{
             label: 'Save it, then clone',
@@ -62,7 +62,7 @@ export const SaveHandler = () => {
 
     if (cantOverrideDraft) {
       openDialogMenu(
-        <OverwriteDraftDMenu
+        <OverwriteDraftMenu
           header='Erase your draft?'
           paragraph2='Creating a new blank draft will erase it.'
           pixels={draft.pixels}

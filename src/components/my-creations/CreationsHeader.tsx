@@ -5,10 +5,10 @@ import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useEvent } from '@/hooks/useEvent'
 import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { CanvasesGridHeader } from '../canvases-grid/CanvasesGridHeader'
+import { DeletePaintingsMenu } from '../dialog-menu/premade-menus/DeletePaintingsMenu'
+import { DownloadPaintingsMenu } from '../dialog-menu/premade-menus/DownloadPaintingsMenu'
+import { ImportPaintingsMenu } from '../dialog-menu/premade-menus/ImportPaintingsMenu'
 import { CreationsHeaderButton } from './CreationsHeaderButton'
-import { DeletePaintingsMenu } from './menus/DeletePaintingsMenu'
-import { DownloadPaintingsMenu } from './menus/DownloadPaintingsMenu'
-import { ImportPaintingsMenu } from './menus/ImportPaintingsMenu'
 
 export const CreationsHeader = ({ className = '', ...props }: ReusableComponent) => {
   const { openMenu, closeMenu, menuIsOpen } = useDialogMenu()

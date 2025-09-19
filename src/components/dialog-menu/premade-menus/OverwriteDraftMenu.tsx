@@ -20,7 +20,7 @@ interface Props {
   badOption: Option
 }
 
-export const OverwriteDraftDMenu = ({
+export const OverwriteDraftMenu = ({
   pixels,
   header = 'Overwrite your draft?',
   paragraph1 = "You've got this unsaved painting on your draft.",

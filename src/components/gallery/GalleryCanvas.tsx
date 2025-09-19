@@ -1,8 +1,8 @@
-import { OverwriteDraftDMenu } from '@@/OverwriteDraftDMenu'
 import type { GalleryCanvas as GalleryCanvasType } from '@types'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef } from 'react'
 import { twMerge } from 'tailwind-merge'
+import { OverwriteDraftMenu } from '@/components/dialog-menu/premade-menus/OverwriteDraftMenu'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useGridCanvasStyles } from '@/hooks/useGridCanvasStyles'
 import { useOverwriteDraft } from '@/hooks/useOverwriteDraft'
@@ -60,7 +60,7 @@ export const GalleryCanvas = ({
       closeMenu()
     } else {
       openMenu(
-        <OverwriteDraftDMenu
+        <OverwriteDraftMenu
           pixels={draftPixels}
           goodOption={{
             label: 'Save it, then clone',
