@@ -7,10 +7,14 @@
 
 :root {
   /* Global vars */
-  --canvas-size: calc(100vw - (var(--paint-pad-x) * 2));
-  --sidebar-margin: 36px;
-  --navbar-height: 90px;
-  --paint-pad-x: 48px;
+  --canvas-size: calc(var(--w-screen-minus-pad) - (var(--canvas-outline-w) * 2));
+  --canvas-outline-w: 22px;
+
+  --sidebar-margin: 16px;
+  --navbar-height: 72px;
+
+  --paint-page-pad-x: 8px;
+  --w-screen-minus-pad: calc(100vw - (var(--paint-page-pad-x) * 2));
 
   --galery-pad-x: 110px;
   --creations-canvas-pad: 14px;
@@ -28,6 +32,8 @@
 @media (min-width: 640px) {
   :root {
     --canvas-size: 460px;
+    --sidebar-margin: 24px;
+    --paint-page-pad-x: 20px;
   }
 }
 
@@ -42,6 +48,8 @@
 @media (min-width: 1024px) {
   :root {
     --canvas-size: 650px;
+    --sidebar-margin: 36px;
+    --navbar-height: 90px;
   }
 }
 

@@ -24,5 +24,14 @@ export const PaletteColor = ({ color }: Props) => {
 
   const outline = colorComparison(selectedColor, color) ? 'outline-3 brightness-selected' : ''
 
-  return <ColorBase className={`size-16 button ${outline}`} color={color} onClick={handleClick} />
+  return (
+    <ColorBase
+      className={`
+        lg:size-16 h-12 w-full not-lg:rounded-none not-lg:outline-none 
+        lg:aspect-square button ${outline}
+      `}
+      color={color}
+      onClick={handleClick}
+    />
+  )
 }

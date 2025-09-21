@@ -1,5 +1,5 @@
 import { MenuBase } from '@@/MenuBase'
-import type { ReusableComponent } from '@types'
+import type { ReusableComponent, TransformOrigin } from '@types'
 import { useContext, useEffect, useRef } from 'react'
 import { HexColorPicker } from 'react-colorful'
 import { HTML_IDS } from '@/consts'
@@ -8,6 +8,7 @@ import { useDebounce } from '@/hooks/useDebounce'
 import { useEvent } from '@/hooks/useEvent'
 import { useFreshRefs } from '@/hooks/useFreshRefs'
 import { useMenuBase } from '@/hooks/useMenuBase'
+import { useResponsiveness } from '@/hooks/useResponsiveness'
 import { useGeneralStore } from '@/store/useGeneralStore'
 import { usePaintStore } from '@/store/usePaintStore'
 import { validateColor } from '@/utils/validateColor'
@@ -25,9 +26,12 @@ export const PickerMenu = ({ parentRef }: Props) => {
   const elementRef = useRef<HTMLDialogElement>(null)
   const setIsUsingInput = useGeneralStore(s => s.setIsUsingInput)
 
+  const { media } = useResponsiveness()
+  const transOrigin: TransformOrigin = media.lg ? 'right' : 'top'
+
   const { isOpen, openMenu, style } = useMenuBase({
     elementRef,
-    transformOrigins: ['right'],
+    transformOrigins: [transOrigin],
     horizontal: true,
     elementSelector: `#${HTML_IDS.PICKER_MENU}`,
     closeOn: {

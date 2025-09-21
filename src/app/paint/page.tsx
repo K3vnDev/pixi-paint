@@ -18,8 +18,8 @@ export default function PaintPage() {
   return (
     <main
       className={`
-        w-screen h-[calc(100dvh-var(--navbar-height))] mt-[var(--navbar-height)]
-        flex justify-center items-center relative
+        relative w-screen h-[calc(100dvh-var(--navbar-height))] mt-[var(--navbar-height)]
+        flex justify-center items-center
       `}
     >
       <PaintCanvas />

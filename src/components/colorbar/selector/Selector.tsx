@@ -37,7 +37,8 @@ export const Selector = () => {
     <ColorSelectorContext.Provider
       value={{ pickerColor, setPickerColor, lastValidColor, menuIsOpen, setMenuIsOpen }}
     >
-      <section className='w-full aspect-square relative translate-0 group'>
+      <section className='lg:size-full size-24 aspect-square relative translate-0 group'>
+        {/* Colors */}
         <ColorBase
           id={HTML_IDS.PICKER_MENU}
           ref={pickerRef}
@@ -46,12 +47,14 @@ export const Selector = () => {
         >
           <PickerMenu parentRef={pickerRef} />
         </ColorBase>
+
         <ColorBase
           className='absolute bottom-0 right-0 size-1/2 transition group button'
           color={secondaryColor}
           onClick={swapColors}
         />
 
+        {/* Arrow buttons */}
         {arrows.map(({ pos, rot = '' }, i) => (
           <button
             key={i}
