@@ -138,3 +138,5 @@ export const HTML_DATA_IDS = {
 export const API_ERRORS = {
   CANVAS_ALREADY_EXISTS: 'canvas-already-exists'
 }
+
+export const ROUTES = ['Paint', 'My Creations', 'Gallery'] as const

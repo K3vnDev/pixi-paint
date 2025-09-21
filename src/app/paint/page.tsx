@@ -9,9 +9,9 @@ import { useResetScroll } from '@/hooks/useResetScroll'
 import { useSaveCanvases } from '@/hooks/useSaveCanvases'
 
 export default function PaintPage() {
-  useBodyClassName('overflow-hidden')
   useDefaultPrevention()
   useResetScroll()
+  useBodyClassName('overflow-hidden')
 
   useSaveCanvases()
 

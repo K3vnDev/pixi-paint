@@ -29,10 +29,7 @@ export interface GalleryCanvas {
 
 export interface Cursor {
   imageName: string
-  origin: {
-    x: number
-    y: number
-  }
+  origin: Origin
   colorize?: 'primary' | 'secondary'
 }
 
