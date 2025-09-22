@@ -19,11 +19,11 @@ export const Option = ({ label, icon, action, closeMenu }: Props) => {
     <button
       className={`
         flex items-center bg-transparent hover:bg-black/40 w-full 
-        pl-3 pr-5 py-1 gap-1.5 active:bg-black/20
+        pl-3 pr-5 py-1 gap-1.5 active:bg-black/20 min-h-12
       `}
       onPointerUp={handleClick}
     >
-      <ColoredPixelatedImage icon={icon} className='bg-theme-10 size-12' />
+      {icon && <ColoredPixelatedImage icon={icon} className='bg-theme-10 size-12' />}
       <span className='text-theme-10 text-xl font-semibold'>{label}</span>
     </button>
   )

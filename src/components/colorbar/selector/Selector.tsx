@@ -37,7 +37,7 @@ export const Selector = () => {
     <ColorSelectorContext.Provider
       value={{ pickerColor, setPickerColor, lastValidColor, menuIsOpen, setMenuIsOpen }}
     >
-      <section className='lg:size-full size-24 aspect-square relative translate-0 group'>
+      <section className='lg:size-full md:size-24 size-20 aspect-square relative translate-0 group'>
         {/* Colors */}
         <ColorBase
           id={HTML_IDS.PICKER_MENU}

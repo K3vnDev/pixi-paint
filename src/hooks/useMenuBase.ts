@@ -1,9 +1,10 @@
 import type { Origin, Position as PositionType, TransformOrigin } from '@types'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { animationData as animData } from '@/utils/animationData'
 import { wasInsideElement } from '@/utils/wasInsideElement'
 import { useActionOnKey } from './useActionOnKey'
 import { useAnimations } from './useAnimations'
+import { useDebounce } from './useDebounce'
 import { useEvent } from './useEvent'
 import { useFreshRefs } from './useFreshRefs'
 
@@ -87,6 +88,8 @@ export const useMenuBase = ({
     : [animData.menuShowVertical(), animData.menuHideVertical()]
 
   const { animation, anims, startAnimation } = useAnimations({ animations: { show, hide } })
+  const [resizedCount, setResizedCount] = useState(0)
+  const debouncedResizedCount = useDebounce(resizedCount, 15, false)
 
   const refs = useFreshRefs({
     isOpen,
@@ -143,14 +146,14 @@ export const useMenuBase = ({
   useEvent('pointerleave', () => refs.current.closeOnLeaveDocument && closeMenu())
   useEvent('scroll', () => refs.current.closeOnScroll && closeMenu())
 
-  useEvent(
-    'resize',
-    () => {
+  // Handle resize
+  useEvent('resize', () => setResizedCount(c => c + 1), { target: 'window' })
+  useEffect(() => {
+    if (debouncedResizedCount) {
       const origin = refs.current.defaultOriginGetter?.()
       origin && refreshPosition(origin)
-    },
-    { target: 'window' }
-  )
+    }
+  }, [debouncedResizedCount])
 
   const openMenu = (origin?: Origin) => {
     const tryOpen = () => {

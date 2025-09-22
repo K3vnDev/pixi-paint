@@ -27,7 +27,7 @@ export const PaletteColor = ({ color }: Props) => {
   return (
     <ColorBase
       className={`
-        lg:size-16 h-12 w-full not-lg:rounded-none not-lg:outline-none 
+        lg:size-16 md:h-12 h-10 w-full not-lg:rounded-none not-lg:outline-none 
         lg:aspect-square button ${outline}
       `}
       color={color}

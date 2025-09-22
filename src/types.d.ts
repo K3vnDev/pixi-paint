@@ -86,7 +86,7 @@ export type ContextMenuDetail = {
 
 export interface Option {
   label: string
-  icon: IconName
+  icon?: IconName
 }
 
 export interface ContextMenuOption extends Option {
@@ -106,4 +106,9 @@ export interface TooltipDetail {
 export interface DialogMenuDetail {
   component: React.ReactNode
   id: string
+}
+
+export interface Route {
+  name: string
+  path: string
 }
