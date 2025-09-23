@@ -11,7 +11,7 @@
   --canvas-outline-w: 22px;
 
   --sidebar-margin: 16px;
-  --navbar-height: 72px;
+  --navbar-height: 64px;
 
   --paint-page-pad-x: 8px;
   --w-screen-minus-pad: calc(100vw - (var(--paint-page-pad-x) * 2));
@@ -31,7 +31,7 @@
 /* sm */
 @media (min-width: 640px) {
   :root {
-    --canvas-size: 460px;
+    --canvas-size: 450px;
     --sidebar-margin: 24px;
     --paint-page-pad-x: 20px;
   }
@@ -40,14 +40,14 @@
 /* md */
 @media (min-width: 768px) {
   :root {
-    --canvas-size: 500px;
+    --canvas-size: 450px;
   }
 }
 
 /* lg */
 @media (min-width: 1024px) {
   :root {
-    --canvas-size: 650px;
+    --canvas-size: 550px;
     --sidebar-margin: 36px;
     --navbar-height: 90px;
   }
@@ -56,7 +56,7 @@
 /* xl */
 @media (min-width: 1280px) {
   :root {
-    --canvas-size: 650px;
+    --canvas-size: 620px;
   }
 }
 

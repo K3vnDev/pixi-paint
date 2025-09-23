@@ -45,7 +45,7 @@ export const Content = () => {
     allowedClicks: [CLICK_BUTTON.LEFT, CLICK_BUTTON.RIGHT]
   })
 
-  if (media.md) {
+  if (media.lg) {
     return routes.map(route => (
       <Route key={route.path} {...route} isSelected={selectedRoute?.path === route.path} />
     ))

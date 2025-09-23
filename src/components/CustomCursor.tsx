@@ -8,9 +8,9 @@ import type { Cursor as CursorType } from '@/types'
 import { CursorImage } from './CursorImage'
 
 export const CustomCursor = () => {
-  const { currentCursorIndex, cursorsContainerRef, isShowingCursor } = useCustomCursor()
+  const { currentCursorIndex, cursorsContainerRef, isShowingCursor, isUsingTouch } = useCustomCursor()
 
-  return (
+  return !isUsingTouch ? (
     <div ref={cursorsContainerRef}>
       {CURSORS.map((cursor, i) => (
         <Cursor
@@ -22,7 +22,7 @@ export const CustomCursor = () => {
         />
       ))}
     </div>
-  )
+  ) : null
 }
 
 type CursorProps = {
