@@ -3,7 +3,7 @@
 import { CanvasesGrid } from '@@/canvases-grid/CanvasesGrid'
 import { CreationsCanvas } from '@@/my-creations/CreationsCanvas'
 import { CreationsHeader } from '@@/my-creations/CreationsHeader'
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { CreationsContext } from '@/context/CreationsContext'
 import { useCanvasesGallery } from '@/hooks/useCanvasesGallery'
 import { useCanvasesSelection } from '@/hooks/useCanvasesSelection'
@@ -17,10 +17,13 @@ export default function MyCreationsPage() {
   const stateCanvases = useMemo(() => [draft, ...savedCanvases], [draft, savedCanvases])
   const { canvasesGallery } = useCanvasesGallery({ stateCanvases, loaded: hydrated })
   const canvasesSelection = useCanvasesSelection()
+  const headerRef = useRef<HTMLElement>(null)
 
   useUserPublishedIds(true)
   useDefaultPrevention()
   useResetScroll()
+
+  const gridPaddingTop = canvasesSelection.hasTallHeader ? 'pt-23' : 'pt-4'
 
   return (
     <CreationsContext.Provider value={canvasesSelection}>
@@ -30,9 +33,9 @@ export default function MyCreationsPage() {
           justify-center items-center relative
         `}
       >
-        <CreationsHeader />
+        <CreationsHeader ref={headerRef} />
 
-        <CanvasesGrid>
+        <CanvasesGrid className={`[transition:padding_250ms_ease] ${gridPaddingTop}`}>
           {hydrated && canvasesGallery.map(c => <CreationsCanvas key={c.id} {...c} />)}
         </CanvasesGrid>
       </main>

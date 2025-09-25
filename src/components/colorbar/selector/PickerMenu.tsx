@@ -32,7 +32,7 @@ export const PickerMenu = ({ parentRef }: Props) => {
     [media]
   )
 
-  const { isOpen, openMenu, style } = useMenuBase({
+  const { isOpen, openMenu, refreshPosition, style } = useMenuBase({
     elementRef,
     transformOrigins: [transOrigin],
     horizontal: true,
@@ -80,6 +80,8 @@ export const PickerMenu = ({ parentRef }: Props) => {
     capture: true,
     deps: [media]
   })
+
+  useEffect(refreshPosition, [])
 
   // Refresh primary color
   useEffect(() => {

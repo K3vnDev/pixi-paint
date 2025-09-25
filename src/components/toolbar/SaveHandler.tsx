@@ -123,7 +123,7 @@ export const SaveHandler = ({ spriteSize }: Props) => {
       onClick={handleClick}
       className={`
         flex items-center justify-center relative
-        not-lg:ml-2 ${colorOverride}
+        not-lg:ml-1 not-lg:rounded-full not-lg:scale-90 ${colorOverride}
       `}
       ref={elementRef}
     >

@@ -16,7 +16,7 @@
   --paint-page-pad-x: 8px;
   --w-screen-minus-pad: calc(100vw - (var(--paint-page-pad-x) * 2));
 
-  --galery-pad-x: 110px;
+  --galery-pad-x: 16px; /* 110px */
   --creations-canvas-pad: 14px;
 
   /* Easing vars */
@@ -34,6 +34,7 @@
     --canvas-size: 450px;
     --sidebar-margin: 24px;
     --paint-page-pad-x: 20px;
+    --galery-pad-x: 32px;
   }
 }
 
@@ -41,6 +42,7 @@
 @media (min-width: 768px) {
   :root {
     --canvas-size: 450px;
+    --galery-pad-x: 64px;
   }
 }
 
@@ -50,6 +52,7 @@
     --canvas-size: 550px;
     --sidebar-margin: 36px;
     --navbar-height: 90px;
+    --galery-pad-x: 72px;
   }
 }
 
@@ -57,6 +60,7 @@
 @media (min-width: 1280px) {
   :root {
     --canvas-size: 620px;
+    --galery-pad-x: 120px;
   }
 }
 

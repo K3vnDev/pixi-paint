@@ -150,8 +150,7 @@ export const useMenuBase = ({
   useEvent('resize', () => setResizedCount(c => c + 1), { target: 'window' })
   useEffect(() => {
     if (debouncedResizedCount) {
-      const origin = refs.current.defaultOriginGetter?.()
-      origin && refreshPosition(origin)
+      refreshPosition()
     }
   }, [debouncedResizedCount])
 
@@ -159,10 +158,7 @@ export const useMenuBase = ({
     const tryOpen = () => {
       requestAnimationFrame(() => {
         onOpenMenu?.()
-
-        // Refresh position
-        const refreshOrigin = origin ?? defaultOriginGetter?.()
-        refreshOrigin && refreshPosition(refreshOrigin)
+        refreshPosition(origin)
 
         // Open and animate
         setIsOpen(true)
@@ -195,9 +191,11 @@ export const useMenuBase = ({
       })
     })
 
-  const refreshPosition = ({ x, y }: Origin) => {
-    if (!elementRef.current || refs.current.animation) return
+  const refreshPosition = (origin?: Origin) => {
+    const extractedOrigin = origin ?? defaultOriginGetter?.()
+    if (!extractedOrigin || !elementRef.current || refs.current.animation) return
 
+    const { x, y } = extractedOrigin
     const { width, height } = elementRef.current.getBoundingClientRect()
     const { clientWidth, clientHeight } = document.documentElement
 

@@ -28,7 +28,7 @@ export const Tool = ({ cursor, tool, shortcut, spriteSize: cursorSize }: Props) 
   useActionOnKey({ key: shortcut, action: selectTool })
 
   const selectedStyle =
-    selectedTool === tool ? 'outline-5 brightness-selected lg:translate-x-1.5 not-lg:-translate-y-1.5' : ''
+    selectedTool === tool ? 'outline-5 brightness-selected lg:translate-x-1.5 not-lg:-translate-y-5' : ''
 
   return (
     <Item
