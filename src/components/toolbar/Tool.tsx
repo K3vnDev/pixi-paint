@@ -1,5 +1,6 @@
 import type { ToolbarTool } from '@types'
 import { useRef } from 'react'
+import { twMerge } from 'tailwind-merge'
 import { useActionOnKey } from '@/hooks/useActionOnKey'
 import { useTooltip } from '@/hooks/useTooltip'
 import { usePaintStore } from '@/store/usePaintStore'
@@ -7,7 +8,11 @@ import { parseKebabName } from '@/utils/parseKebabName'
 import { CursorImage } from '../CursorImage'
 import { Item } from './Item'
 
-export const Tool = ({ cursor, tool, shortcut }: ToolbarTool) => {
+type Props = {
+  spriteSize: number
+} & ToolbarTool
+
+export const Tool = ({ cursor, tool, shortcut, spriteSize: cursorSize }: Props) => {
   const setSelectedTool = usePaintStore(s => s.setTool)
   const selectedTool = usePaintStore(s => s.tool)
   const elementRef = useRef<HTMLElement>(null)
@@ -22,18 +27,22 @@ export const Tool = ({ cursor, tool, shortcut }: ToolbarTool) => {
 
   useActionOnKey({ key: shortcut, action: selectTool })
 
-  const selectedStyle = selectedTool === tool ? 'outline-5 brightness-selected translate-x-1.5' : ''
+  const selectedStyle =
+    selectedTool === tool ? 'outline-5 brightness-selected lg:translate-x-1.5 not-lg:-translate-y-5' : ''
 
   return (
     <Item
       ref={elementRef}
-      className={selectedStyle}
+      className={twMerge(`
+        not-lg:px-0 not-lg:py-2 ${selectedStyle}  
+      `)}
       onClick={selectTool}
       onFocusCapture={e => e.preventDefault()}
     >
       <CursorImage
         className={{ both: 'left-1/2 top-1/2 -translate-1/2' }}
         alt={`A pixel art of the ${toolName} tool.`}
+        overrideSize={cursorSize}
         {...cursor}
       />
     </Item>

@@ -107,7 +107,8 @@ export const EVENTS = {
   CLOSE_DIALOG_MENU: '$close-dialog-menu',
   DIALOG_MENU_CLOSED: '$dialog-menu-closed',
 
-  PAINTED: '$painted'
+  PAINTED: '$painted',
+  SELECT_LAST_PAINT_TOOL: '$select-last-paint-tool'
 } as const
 
 export const Z_INDEX = {
@@ -138,3 +139,5 @@ export const HTML_DATA_IDS = {
 export const API_ERRORS = {
   CANVAS_ALREADY_EXISTS: 'canvas-already-exists'
 }
+
+export const ROUTES = ['Paint', 'My Creations', 'Gallery'] as const

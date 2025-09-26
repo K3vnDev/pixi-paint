@@ -1,33 +1,34 @@
-import { usePathname, useRouter } from 'next/navigation'
+import type { ReusableComponent } from '@types'
+import { useRouter } from 'next/navigation'
 import { twMerge } from 'tailwind-merge'
 
-interface Props {
+type Props = {
   name: string
-  route: string
-}
+  path?: string
+  isSelected?: boolean
+} & ReusableComponent
 
-export const Route = ({ name, route }: Props) => {
+export const Route = ({ name, path, isSelected = false, className = '', ...props }: Props) => {
   const router = useRouter()
-  const path = usePathname()
 
   const handleClick = () => {
-    router.push(route)
+    path && router.push(path)
   }
 
-  const isSelected = path === route
   const style = isSelected
-    ? 'bg-theme-bg border-theme-20 py-3.5 translate-y-[4px]'
+    ? 'bg-theme-bg border-theme-20 lg:py-3.5 py-2.5 translate-y-[4px]'
     : 'active:text-theme-10/75 active:scale-90'
 
   return (
     <button
       className={twMerge(`
-        py-2.5 px-12 bg-black/50 text-theme-10 font-semibold text-xl origin-bottom
-        rounded-t-2xl border-4 border-b-0 border-transparent transition-all duration-75
-        ${style}
+        lg:py-2.5 py-1.5 lg:px-12 md:px-8 sm:px-12 px-8 bg-black/50 text-theme-10 font-semibold text-xl 
+        origin-bottom transition-all duration-75 text-nowrap
+        rounded-t-2xl border-4 border-b-0 border-transparent 
+        ${style} ${className}
       `)}
-      key={route}
       onClick={handleClick}
+      {...props}
     >
       {name}
     </button>

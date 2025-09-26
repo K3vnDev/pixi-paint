@@ -8,6 +8,7 @@ export const useCanvasesSelection = () => {
   const [isOnSelectionMode, setIsOnSelectionMode] = useState(false)
   const [selectedCanvases, setSelectedCanvases] = useState<Set<string>>(new Set())
   const [draggingSelection, setDraggingSelection] = useState<DraggingSelection>(null)
+  const [hasTallHeader, setHasTallHeader] = useState(false)
   const savedCanvases = useCanvasesStore(s => s.savedCanvases)
 
   const enableSelectionMode = () => setIsOnSelectionMode(true)
@@ -74,6 +75,8 @@ export const useCanvasesSelection = () => {
     selectAllCanvases,
     deselectAllCanvases,
     draggingSelection,
-    setDraggingSelection
+    setDraggingSelection,
+    hasTallHeader,
+    setHasTallHeader
   }
 }

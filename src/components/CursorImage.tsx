@@ -12,18 +12,21 @@ type Props = {
     mainImg?: string
     colorImg?: string
   }
+  overrideSize?: number
 } & CursorType
 
-export const CursorImage = ({ alt, imageName, colorize, className }: Props) => {
+export const CursorImage = ({ alt, imageName, colorize, className, overrideSize }: Props) => {
   const colors = {
     primary: usePaintStore(s => s.primaryColor),
     secondary: usePaintStore(s => s.secondaryColor)
   }
 
+  const spritesSize = overrideSize ?? SPRITES_SIZE
+
   const globalStyle: React.CSSProperties = {
     imageRendering: 'pixelated',
-    width: SPRITES_SIZE,
-    height: SPRITES_SIZE
+    width: spritesSize,
+    height: spritesSize
   }
   const globalClass = `absolute aspect-square left-0 top-0 ${className?.both}`
   const getImageUrl = (name: string) => `/imgs/tools/${name}.png`

@@ -11,13 +11,13 @@ export const CreationCanvasIndicator = ({ children, icon, className = '', ...pro
   return (
     <span
       className={twMerge(`
-        animate-appear opacity-100 text-2xl font-bold text-theme-10 px-1 h-11
+        animate-appear opacity-100 sm:text-2xl text-lg font-bold text-theme-10 sm:px-1 px-0.5 sm:h-11 h-9
         flex items-center bg-theme-bg/80 backdrop-blur-xs rounded-md shadow-card
         ${className}
       `)}
       {...props}
     >
-      {icon ? <ColoredPixelatedImage icon={icon} className='bg-theme-10 size-10' /> : children}
+      {icon ? <ColoredPixelatedImage icon={icon} className='bg-theme-10 sm:size-10 size-8' /> : children}
     </span>
   )
 }

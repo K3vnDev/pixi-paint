@@ -7,7 +7,7 @@ type Props = {
 } & ReusableComponent &
   React.ComponentPropsWithoutRef<'dialog'>
 
-export const MenuBase = ({ children, className, style, isOpen, ...props }: Props) => (
+export const MenuBase = ({ children, className = '', style, isOpen, ...props }: Props) => (
   <dialog
     className={twMerge(`
       fixed bg-theme-bg border-2 border-theme-20 rounded-xl shadow-card

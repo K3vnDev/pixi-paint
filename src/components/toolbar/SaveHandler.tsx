@@ -1,4 +1,4 @@
-import { CLICK_BUTTON, SPRITES_RESOLUTION, SPRITES_SIZE } from '@consts'
+import { CLICK_BUTTON, SPRITES_RESOLUTION } from '@consts'
 import { useState } from 'react'
 import { useConfetti } from '@/hooks/useConfetti'
 import { useContextMenu } from '@/hooks/useContextMenu'
@@ -13,7 +13,11 @@ import { OverwriteDraftMenu } from '../dialog-menu/premade-menus/OverwriteDraftM
 import { PixelatedImage } from '../PixelatedImage'
 import { Item } from './Item'
 
-export const SaveHandler = () => {
+interface Props {
+  spriteSize: number
+}
+
+export const SaveHandler = ({ spriteSize }: Props) => {
   const { createNewSave, newBlankDraftAction, refs, isDraft, elementRef } = useSaveHandler()
 
   const { startTimeout, stopTimeout } = useTimeout()
@@ -112,24 +116,33 @@ export const SaveHandler = () => {
     ? ['', 'opacity-0 scale-60']
     : ['bg-theme-20/40 outline-theme-20', '']
 
+  const checkSize = spriteSize * 0.8
+
   return (
     <Item
       onClick={handleClick}
-      className={`flex items-center justify-center relative ${colorOverride}`}
+      className={`
+        flex items-center justify-center relative
+        not-lg:ml-1 not-lg:rounded-full not-lg:scale-90 ${colorOverride}
+      `}
       ref={elementRef}
     >
       <PixelatedImage
         resolution={SPRITES_RESOLUTION}
         src='/imgs/save.png'
-        imageSize={SPRITES_SIZE}
+        imageSize={spriteSize}
         alt='Save icon'
       />
       <ColoredPixelatedImage
         icon='check'
         className={`
-          absolute size-20 bg-theme-10 left-1/2 top-1/2 -translate-1/3
+          absolute bg-theme-10 left-1/2 top-1/2 -translate-1/3
           transition-all duration-200 ${checkOverride}
         `}
+        style={{
+          width: `${checkSize}px`,
+          height: `${checkSize}px`
+        }}
       />
     </Item>
   )

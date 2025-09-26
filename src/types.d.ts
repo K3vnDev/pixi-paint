@@ -29,10 +29,7 @@ export interface GalleryCanvas {
 
 export interface Cursor {
   imageName: string
-  origin: {
-    x: number
-    y: number
-  }
+  origin: Origin
   colorize?: 'primary' | 'secondary'
 }
 
@@ -89,7 +86,7 @@ export type ContextMenuDetail = {
 
 export interface Option {
   label: string
-  icon: IconName
+  icon?: IconName
 }
 
 export interface ContextMenuOption extends Option {
@@ -109,4 +106,9 @@ export interface TooltipDetail {
 export interface DialogMenuDetail {
   component: React.ReactNode
   id: string
+}
+
+export interface Route {
+  name: string
+  path: string
 }

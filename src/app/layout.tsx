@@ -1,14 +1,16 @@
 import { CustomCursor } from '@@/CustomCursor'
 import { ContextMenu } from '@@/context-menu/ContextMenu'
 import { Navbar } from '@@/navbar/Navbar'
-import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
-import './globals.css'
 import { Tooltip } from '@@/Tooltip'
 import { DialogMenu } from '@dialog-menu/DialogMenu'
+import type { Metadata } from 'next'
+import { Geist, Geist_Mono } from 'next/font/google'
 import Head from 'next/head'
 import { ICON_NAMES } from '@/consts'
 import { getIconPath } from '@/utils/getIconPath'
+
+import './globals.css'
+import './animations.css'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',

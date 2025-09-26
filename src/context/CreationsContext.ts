@@ -19,6 +19,9 @@ type CreationsContext = {
   deselectAllCanvases: () => void
 
   isCanvasSelected: (id: string) => boolean
+
+  hasTallHeader: boolean
+  setHasTallHeader: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const CreationsContext = createContext<CreationsContext>({
@@ -35,5 +38,8 @@ export const CreationsContext = createContext<CreationsContext>({
   toggleCanvas: () => {},
   selectAllCanvases: () => {},
   deselectAllCanvases: () => {},
-  isCanvasSelected: () => false
+  isCanvasSelected: () => false,
+
+  hasTallHeader: false,
+  setHasTallHeader: () => {}
 })

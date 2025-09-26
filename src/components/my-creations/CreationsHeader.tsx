@@ -1,5 +1,5 @@
 import type { IconName, ReusableComponent } from '@types'
-import { useContext } from 'react'
+import { useCallback, useContext, useEffect } from 'react'
 import { CreationsContext } from '@/context/CreationsContext'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useEvent } from '@/hooks/useEvent'
@@ -21,7 +21,8 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
     enableSelectionMode,
     selectAllCanvases,
     deselectAllCanvases,
-    disableSelectionMode
+    disableSelectionMode,
+    setHasTallHeader
   } = useContext(CreationsContext)
 
   useEvent(
@@ -34,6 +35,41 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
     },
     { deps: [menuIsOpen] }
   )
+
+  const refreshTallHeaderValue = useCallback(() => {
+    requestAnimationFrame(() => {
+      const headerEl = props.ref?.current as HTMLElement
+      if (!headerEl) return
+
+      const childButtons = headerEl.querySelectorAll('button')
+      let lastTop = -1
+      let hasMultipleRows = false
+
+      for (const btn of childButtons) {
+        const { top } = btn.getBoundingClientRect()
+
+        if (lastTop === -1) {
+          lastTop = top
+          continue
+        }
+
+        if (Math.abs(top - lastTop) > 20) {
+          hasMultipleRows = true
+          break
+        }
+      }
+      setHasTallHeader(hasMultipleRows)
+    })
+  }, [])
+
+  useEvent('resize', refreshTallHeaderValue, { target: 'window' })
+  useEffect(() => {
+    if (isOnSelectionMode) {
+      refreshTallHeaderValue()
+      return
+    }
+    setHasTallHeader(false)
+  }, [isOnSelectionMode])
 
   const openImportPaintingsMenu = () => openMenu(<ImportPaintingsMenu {...{ closeMenu }} />)
 
@@ -53,7 +89,7 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
           action: selectAllCanvases
         },
         {
-          label: 'Download selected',
+          label: 'Download',
           icon: 'download',
           disabled: !selectedCanvases.length,
           action: () =>
@@ -62,7 +98,7 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
             )
         },
         {
-          label: 'Delete selected',
+          label: 'Delete',
           icon: 'trash',
           disabled: !selectedCanvases.length,
           action: () =>
@@ -71,7 +107,7 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
       ]
     : [
         {
-          label: 'Selection mode',
+          label: 'Selection',
           icon: 'selection-mode',
           action: enableSelectionMode,
           disabled: savedCanvases.length < 2
@@ -84,7 +120,7 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
       ]
 
   return (
-    <CanvasesGridHeader {...props}>
+    <CanvasesGridHeader className='flex lg:gap-5 gap-3 flex-wrap' {...props}>
       {hydrated && buttons.map((button, i) => <CreationsHeaderButton {...button} key={i} index={i} />)}
     </CanvasesGridHeader>
   )
