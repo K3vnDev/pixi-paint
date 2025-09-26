@@ -75,11 +75,17 @@ export const PickerMenu = ({ parentRef }: Props) => {
   }, [isOpen])
 
   // Handle click event
-  useEvent('click', () => openMenu(), {
-    target: parentRef,
-    capture: true,
-    deps: [media]
-  })
+  useEvent(
+    'click',
+    () => {
+      !refs.current.isOpen && openMenu()
+    },
+    {
+      target: parentRef,
+      capture: true,
+      deps: [media]
+    }
+  )
 
   useEffect(refreshPosition, [])
 

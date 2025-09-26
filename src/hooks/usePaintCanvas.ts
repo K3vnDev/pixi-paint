@@ -95,7 +95,6 @@ export const usePaintCanvas = () => {
   // Triggered on move and click
   const handlePointer = (e: PointerEvent | TouchEvent) => {
     const { pixels, tool, selectedColor, isUsingTouch } = stateRefs.current
-    e.stopPropagation()
 
     // Dont proceed if it wasn't a valid click
     const clickBtn = clickButton.current

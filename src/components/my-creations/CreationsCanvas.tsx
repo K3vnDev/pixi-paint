@@ -9,6 +9,7 @@ import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useEvent } from '@/hooks/useEvent'
 import { useFreshRefs } from '@/hooks/useFreshRefs'
 import { useGridCanvasStyles } from '@/hooks/useGridCanvasStyles'
+import { useHold } from '@/hooks/useHold'
 import { usePressed } from '@/hooks/usePressed'
 import { useTouchChecking } from '@/hooks/useTouchChecking'
 import { useCanvasesStore } from '@/store/useCanvasesStore'
@@ -145,7 +146,9 @@ export const CreationsCanvas = ({ id, pixels, dataUrl, isVisible }: GalleryCanva
         action: openPublishPaintingMenu
       }
 
-  useContextMenu({
+  const { openMenu: openCtxMenu } = useContextMenu({
+    ref: canvasRef,
+    showWhen: !isDraft && !isOnSelectionMode,
     options: [
       {
         label: 'Edit',
@@ -168,14 +171,32 @@ export const CreationsCanvas = ({ id, pixels, dataUrl, isVisible }: GalleryCanva
         icon: 'trash',
         action: openDeletePaintingsMenu
       }
-    ],
+    ]
+  })
+
+  useHold({
     ref: canvasRef,
-    showWhen: !isDraft && !isOnSelectionMode
+    onHold: e => {
+      if (refs.current.isOnSelectionMode) {
+        toggleCanvas(id)
+        return
+      }
+
+      const [{ clientX, clientY }] = e.touches
+      openCtxMenu(clientX, clientY)
+    },
+    onCancel: ({ cancelledFromMove }) => {
+      if (cancelledFromMove) return
+
+      // biome-ignore format: <>
+      refs.current.isOnSelectionMode 
+        ? toggleCanvas(id) 
+        : openCanvas()
+    }
   })
 
   const handleClick = () => {
-    !isOnSelectionMode && openCanvas()
-    isUsingTouch && toggleCanvas(id)
+    !isUsingTouch && openCanvas()
   }
 
   const selectedStyle =

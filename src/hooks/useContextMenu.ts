@@ -9,7 +9,7 @@ import { useTimeout } from './useTimeout'
 interface Params {
   options: ContextMenuOption[]
   ref: React.RefObject<HTMLElement | null>
-  allowedClicks?: CLICK_BUTTON[]
+  allowedClicks?: Array<CLICK_BUTTON.LEFT | CLICK_BUTTON.RIGHT>
   showWhen?: boolean
 }
 
@@ -49,6 +49,7 @@ export const useContextMenu = ({
     setMenuIsOpen(false)
   })
 
+  // Close menu on un-mount
   useEffect(() => closeMenu, [])
 
   const openMenu = (x: number, y: number) => {
