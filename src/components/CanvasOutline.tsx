@@ -21,7 +21,7 @@ export const CanvasOutline = ({ children, className = '' }: Props) => {
       className={twMerge(`
         size-[calc(var(--canvas-size)+(var(--canvas-outline-w)*2))]
         overflow-clip rounded-2xl relative 
-        flex justify-center items-center p-[8px] ${className} 
+        flex justify-center items-center p-[calc(var(--canvas-outline-w)*0.4)] ${className} 
       `)}
     >
       <div

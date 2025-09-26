@@ -42,18 +42,18 @@ export const CreationsHeader = ({ className = '', ...props }: ReusableComponent)
       if (!headerEl) return
 
       const childButtons = headerEl.querySelectorAll('button')
-      let lastHeight = -1
+      let lastTop = -1
       let hasMultipleRows = false
 
       for (const btn of childButtons) {
-        const { y } = btn.getBoundingClientRect()
+        const { top } = btn.getBoundingClientRect()
 
-        if (lastHeight === -1) {
-          lastHeight = y
+        if (lastTop === -1) {
+          lastTop = top
           continue
         }
 
-        if (y !== lastHeight) {
+        if (Math.abs(top - lastTop) > 20) {
           hasMultipleRows = true
           break
         }

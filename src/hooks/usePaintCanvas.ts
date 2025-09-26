@@ -1,4 +1,4 @@
-import { CLICK_BUTTON as CB, EVENTS, TOOLS, WHEEL_SWITCH_TOOL_COOLDOWN } from '@consts'
+import { CANVAS_RESOLUTION, CLICK_BUTTON as CB, EVENTS, TOOLS, WHEEL_SWITCH_TOOL_COOLDOWN } from '@consts'
 import { useEffect, useRef } from 'react'
 import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { usePaintStore } from '@/store/usePaintStore'
@@ -8,6 +8,7 @@ import { useBucketPixels } from './useBucketPixels'
 import { useEvent } from './useEvent'
 import { useFreshRefs } from './useFreshRefs'
 import { useTimeout } from './useTimeout'
+import { useTouchChecking } from './useTouchChecking'
 
 export const usePaintCanvas = () => {
   const pixels = usePaintStore(s => s.pixels)
@@ -42,19 +43,32 @@ export const usePaintCanvas = () => {
   })
 
   const clickButton = useRef(-1)
+  const isUsingTouch = useTouchChecking()
 
   // Set up state refs
-  const stateRefs = useFreshRefs({ pixels, tool, selectedColor, secondaryColor })
+  const stateRefs = useFreshRefs({
+    pixels,
+    tool,
+    selectedColor,
+    secondaryColor,
+    savedCanvases,
+    draft,
+    isUsingTouch
+  })
 
   // Load the correct painting on startup
   useEffect(() => {
     if (!hydrated) return
+    const { draft, savedCanvases } = stateRefs.current
 
     // Check if the user left an open canvas
-    const foundCanvas = savedCanvases.find(c => c.id === editingCanvasId)
-    if (foundCanvas) {
-      setPixels(foundCanvas.pixels)
-      return
+    if (editingCanvasId) {
+      const foundCanvas = savedCanvases.find(c => c.id === editingCanvasId)
+
+      if (foundCanvas) {
+        setPixels(foundCanvas.pixels)
+        return
+      }
     }
 
     // If not, load draft
@@ -79,19 +93,20 @@ export const usePaintCanvas = () => {
   }, [tool])
 
   // Triggered on move and click
-  const handlePointer = (e: PointerEvent) => {
+  const handlePointer = (e: PointerEvent | TouchEvent) => {
+    const { pixels, tool, selectedColor, isUsingTouch } = stateRefs.current
     e.stopPropagation()
 
     // Dont proceed if it wasn't a valid click
     const clickBtn = clickButton.current
-    if (!clickIncludes(clickBtn, CB.LEFT, CB.RIGHT, CB.MIDDLE)) return
+    if ((!clickIncludes(clickBtn, CB.LEFT, CB.RIGHT, CB.MIDDLE) && !isUsingTouch) || !canvasRef.current) {
+      return
+    }
 
     // Extract pixel index and don't proceed if its not valid
-    const element = e.target as HTMLDivElement
-    const pixelIndex = +(element.getAttribute('data-pixel-index') ?? NaN)
-    if (Number.isNaN(pixelIndex)) return
+    const pixelIndex = extractPixelIndex(e)
+    if (pixelIndex === -1) return
 
-    const { pixels, tool, selectedColor } = stateRefs.current
     const pixelColor = structuredClone(pixels[pixelIndex])
 
     // Switch to the eraser automatically on right click
@@ -159,10 +174,14 @@ export const usePaintCanvas = () => {
     }
   }
 
+  useEvent('touchmove', handlePointer)
+  useEvent('touchstart', handlePointer)
+  useEvent('touchend', handlePointerStop)
+
   useEvent('pointerup', handlePointerStop, { passive: false })
   useEvent('pointerleave', handlePointerStop, { passive: false })
-
   useEvent('pointermove', handlePointer, { passive: false })
+
   useEvent(
     'pointerdown',
     (e: PointerEvent) => {
@@ -187,6 +206,29 @@ export const usePaintCanvas = () => {
       dispatchPaintedEvent()
     }
   }
+
+  const extractPixelIndex = (e: PointerEvent | TouchEvent): number => {
+    if (!canvasRef.current) return -1
+
+    // Get variables
+    const { clientX, clientY } = 'touches' in e ? e.touches[0] : e
+    const { height: canvasSize, left, top } = canvasRef.current.getBoundingClientRect()
+
+    // Get cordinates
+    const coordinate = (raw: number) => Math.floor((raw / canvasSize) * CANVAS_RESOLUTION)
+    const [x, y] = [coordinate(clientX - left), coordinate(clientY - top)]
+
+    if ([x, y].some(v => !Number.isNaN(v) && (v < 0 || v > CANVAS_RESOLUTION - 1))) {
+      return -1
+    }
+
+    // Return coordinates translated to index
+    return y * CANVAS_RESOLUTION + x
+  }
+
+  useEvent('$select-last-paint-tool', () => {
+    setTool(lastUsedPaintTool.current)
+  })
 
   // Switch tools on mouse wheel
   useEvent('wheel', (e: WheelEvent) => {

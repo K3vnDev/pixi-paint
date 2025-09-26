@@ -10,6 +10,7 @@ import { useEvent } from '@/hooks/useEvent'
 import { useFreshRefs } from '@/hooks/useFreshRefs'
 import { useGridCanvasStyles } from '@/hooks/useGridCanvasStyles'
 import { usePressed } from '@/hooks/usePressed'
+import { useTouchChecking } from '@/hooks/useTouchChecking'
 import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { useRemoteStore } from '@/store/useRemoteStore'
 import { CanvasImage } from '../CanvasImage'
@@ -51,15 +52,22 @@ export const CreationsCanvas = ({ id, pixels, dataUrl, isVisible }: GalleryCanva
   const isOnSelectionMode = isOnGlobalSelectionMode && !isDraft
   const canvasIsSelected = isOnSelectionMode && isCanvasSelected(id)
   const isDisabled = !isVisible || (isOnGlobalSelectionMode && isDraft)
+  const isUsingTouch = useTouchChecking()
 
-  const refs = useFreshRefs({ savedCanvases, draggingSelection, isOnSelectionMode, canvasIsSelected })
+  const refs = useFreshRefs({
+    savedCanvases,
+    draggingSelection,
+    isOnSelectionMode,
+    canvasIsSelected,
+    isUsingTouch
+  })
 
   const { openMenu } = useDialogMenu()
   const { isPressed } = usePressed({
     ref: canvasRef,
     onPressStart: () => {
-      const { isOnSelectionMode, canvasIsSelected, draggingSelection } = refs.current
-      if (!isOnSelectionMode) return
+      const { isOnSelectionMode, canvasIsSelected, draggingSelection, isUsingTouch } = refs.current
+      if (!isOnSelectionMode || isUsingTouch) return
 
       if (draggingSelection) {
         draggingSelection === 'selecting' ? selectCanvas(id) : deselectCanvas(id)
@@ -167,6 +175,7 @@ export const CreationsCanvas = ({ id, pixels, dataUrl, isVisible }: GalleryCanva
 
   const handleClick = () => {
     !isOnSelectionMode && openCanvas()
+    isUsingTouch && toggleCanvas(id)
   }
 
   const selectedStyle =
@@ -186,7 +195,12 @@ export const CreationsCanvas = ({ id, pixels, dataUrl, isVisible }: GalleryCanva
       <CanvasImage className={`size-full rounded-xl border-4 ${selectedStyle}`} dataUrl={dataUrl} />
 
       {/* Indicators */}
-      <div className='absolute w-full p-[var(--creations-canvas-pad)] pt-0 flex items-center bottom-0'>
+      <div
+        className={`
+          absolute w-full p-[var(--creations-canvas-pad)] 
+          pt-0 flex items-center bottom-0
+        `}
+      >
         {isDraft && <CreationCanvasIndicator className='px-3'>DRAFT</CreationCanvasIndicator>}
         {userPublishedCanvasesIds !== undefined && (
           <div className='flex ml-auto gap-2.5'>
