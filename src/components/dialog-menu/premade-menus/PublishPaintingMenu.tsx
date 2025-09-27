@@ -6,11 +6,10 @@ import { useRemoteStore } from '@/store/useRemoteStore'
 import type { SavedCanvas } from '@/types'
 import { dataFetch } from '@/utils/dataFetch'
 import { DMButton } from '../DMButton'
-import { DMCanvasImage } from '../DMCanvasImage'
 import { DMHeader } from '../DMHeader'
 import { DMParagraph } from '../DMParagraph'
+import { DMParagraphsNCanvasImage } from '../DMParagraphsNCanvasImage'
 import { DMParagraphsZone } from '../DMParagraphsZone'
-import { DMZone } from '../DMZone'
 import { DMZoneButtons } from '../DMZoneButtons'
 
 interface Props {
@@ -106,15 +105,13 @@ export const PublishPaintingMenu = ({ canvasRef, canvasId, dataUrl }: Props) => 
   return (
     <>
       <DMHeader icon='publish'>Publish your painting?</DMHeader>
-      <DMZone className='pt-2 pb-0 gap-8'>
-        <DMZone className='w-96 flex-col gap-3'>
-          <DMParagraph className='w-full'>Upload your painting to the gallery for others to see!</DMParagraph>
-          <DMParagraph className='w-full font-semibold italic text-xl'>
-            Be warned: You won't be able to delete the published version ever again.
-          </DMParagraph>
-        </DMZone>
-        <DMCanvasImage dataUrl={dataUrl} />
-      </DMZone>
+      <DMParagraphsNCanvasImage dataUrl={dataUrl}>
+        <DMParagraph className='w-full'>Upload your painting to the gallery for others to see!</DMParagraph>
+        <DMParagraph className='w-full font-semibold italic text-xl'>
+          Be warned: You won't be able to delete the published version ever again.
+        </DMParagraph>
+      </DMParagraphsNCanvasImage>
+
       <DMZoneButtons>
         <DMButton empty icon='heart' isLoading={isLoading} onClick={publishPainting} preventAutoClose>
           Yes, yes!

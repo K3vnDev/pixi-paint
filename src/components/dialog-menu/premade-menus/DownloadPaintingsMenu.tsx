@@ -120,11 +120,11 @@ export const DownloadPaintingsMenu = ({ canvasesIds, onDownload }: Props) => {
   return (
     <>
       <DMHeader icon='download'>{title}</DMHeader>
-      <DMParagraph className='w-128 mb-4'>{paragraph1 + paragraph2}</DMParagraph>
+      <DMParagraph className='max-w-128 w-full mb-4'>{paragraph1 + paragraph2}</DMParagraph>
 
       <DMRadio
         label='Format'
-        className='w-full'
+        className='w-full not-md:my-2'
         selectedIndex={formatIndex}
         onSelect={setFormatIndex}
         options={[

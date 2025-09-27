@@ -45,8 +45,8 @@ export const DialogMenu = () => {
   return (
     <div
       className={`
-        fixed w-dvw h-dvh top-0 left-0 ${Z_INDEX.DIALOG_MENU}
-        bg-black/50 backdrop-blur-xs ${blackBGStyle} transition-opacity duration-200
+        fixed w-dvw h-dvh top-0 left-0 ${Z_INDEX.DIALOG_MENU} bg-black/50
+        backdrop-blur-xs ${blackBGStyle} transition-opacity duration-200
       `}
     >
       <MenuBase
@@ -54,8 +54,8 @@ export const DialogMenu = () => {
         id={HTML_IDS.DIALOG_MENU}
         style={style}
         className={`
-          flex flex-col items-center gap-2 px-10 py-8 pb-5
-          rounded-2xl ${Z_INDEX.DIALOG_MENU}
+          flex flex-col items-center gap-2 md:px-10 sm:px-8 px-4 md:pt-8 pt-6 pb-5
+          max-w-[calc(100vw-2rem)] rounded-2xl ${Z_INDEX.DIALOG_MENU}
         `}
         isOpen={isOpen}
         ref={elementRef}

@@ -25,7 +25,7 @@ export const DMSlider = ({
   const opacity = disabled ? 'opacity-40 brightness-50' : ''
 
   return (
-    <div className={`flex gap-8 items-center w-full ${opacity} ${className}`} {...props}>
+    <div className={`flex md:gap-8 gap-4 items-center w-full ${opacity} ${className}`} {...props}>
       <DMLabel>{label}</DMLabel>
 
       <div className='w-full h-12 flex items-center relative'>
@@ -59,7 +59,7 @@ export const DMSlider = ({
       {valueDisplayParser && (
         <span
           className={`
-            w-40 bg-black/30 text-lg text-theme-10 flex items-center justify-center 
+            md:w-40 w-32 bg-black/30 text-lg text-theme-10 flex items-center justify-center 
             rounded-full font-semibold font-mono
           `}
         >

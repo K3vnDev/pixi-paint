@@ -55,7 +55,7 @@ export const ImportPaintingsMenu = ({ closeMenu }: Props) => {
         Paintings importer
       </DMHeader>
       <DMDragNDrop
-        className='w-128 my-1 px-10'
+        className='max-w-128 w-full my-1 md:px-10 px-4'
         acceptedFormats={['application/json']}
         allowMultipleFiles
         {...{ onDropOrSelect }}

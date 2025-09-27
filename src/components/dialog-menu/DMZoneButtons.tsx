@@ -7,7 +7,7 @@ type Props = {
 } & ReusableComponent
 
 export const DMZoneButtons = ({ children, className = '', ...props }: Props) => (
-  <DMZone className={twMerge(`w-min mt-4 ${className}`)} {...props}>
+  <DMZone className={twMerge(`w-min mt-4 not-md:flex-col-reverse not-md:gap-3 ${className}`)} {...props}>
     {children}
   </DMZone>
 )

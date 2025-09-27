@@ -4,6 +4,7 @@ import { DMParagraph } from '@dialog-menu/DMParagraph'
 import { DMZoneButtons } from '@dialog-menu/DMZoneButtons'
 import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { useRemoteStore } from '@/store/useRemoteStore'
+import { DMParagraphsZone } from '../DMParagraphsZone'
 
 interface Props {
   canvasesIds: string[]
@@ -38,12 +39,16 @@ export const DeletePaintingsMenu = ({ canvasesIds, onDelete }: Props) => {
   const itThem = canvasesIds.length > 1 ? 'them' : 'it'
 
   const header = `Delete painting${s}?`
-  const paragraph = `Do you really want to delete your painting${s}? You won't see ${itThem} ever again (that's a long time).`
+  const paragraph1 = `Do you really want to delete your painting${s}?`
+  const paragraph2 = `You won't see ${itThem} ever again (and that's a long time).`
 
   return (
     <>
       <DMHeader icon='warning'>{header}</DMHeader>
-      <DMParagraph className='w-xl'>{paragraph}</DMParagraph>
+      <DMParagraphsZone className='max-w-xl w-full'>
+        <DMParagraph>{paragraph1}</DMParagraph>
+        <DMParagraph remark>{paragraph2}</DMParagraph>
+      </DMParagraphsZone>
       <DMZoneButtons>
         <DMButton icon='trash' empty onClick={handleClick}>
           Yes, I don't care

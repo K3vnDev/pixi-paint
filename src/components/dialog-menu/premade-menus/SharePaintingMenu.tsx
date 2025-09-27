@@ -1,9 +1,7 @@
 import { DMButton } from '@@/dialog-menu/DMButton'
-import { DMCanvasImage } from '@@/dialog-menu/DMCanvasImage'
 import { DMHeader } from '@@/dialog-menu/DMHeader'
 import { DMParagraph } from '@@/dialog-menu/DMParagraph'
 import { DMParagraphsZone } from '@@/dialog-menu/DMParagraphsZone'
-import { DMZone } from '@@/dialog-menu/DMZone'
 import { useEffect, useState } from 'react'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useFreshRefs } from '@/hooks/useFreshRefs'
@@ -12,6 +10,7 @@ import { useRemoteStore } from '@/store/useRemoteStore'
 import type { IconName } from '@/types'
 import { dataFetch } from '@/utils/dataFetch'
 import { pixelsComparison } from '@/utils/pixelsComparison'
+import { DMParagraphsNCanvasImage } from '../DMParagraphsNCanvasImage'
 
 interface Props {
   localCanvasId: string
@@ -103,15 +102,13 @@ export const SharePaintingMenu = ({ localCanvasId, dataUrl, pixels }: Props) => 
   return (
     <>
       <DMHeader icon='share'>Share your painting</DMHeader>
-      <DMZone className='w-120'>
-        <DMParagraphsZone className='w-full'>
-          <DMParagraph>You can share this awesome painting with others!</DMParagraph>
-          <DMParagraph remark className='flex-row'>
-            Share and flex what you did.
-          </DMParagraph>
-        </DMParagraphsZone>
-        <DMCanvasImage dataUrl={dataUrl} />
-      </DMZone>
+      <DMParagraphsNCanvasImage dataUrl={dataUrl}>
+        <DMParagraph>You can share this awesome painting with others!</DMParagraph>
+        <DMParagraph remark className='flex-row'>
+          Share and flex what you did.
+        </DMParagraph>
+      </DMParagraphsNCanvasImage>
+
       <DMButton
         className='mt-3'
         icon={buttonIcon}

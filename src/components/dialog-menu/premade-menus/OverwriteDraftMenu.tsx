@@ -1,10 +1,8 @@
-import { DMParagraphsZone } from '@@/dialog-menu/DMParagraphsZone'
 import { DMButton } from '@dialog-menu/DMButton'
-import { DMCanvasImage } from '@dialog-menu/DMCanvasImage'
 import { DMHeader } from '@dialog-menu/DMHeader'
 import { DMParagraph } from '@dialog-menu/DMParagraph'
-import { DMZone } from '@dialog-menu/DMZone'
 import { DMZoneButtons } from '@dialog-menu/DMZoneButtons'
+import { DMParagraphsNCanvasImage } from '../DMParagraphsNCanvasImage'
 
 interface Option {
   label: string
@@ -30,13 +28,11 @@ export const OverwriteDraftMenu = ({
 }: Props) => (
   <>
     <DMHeader icon='warning'>{header}</DMHeader>
-    <DMZone className='pt-2 pb-0 items-start gap-8'>
-      <DMParagraphsZone className='w-96'>
-        <DMParagraph>{paragraph1}</DMParagraph>
-        <DMParagraph remark>{paragraph2}</DMParagraph>
-      </DMParagraphsZone>
-      <DMCanvasImage pixels={pixels} />
-    </DMZone>
+    <DMParagraphsNCanvasImage pixels={pixels}>
+      <DMParagraph>{paragraph1}</DMParagraph>
+      <DMParagraph remark>{paragraph2}</DMParagraph>
+    </DMParagraphsNCanvasImage>
+
     <DMZoneButtons>
       <DMButton icon='trash' empty onClick={badOption.action}>
         {badOption.label}

@@ -108,7 +108,7 @@ export const DMDragNDrop = ({
       <ColoredPixelatedImage icon={icon} className={`size-16 ${twIconStyles}`} />
       <span
         className={`
-          h-16 flex items-center justify-center text-center text-2xl
+          flex items-center justify-center text-center text-2xl
           text-pretty text-theme-10
         `}
       >

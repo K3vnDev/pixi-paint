@@ -37,7 +37,10 @@ export const useRemoteStore = create<RemoteStore>((set, get) => ({
       method: 'POST',
       json: savedCanvases,
       onSuccess: ids => setUserPublishedIds(new Set(ids)),
-      onError: () => setUserPublishedIds(null)
+      onError: () => {
+        setUPIRefreshCooldown(UPI_COOLDOWN.INSTANT)
+        setUserPublishedIds(undefined)
+      }
     })
   },
 
