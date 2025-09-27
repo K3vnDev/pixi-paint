@@ -8,21 +8,23 @@ import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { useRemoteStore } from '@/store/useRemoteStore'
 import { generateId } from '@/utils/generateId'
 import { pixelsComparison } from '@/utils/pixelsComparison'
-import { DMButton } from '../dialog-menu/DMButton'
+import { DMButton, type Props as DMButtonProps } from '../dialog-menu/DMButton'
 import { DMCanvasImage } from '../dialog-menu/DMCanvasImage'
 import { DMHeader } from '../dialog-menu/DMHeader'
 import { DMZone } from '../dialog-menu/DMZone'
+import { DMZoneButtons } from '../dialog-menu/DMZoneButtons'
 
 interface Props {
   id: string
   dataUrl: string
   pixels: string[]
+  verticalMode: boolean
 
   closeMenu: () => void
   openInDraft: () => void
 }
 
-export const CanvasViewMenu = ({ dataUrl, id, closeMenu, pixels, openInDraft }: Props) => {
+export const CanvasViewMenu = ({ dataUrl, id, closeMenu, pixels, openInDraft, verticalMode }: Props) => {
   const [shareLinkCopied, setShareLinkCopied] = useState(false)
   const [saveDisabled, setSaveDisabled] = useState(true)
 
@@ -46,10 +48,6 @@ export const CanvasViewMenu = ({ dataUrl, id, closeMenu, pixels, openInDraft }: 
       stopTimeout(index)
     }, 1500)
   }
-
-  const shareLinkButtonData: ButtonData = shareLinkCopied
-    ? { icon: 'check', text: 'Share link copied!' }
-    : { icon: 'share', text: 'Copy share link' }
 
   const refreshSaveDisabled = () => {
     setTimeout(() => {
@@ -78,41 +76,73 @@ export const CanvasViewMenu = ({ dataUrl, id, closeMenu, pixels, openInDraft }: 
     }
   }
 
+  const shareLinkButtonData: ButtonData = shareLinkCopied
+    ? { icon: 'check', text: 'Share link copied!' }
+    : { icon: 'share', text: 'Copy share link' }
+
   const saveToMyCreationsButtonData: ButtonData = saveDisabled
     ? { icon: 'check', text: 'In your creations!' }
     : { icon: 'save', text: 'Save to my creations' }
 
-  return (
-    <DMZone className='gap-16 items-start relative'>
-      <DMZone className='flex-col items-start'>
-        <DMHeader icon='publish' className='pl-0'>
-          Community painting
-        </DMHeader>
-        <DMButton
-          icon={shareLinkButtonData.icon}
-          onClick={copyShareLink}
-          disabled={shareLinkCopied}
-          preventAutoClose
-        >
-          {shareLinkButtonData.text}
-        </DMButton>
-        <DMButton icon='pencil' onClick={openInDraft} preventAutoClose>
-          Open in draft
-        </DMButton>
-        <DMButton
-          icon={saveToMyCreationsButtonData.icon}
-          disabled={saveDisabled}
-          onClick={saveToMyCreations}
-          preventAutoClose
-        >
-          {saveToMyCreationsButtonData.text}
-        </DMButton>
-        <DMButton icon='cross' empty>
-          Close
-        </DMButton>
-      </DMZone>
-      <DMCanvasImage className='size-99' dataUrl={dataUrl} />
+  const buttons: DMButtonProps[] = [
+    {
+      icon: shareLinkButtonData.icon,
+      children: shareLinkButtonData.text,
+      onClick: copyShareLink,
+      disabled: shareLinkCopied,
+      preventAutoClose: true
+    },
+    {
+      icon: 'pencil',
+      children: 'Open in draft',
+      onClick: openInDraft,
+      preventAutoClose: true
+    },
+    {
+      icon: saveToMyCreationsButtonData.icon,
+      children: saveToMyCreationsButtonData.text,
+      disabled: saveDisabled,
+      onClick: saveToMyCreations,
+      preventAutoClose: true
+    },
+    {
+      icon: 'cross',
+      children: 'Close',
+      empty: true,
+      onClick: closeMenu
+    }
+  ]
+
+  return verticalMode ? (
+    <DMZone>
+      <Header />
+      <DMCanvasImage className='size-48' dataUrl={dataUrl} />
+      <Buttons buttonsData={buttons} />
     </DMZone>
+  ) : (
+    <DMZone className='gap-16 items-start'>
+      <DMZone className='flex-col items-start'>
+        <Header />
+        <Buttons buttonsData={buttons} />
+      </DMZone>
+      <DMCanvasImage className='md:size-100' dataUrl={dataUrl} />
+    </DMZone>
+  )
+}
+
+const Header = () => (
+  <DMHeader icon='publish' className='pl-0'>
+    Community painting
+  </DMHeader>
+)
+
+const Buttons = ({ buttonsData }: { buttonsData: DMButtonProps[] }) => {
+  return (
+    <DMZoneButtons className='not-md:flex-col md:flex-col md:items-start'>
+      {buttonsData.map((btn, i) => (
+        <DMButton key={i} {...btn} />
+      ))}
+    </DMZoneButtons>
   )
 }
 

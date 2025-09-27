@@ -42,7 +42,7 @@ export const useContextMenu = ({
         }
       }, OPEN_WAIT)
     },
-    { target: ref, capture: true }
+    { target: ref, capture: true, deps: [showWhen] }
   )
 
   useEvent('$context-menu-closed', () => {

@@ -9,8 +9,8 @@ import { DMButton } from '../DMButton'
 import { DMHeader } from '../DMHeader'
 import { DMParagraph } from '../DMParagraph'
 import { DMParagraphsNCanvasImage } from '../DMParagraphsNCanvasImage'
-import { DMParagraphsZone } from '../DMParagraphsZone'
 import { DMZoneButtons } from '../DMZoneButtons'
+import { DefaultErrorMenu } from './DefaultErrorMenu'
 
 interface Props {
   canvasId: string
@@ -70,7 +70,7 @@ export const PublishPaintingMenu = ({ canvasRef, canvasId, dataUrl }: Props) => 
 
         const { header, button, paragraphs } = isConflictError
           ? {
-              header: 'Sorry, but your canvas...',
+              header: 'Sorry, but...',
               paragraphs: [
                 "It's nothing personal, but a very similar painting has already been published.",
                 "Published paintings must be unique, so we can't accept yours right now... unless you tweak it a bit."
@@ -78,7 +78,7 @@ export const PublishPaintingMenu = ({ canvasRef, canvasId, dataUrl }: Props) => 
               button: 'Okay, I guess...'
             }
           : {
-              header: 'Oops! Something went wrong...',
+              header: 'Whoops!',
               paragraphs: [
                 'Something unexpected happened on our side while trying to publish your canvas.',
                 'Please wait a few minutes and try again.'
@@ -87,16 +87,12 @@ export const PublishPaintingMenu = ({ canvasRef, canvasId, dataUrl }: Props) => 
             }
 
         openMenu(
-          <>
-            <DMHeader icon='warning'>{header}</DMHeader>
-            <DMParagraphsZone className='w-xl'>
-              <DMParagraph>{paragraphs[0]}</DMParagraph>
-              <DMParagraph remark>{paragraphs[1]}</DMParagraph>
-            </DMParagraphsZone>
-            <DMZoneButtons>
-              <DMButton>{button}</DMButton>
-            </DMZoneButtons>
-          </>
+          <DefaultErrorMenu
+            header={{ icon: 'warning', label: header }}
+            paragraph1={paragraphs[0]}
+            paragraph2={paragraphs[1]}
+            button={{ label: button }}
+          />
         )
       }
     })

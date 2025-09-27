@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { ColoredPixelatedImage } from '../ColoredPixelatedImage'
 
-type Props = {
+export type Props = {
   children?: React.ReactNode
   icon?: IconName
   onClick?: () => void | Promise<void>

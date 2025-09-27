@@ -1,7 +1,6 @@
 import { DMButton } from '@@/dialog-menu/DMButton'
 import { DMHeader } from '@@/dialog-menu/DMHeader'
 import { DMParagraph } from '@@/dialog-menu/DMParagraph'
-import { DMParagraphsZone } from '@@/dialog-menu/DMParagraphsZone'
 import { useEffect, useState } from 'react'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useFreshRefs } from '@/hooks/useFreshRefs'
@@ -11,6 +10,7 @@ import type { IconName } from '@/types'
 import { dataFetch } from '@/utils/dataFetch'
 import { pixelsComparison } from '@/utils/pixelsComparison'
 import { DMParagraphsNCanvasImage } from '../DMParagraphsNCanvasImage'
+import { DefaultErrorMenu } from './DefaultErrorMenu'
 
 interface Props {
   localCanvasId: string
@@ -43,6 +43,7 @@ export const SharePaintingMenu = ({ localCanvasId, dataUrl, pixels }: Props) => 
       handlePaintingId(foundCanvas.id)
       return
     }
+
     // If not possible, fetch id from the server
     dataFetch<string>({
       url: '/api/paintings/share',
@@ -50,7 +51,7 @@ export const SharePaintingMenu = ({ localCanvasId, dataUrl, pixels }: Props) => 
       json: pixels,
       onSuccess: foundId => handlePaintingId(foundId),
       onError: (_, code) => {
-        const [errorMsg1, errorMsg2] =
+        const [paragraph1, paragraph2] =
           code === 404
             ? (() => {
                 setUserPublishedIds(ids => {
@@ -65,14 +66,11 @@ export const SharePaintingMenu = ({ localCanvasId, dataUrl, pixels }: Props) => 
             : ['A totally unexpected error just occurred. Please try again later.']
 
         openMenu(
-          <>
-            <DMHeader icon='cross'>Something went wrong...</DMHeader>
-            <DMParagraphsZone className='w-120'>
-              <DMParagraph>{errorMsg1}</DMParagraph>
-              {errorMsg2 && <DMParagraph remark>{errorMsg2}</DMParagraph>}
-            </DMParagraphsZone>
-            <DMButton className='mt-2'>Okay, okay...</DMButton>
-          </>
+          <DefaultErrorMenu
+            header={{ icon: 'cross', label: 'Something went wrong...' }}
+            {...{ paragraph1, paragraph2 }}
+            button={{ label: 'Okay, okay...' }}
+          />
         )
       }
     })
