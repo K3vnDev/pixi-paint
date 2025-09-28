@@ -6,7 +6,7 @@ import { useResponsiveness } from '@/hooks/useResponsiveness'
 import type { ContextMenuOption, Route as RouteType } from '@/types'
 import { Route } from './Route'
 
-export const Content = () => {
+export const Routes = () => {
   const { media } = useResponsiveness()
   const ctxMenuRef = useRef<HTMLElement>(null)
   const pathName = usePathname()

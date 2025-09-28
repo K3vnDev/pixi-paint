@@ -22,10 +22,9 @@ export const Route = ({ name, path, isSelected = false, className = '', ...props
   return (
     <button
       className={twMerge(`
-        lg:py-2.5 py-1.5 lg:px-12 md:px-8 sm:px-12 px-8 bg-black/50 text-theme-10 font-semibold text-xl 
-        origin-bottom transition-all duration-75 text-nowrap
-        rounded-t-2xl border-4 border-b-0 border-transparent 
-        ${style} ${className}
+        lg:py-2.5 py-1.5 lg:px-12 md:px-8 sm:px-12 px-8 font-semibold text-xl 
+        bg-black text-theme-10 origin-bottom transition-all duration-75 text-nowrap
+        rounded-t-2xl border-4 border-b-0 border-transparent ${style} ${className}
       `)}
       onClick={handleClick}
       {...props}
