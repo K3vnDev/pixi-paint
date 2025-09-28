@@ -2,8 +2,8 @@
 
 import { CURSORS, SPRITES_RESOLUTION, SPRITES_SIZE, Z_INDEX } from '@consts'
 import { useEffect, useMemo, useState } from 'react'
+import { useTimeout } from '@/hooks/timer-handlers/useTimeout'
 import { useCustomCursor } from '@/hooks/useCustomCursor'
-import { useTimeout } from '@/hooks/useTimeout'
 import type { Cursor as CursorType } from '@/types'
 import { CursorImage } from './CursorImage'
 

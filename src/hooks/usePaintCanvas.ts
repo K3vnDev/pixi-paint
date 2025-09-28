@@ -4,10 +4,10 @@ import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { usePaintStore } from '@/store/usePaintStore'
 import { clickIncludes } from '@/utils/clickIncludes'
 import { colorComparison } from '@/utils/colorComparison'
+import { useTimeout } from './timer-handlers/useTimeout'
 import { useBucketPixels } from './useBucketPixels'
 import { useEvent } from './useEvent'
 import { useFreshRefs } from './useFreshRefs'
-import { useTimeout } from './useTimeout'
 import { useTouchChecking } from './useTouchChecking'
 
 export const usePaintCanvas = () => {
@@ -95,7 +95,6 @@ export const usePaintCanvas = () => {
   // Triggered on move and click
   const handlePointer = (e: PointerEvent | TouchEvent) => {
     const { pixels, tool, selectedColor, isUsingTouch } = stateRefs.current
-    e.stopPropagation()
 
     // Dont proceed if it wasn't a valid click
     const clickBtn = clickButton.current

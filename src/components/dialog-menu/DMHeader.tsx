@@ -10,12 +10,13 @@ type Props = {
 export const DMHeader = ({ children, className = '', icon, ...props }: Props) => (
   <header
     className={twMerge(`
-      pb-3 px-8 mb-3 text-3xl text-theme-10 font-bold text-nowrap border-b-3 
-      border-theme-10/20 border-dashed flex items-center gap-2 ${className}
+      pb-3 md:px-8 px-2 md:mb-3 md:text-3xl text-2xl md:gap-2 gap-1
+      text-theme-10 font-bold text-nowrap border-b-3 
+      border-theme-10/20 border-dashed flex items-center ${className}
     `)}
     {...props}
   >
-    {icon && <ColoredPixelatedImage icon={icon} className='size-8 bg-theme-10' />}
+    {icon && <ColoredPixelatedImage icon={icon} className='md:size-8 size-7 bg-theme-10' />}
     {children}
   </header>
 )

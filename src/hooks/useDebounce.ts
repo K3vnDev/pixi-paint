@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
+import { useTimeout } from './timer-handlers/useTimeout'
 import { useFreshRefs } from './useFreshRefs'
-import { useTimeout } from './useTimeout'
 
 /**
  * Debounce hook

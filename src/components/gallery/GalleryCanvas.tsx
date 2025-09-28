@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import { twMerge } from 'tailwind-merge'
 import { OverwriteDraftMenu } from '@/components/dialog-menu/premade-menus/OverwriteDraftMenu'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
+import { useFreshRefs } from '@/hooks/useFreshRefs'
 import { useGridCanvasStyles } from '@/hooks/useGridCanvasStyles'
 import { useOverwriteDraft } from '@/hooks/useOverwriteDraft'
 import { usePressed } from '@/hooks/usePressed'
@@ -14,6 +15,7 @@ interface Props extends GalleryCanvasType {
   setSearchParamsId: (id: string) => void
   initiallyOpenMenu: boolean
   pixels: string[]
+  verticalMode: boolean
 }
 
 export const GalleryCanvas = ({
@@ -22,7 +24,8 @@ export const GalleryCanvas = ({
   initiallyOpenMenu,
   setSearchParamsId,
   pixels,
-  isVisible
+  isVisible,
+  verticalMode
 }: Props) => {
   const canvasRef = useRef<HTMLLIElement>(null)
   const { canOverwriteDraft, overwriteDraft, saveDraft, draftPixels } = useOverwriteDraft(pixels)
@@ -33,8 +36,14 @@ export const GalleryCanvas = ({
     initiallyOpenMenu && openViewMenu()
   }, [initiallyOpenMenu])
 
+  const verticalModeRef = useFreshRefs(verticalMode)
+
   const openViewMenu = () => {
-    openMenu(<CanvasViewMenu {...{ id, dataUrl, closeMenu, pixels, openInDraft }} />)
+    openMenu(
+      <CanvasViewMenu
+        {...{ id, dataUrl, closeMenu, pixels, openInDraft, verticalMode: verticalModeRef.current }}
+      />
+    )
     setSearchParamsId(id)
   }
 

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { AnimationData } from '@/utils/animationData'
-import { useTimeout } from './useTimeout'
+import { useTimeout } from './timer-handlers/useTimeout'
 
 interface Params<T extends Record<string, AnimationData>> {
   animations: T

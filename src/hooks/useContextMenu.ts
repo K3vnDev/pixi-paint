@@ -2,14 +2,14 @@ import type { ContextMenuDetail, ContextMenuOption } from '@types'
 import { useEffect, useRef, useState } from 'react'
 import { CLICK_BUTTON, EVENTS } from '@/consts'
 import { clickIncludes } from '@/utils/clickIncludes'
+import { useTimeout } from './timer-handlers/useTimeout'
 import { useEvent } from './useEvent'
 import { useFreshRefs } from './useFreshRefs'
-import { useTimeout } from './useTimeout'
 
 interface Params {
   options: ContextMenuOption[]
   ref: React.RefObject<HTMLElement | null>
-  allowedClicks?: CLICK_BUTTON[]
+  allowedClicks?: Array<CLICK_BUTTON.LEFT | CLICK_BUTTON.RIGHT>
   showWhen?: boolean
 }
 
@@ -42,13 +42,14 @@ export const useContextMenu = ({
         }
       }, OPEN_WAIT)
     },
-    { target: ref, capture: true }
+    { target: ref, capture: true, deps: [showWhen] }
   )
 
   useEvent('$context-menu-closed', () => {
     setMenuIsOpen(false)
   })
 
+  // Close menu on un-mount
   useEffect(() => closeMenu, [])
 
   const openMenu = (x: number, y: number) => {

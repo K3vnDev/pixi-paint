@@ -8,7 +8,7 @@ type Props = {
 export const DMZone = ({ children, className = '', ...props }: Props) => (
   <section
     className={twMerge(`
-      flex items-center justify-center gap-5 py-2
+      flex not-md:flex-col items-center justify-center gap-5 py-2
       ${className}
     `)}
     {...props}

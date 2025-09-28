@@ -1,7 +1,7 @@
 import confetti from 'canvas-confetti'
 import { useRef } from 'react'
 import type { ReusableComponent } from '@/types'
-import { useTimeout } from './useTimeout'
+import { useTimeout } from './timer-handlers/useTimeout'
 
 interface Params {
   ref: ReusableComponent['ref']

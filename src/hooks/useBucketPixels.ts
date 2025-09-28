@@ -4,8 +4,8 @@ import { useRef } from 'react'
 import { usePaintStore } from '@/store/usePaintStore'
 import { colorComparison } from '@/utils/colorComparison'
 import { generateId } from '@/utils/generateId'
+import { useInterval } from './timer-handlers/useInterval'
 import { useFreshRefs } from './useFreshRefs'
-import { useInterval } from './useInterval'
 
 interface PaintBucketPixelsParams {
   intervalTime?: number

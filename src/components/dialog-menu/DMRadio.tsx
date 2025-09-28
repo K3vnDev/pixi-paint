@@ -16,8 +16,8 @@ export const DMRadio = ({ label, selectedIndex = 0, options, onSelect, className
       <DMLabel>{label}</DMLabel>
       <ul
         className={twMerge(`
-          flex items-center justify-center py-2 w-fit
-          transition gap-4
+          flex not-md:flex-col items-center justify-center transition
+          md:py-2 md:w-fit w-full md:gap-4 gap-2
         `)}
       >
         {options.map((option, i) => (
@@ -50,8 +50,8 @@ const DMOption = ({ icon, index, label, selectedIndex, onSelect }: DMOptionProps
     <li
       key={index}
       className={`
-        flex gap-1.5 items-center border-2 transition
-        pr-8 pl-6 py-2 rounded-full ${baseStyle}
+        flex justify-center gap-1.5 items-center border-2 transition
+        md:pr-8 md:pl-6 md:py-2 not-md:w-full py-1 rounded-full ${baseStyle}
       `}
       onClick={handleClick}
     >

@@ -2,8 +2,8 @@ import { ColoredPixelatedImage } from '@@/ColoredPixelatedImage'
 import type { IconName, ReusableComponent } from '@types'
 import { useState } from 'react'
 import { twMerge } from 'tailwind-merge'
+import { useTimeout } from '@/hooks/timer-handlers/useTimeout'
 import { useEvent } from '@/hooks/useEvent'
-import { useTimeout } from '@/hooks/useTimeout'
 
 type Props = {
   children?: string
@@ -108,7 +108,7 @@ export const DMDragNDrop = ({
       <ColoredPixelatedImage icon={icon} className={`size-16 ${twIconStyles}`} />
       <span
         className={`
-          h-16 flex items-center justify-center text-center text-2xl
+          flex items-center justify-center text-center text-2xl
           text-pretty text-theme-10
         `}
       >

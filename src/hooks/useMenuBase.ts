@@ -7,6 +7,7 @@ import { useAnimations } from './useAnimations'
 import { useDebounce } from './useDebounce'
 import { useEvent } from './useEvent'
 import { useFreshRefs } from './useFreshRefs'
+import { useTouchChecking } from './useTouchChecking'
 
 interface Params {
   elementRef: React.RefObject<HTMLElement | null>
@@ -90,6 +91,7 @@ export const useMenuBase = ({
   const { animation, anims, startAnimation } = useAnimations({ animations: { show, hide } })
   const [resizedCount, setResizedCount] = useState(0)
   const debouncedResizedCount = useDebounce(resizedCount, 15, false)
+  const isUsingTouch = useTouchChecking()
 
   const refs = useFreshRefs({
     isOpen,
@@ -98,7 +100,8 @@ export const useMenuBase = ({
     closeOnScroll,
     defaultOriginGetter,
     elementSelector,
-    closeAtDistance
+    closeAtDistance,
+    isUsingTouch
   })
 
   useActionOnKey({
@@ -116,8 +119,8 @@ export const useMenuBase = ({
   useEvent(
     'pointermove',
     (e: PointerEvent) => {
-      const { isOpen, closeAtDistance } = refs.current
-      if (isOpen && elementRef.current && closeAtDistance > 0) {
+      const { isOpen, closeAtDistance, isUsingTouch } = refs.current
+      if (isOpen && !isUsingTouch && elementRef.current && closeAtDistance > 0) {
         const { top, left, width, height } = elementRef.current.getBoundingClientRect()
 
         const center = { x: left + width / 2, y: top + height / 2 }
@@ -143,7 +146,10 @@ export const useMenuBase = ({
     { capture: true }
   )
 
-  useEvent('pointerleave', () => refs.current.closeOnLeaveDocument && closeMenu())
+  useEvent('pointerleave', () => {
+    const { closeOnLeaveDocument, isUsingTouch } = refs.current
+    closeOnLeaveDocument && !isUsingTouch && closeMenu()
+  })
   useEvent('scroll', () => refs.current.closeOnScroll && closeMenu())
 
   // Handle resize

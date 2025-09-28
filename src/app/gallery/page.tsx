@@ -14,6 +14,7 @@ import { useCanvasesGallery } from '@/hooks/useCanvasesGallery'
 import { useDefaultPrevention } from '@/hooks/useDefaultPrevention'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
 import { useEvent } from '@/hooks/useEvent'
+import { useResponsiveness } from '@/hooks/useResponsiveness'
 import { useSaveCanvases } from '@/hooks/useSaveCanvases'
 import { useRemoteStore } from '@/store/useRemoteStore'
 import { canvasParser } from '@/utils/canvasParser'
@@ -26,6 +27,7 @@ export default function GalleryPage() {
   const router = useRouter()
   const [initiallyOpenMenuId, setInitiallyOpenMenuId] = useState<string | null>(null)
   const { openMenu } = useDialogMenu()
+  const { media } = useResponsiveness()
 
   useDefaultPrevention()
   useSaveCanvases()
@@ -106,6 +108,7 @@ export default function GalleryPage() {
                 {...c}
                 setSearchParamsId={setSearchParamsId}
                 initiallyOpenMenu={initiallyOpenMenuId === c.id}
+                verticalMode={!media.md}
                 key={c.id}
               />
             ))}

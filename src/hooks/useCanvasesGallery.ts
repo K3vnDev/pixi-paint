@@ -3,11 +3,11 @@ import { useEffect, useRef, useState } from 'react'
 import { CANVASES_TRANSITION_MS } from '@/consts'
 import { createIdRecordFrom } from '@/utils/createIdRecordFrom'
 import { getPixelsDataUrl } from '@/utils/getPixelsDataUrl'
+import { useInterval } from './timer-handlers/useInterval'
+import { useTimeout } from './timer-handlers/useTimeout'
 import { useDebounce } from './useDebounce'
 import { useEvent } from './useEvent'
 import { useFreshRefs } from './useFreshRefs'
-import { useInterval } from './useInterval'
-import { useTimeout } from './useTimeout'
 
 interface Params {
   stateCanvases: SavedCanvas[]

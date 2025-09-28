@@ -6,12 +6,11 @@ import { useRemoteStore } from '@/store/useRemoteStore'
 import type { SavedCanvas } from '@/types'
 import { dataFetch } from '@/utils/dataFetch'
 import { DMButton } from '../DMButton'
-import { DMCanvasImage } from '../DMCanvasImage'
 import { DMHeader } from '../DMHeader'
 import { DMParagraph } from '../DMParagraph'
-import { DMParagraphsZone } from '../DMParagraphsZone'
-import { DMZone } from '../DMZone'
+import { DMParagraphsNCanvasImage } from '../DMParagraphsNCanvasImage'
 import { DMZoneButtons } from '../DMZoneButtons'
+import { DefaultErrorMenu } from './DefaultErrorMenu'
 
 interface Props {
   canvasId: string
@@ -71,7 +70,7 @@ export const PublishPaintingMenu = ({ canvasRef, canvasId, dataUrl }: Props) => 
 
         const { header, button, paragraphs } = isConflictError
           ? {
-              header: 'Sorry, but your canvas...',
+              header: 'Sorry, but...',
               paragraphs: [
                 "It's nothing personal, but a very similar painting has already been published.",
                 "Published paintings must be unique, so we can't accept yours right now... unless you tweak it a bit."
@@ -79,7 +78,7 @@ export const PublishPaintingMenu = ({ canvasRef, canvasId, dataUrl }: Props) => 
               button: 'Okay, I guess...'
             }
           : {
-              header: 'Oops! Something went wrong...',
+              header: 'Whoops!',
               paragraphs: [
                 'Something unexpected happened on our side while trying to publish your canvas.',
                 'Please wait a few minutes and try again.'
@@ -88,16 +87,12 @@ export const PublishPaintingMenu = ({ canvasRef, canvasId, dataUrl }: Props) => 
             }
 
         openMenu(
-          <>
-            <DMHeader icon='warning'>{header}</DMHeader>
-            <DMParagraphsZone className='w-xl'>
-              <DMParagraph>{paragraphs[0]}</DMParagraph>
-              <DMParagraph remark>{paragraphs[1]}</DMParagraph>
-            </DMParagraphsZone>
-            <DMZoneButtons>
-              <DMButton>{button}</DMButton>
-            </DMZoneButtons>
-          </>
+          <DefaultErrorMenu
+            header={{ icon: 'warning', label: header }}
+            paragraph1={paragraphs[0]}
+            paragraph2={paragraphs[1]}
+            button={{ label: button }}
+          />
         )
       }
     })
@@ -106,15 +101,13 @@ export const PublishPaintingMenu = ({ canvasRef, canvasId, dataUrl }: Props) => 
   return (
     <>
       <DMHeader icon='publish'>Publish your painting?</DMHeader>
-      <DMZone className='pt-2 pb-0 gap-8'>
-        <DMZone className='w-96 flex-col gap-3'>
-          <DMParagraph className='w-full'>Upload your painting to the gallery for others to see!</DMParagraph>
-          <DMParagraph className='w-full font-semibold italic text-xl'>
-            Be warned: You won't be able to delete the published version ever again.
-          </DMParagraph>
-        </DMZone>
-        <DMCanvasImage dataUrl={dataUrl} />
-      </DMZone>
+      <DMParagraphsNCanvasImage dataUrl={dataUrl}>
+        <DMParagraph className='w-full'>Upload your painting to the gallery for others to see!</DMParagraph>
+        <DMParagraph className='w-full font-semibold italic text-xl'>
+          Be warned: You won't be able to delete the published version ever again.
+        </DMParagraph>
+      </DMParagraphsNCanvasImage>
+
       <DMZoneButtons>
         <DMButton empty icon='heart' isLoading={isLoading} onClick={publishPainting} preventAutoClose>
           Yes, yes!

@@ -42,7 +42,8 @@ export const Content = () => {
   useContextMenu({
     ref: ctxMenuRef,
     options: ctxMenuOptions,
-    allowedClicks: [CLICK_BUTTON.LEFT, CLICK_BUTTON.RIGHT]
+    allowedClicks: [CLICK_BUTTON.LEFT, CLICK_BUTTON.RIGHT],
+    showWhen: !media.lg
   })
 
   if (media.lg) {
