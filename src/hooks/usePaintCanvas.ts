@@ -4,10 +4,10 @@ import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { usePaintStore } from '@/store/usePaintStore'
 import { clickIncludes } from '@/utils/clickIncludes'
 import { colorComparison } from '@/utils/colorComparison'
+import { useTimeout } from './timer-handlers/useTimeout'
 import { useBucketPixels } from './useBucketPixels'
 import { useEvent } from './useEvent'
 import { useFreshRefs } from './useFreshRefs'
-import { useTimeout } from './useTimeout'
 import { useTouchChecking } from './useTouchChecking'
 
 export const usePaintCanvas = () => {

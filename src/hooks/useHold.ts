@@ -1,6 +1,6 @@
 import { useCallback, useRef } from 'react'
+import { useTimeout } from './timer-handlers/useTimeout'
 import { useEvent } from './useEvent'
-import { useTimeout } from './useTimeout'
 
 type UseHoldOptions = {
   ref: React.RefObject<HTMLElement | null>
