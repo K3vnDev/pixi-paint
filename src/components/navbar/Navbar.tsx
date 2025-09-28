@@ -20,7 +20,7 @@ export const Navbar = () => (
       `}
     >
       <div
-        className='size-full opacity-25'
+        className='size-full opacity-25 animate-fade-in-slow'
         style={{
           backgroundImage: 'url(/gifs/squares.gif)',
           backgroundSize: 'calc(var(--navbar-height)*0.9)'

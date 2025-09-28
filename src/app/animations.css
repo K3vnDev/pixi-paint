@@ -118,3 +118,9 @@
     rotate: 360deg;
   }
 }
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}

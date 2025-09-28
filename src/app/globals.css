@@ -88,6 +88,11 @@
   --animate-appear: appear 750ms var(--easing-back-out) backwards;
   --animate-step-spin: step-spin 850ms steps(4) infinite;
 
+  /* Fade in animations */
+  --animate-fade-in-slow: fade-in 1200ms ease;
+  --animate-fade-in: fade-in 500ms ease;
+  --animate-fade-in-quick: fade-in 200ms ease;
+
   /* Slide animations */
   --animate-slide-in-left: slide-in-left var(--slide-anim-timing);
   --animate-slide-in-right: slide-in-right var(--slide-anim-timing);
