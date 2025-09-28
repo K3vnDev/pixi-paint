@@ -112,3 +112,8 @@ export interface Route {
   name: string
   path: string
 }
+
+export interface StoredSelectedColors {
+  primaryColor: string
+  secondaryColor: string
+}

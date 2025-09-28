@@ -1,10 +1,11 @@
 import { BLANK_DRAFT, LS_KEYS } from '@consts'
-import type { SavedCanvas, StorageCanvas } from '@types'
-import { useEffect } from 'react'
+import type { SavedCanvas, StorageCanvas, StoredSelectedColors } from '@types'
+import { useEffect, useMemo } from 'react'
 import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { usePaintStore } from '@/store/usePaintStore'
 import { canvasParser } from '@/utils/canvasParser'
 import { getLocalStorageItem } from '@/utils/getLocalStorageItem'
+import { validateColor } from '@/utils/validateColor'
 import { useFreshRefs } from './useFreshRefs'
 import { useSaveItem } from './useSaveItem'
 
@@ -17,6 +18,13 @@ export const useSaveCanvases = () => {
 
   const draft = useCanvasesStore(s => s.draftCanvas)
   const setDraftPixels = useCanvasesStore(s => s.setDraftCanvasPixels)
+
+  const primaryColor = usePaintStore(s => s.primaryColor)
+  const secondaryColor = usePaintStore(s => s.secondaryColor)
+  const selectedColors = useMemo(() => ({ primaryColor, secondaryColor }), [primaryColor, secondaryColor])
+
+  const setPrimaryColor = usePaintStore(s => s.setPrimaryColor)
+  const setSecondaryColor = usePaintStore(s => s.setSecondaryColor)
 
   const hydrated = useCanvasesStore(s => s.hydrated)
   const setHydrated = useCanvasesStore(s => s.setHydrated)
@@ -45,6 +53,21 @@ export const useSaveCanvases = () => {
     const validatedDraftCanvas = canvasParser.fromStorage(rawStoredDraftCanvas)
     validatedDraftCanvas && setDraftPixels(validatedDraftCanvas.pixels)
 
+    // Load selected colors
+    const storedSelectedColors = getLocalStorageItem<StoredSelectedColors | null>(
+      LS_KEYS.SELECTED_COLORS,
+      null
+    )
+    if (storedSelectedColors) {
+      const validateAndSetColor = (color: string, setter: (c: string) => void) => {
+        const { value, isValid } = validateColor(color)
+        if (isValid && value) setter(value)
+      }
+      const { primaryColor, secondaryColor } = storedSelectedColors
+      validateAndSetColor(primaryColor, setPrimaryColor)
+      validateAndSetColor(secondaryColor, setSecondaryColor)
+    }
+
     setHydrated(true)
   }, [])
 
@@ -71,6 +94,12 @@ export const useSaveCanvases = () => {
     watchItem: savedCanvases,
     key: LS_KEYS.SAVED_CANVASES,
     getter: c => canvasParser.batch.toStorage(c)
+  })
+
+  // Store selected colors
+  useSaveItem({
+    watchItem: selectedColors,
+    key: LS_KEYS.SELECTED_COLORS
   })
 
   // Handle draft or saved canvas update

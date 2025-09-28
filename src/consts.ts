@@ -41,7 +41,8 @@ export const LS_KEYS = {
   DRAFT_CANVAS: 'draft-canvas',
   SAVED_CANVASES: 'saved-canvases',
   EDITING_CANVAS_ID: 'editing-canvas-id',
-  DOWNLOAD_SETTINGS: 'download-settings'
+  DOWNLOAD_SETTINGS: 'download-settings',
+  SELECTED_COLORS: 'selected-colors'
 }
 
 export const CURSORS: Cursor[] = [

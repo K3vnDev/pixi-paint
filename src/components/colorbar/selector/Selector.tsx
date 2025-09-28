@@ -3,6 +3,7 @@ import { useRef, useState } from 'react'
 import { HTML_IDS } from '@/consts'
 import { ColorSelectorContext } from '@/context/ColorSelectorContext'
 import { useActionOnKey } from '@/hooks/useActionOnKey'
+import { useCanvasesStore } from '@/store/useCanvasesStore'
 import { usePaintStore } from '@/store/usePaintStore'
 import { ColorBase } from '../ColorBase'
 import { PickerMenu } from './PickerMenu'
@@ -15,6 +16,7 @@ export const Selector = () => {
   const [pickerColor, setPickerColor] = useState(primaryColor)
   const lastValidColor = useRef(primaryColor)
   const [menuIsOpen, setMenuIsOpen] = useState(false)
+  const hydrated = useCanvasesStore(s => s.hydrated)
 
   const pickerRef = useRef<HTMLElement>(null)
 
@@ -32,12 +34,18 @@ export const Selector = () => {
 
   const arrows = [{ pos: 'top-0 right-0' }, { pos: 'bottom-0 left-0', rot: 'rotate-180' }]
   const pickerButtonStyle = menuIsOpen ? '' : 'button'
+  const visibility = hydrated ? '' : 'opacity-0 blur-xs scale-90'
 
   return (
     <ColorSelectorContext.Provider
       value={{ pickerColor, setPickerColor, lastValidColor, menuIsOpen, setMenuIsOpen }}
     >
-      <section className='lg:size-full md:size-24 size-20 aspect-square relative translate-0 group'>
+      <section
+        className={`
+          lg:size-full md:size-24 size-20 aspect-square relative translate-0 group
+          transition-[opacity,filter,scale] duration-400 ${visibility}
+        `}
+      >
         {/* Colors */}
         <ColorBase
           id={HTML_IDS.PICKER_MENU}
