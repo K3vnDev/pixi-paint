@@ -48,3 +48,5 @@ Paint, share, and even play minigames — all inside this handcrafted web platfo
   - Topic Paint: Paint a given topic and earn points based on your creativity.
 
 - Undo/redo functionality for smoother painting.
+- Spanish language support.  
+- Settings & Personalization: Disable animations, show pixel grid, change web theme, and more.

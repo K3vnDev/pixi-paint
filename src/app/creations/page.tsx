@@ -12,7 +12,7 @@ import { useResetScroll } from '@/hooks/useResetScroll'
 import { useSaveCanvases } from '@/hooks/useSaveCanvases'
 import { useUserPublishedIds } from '@/hooks/useUserPublishedIds'
 
-export default function MyCreationsPage() {
+export default function CreationsPage() {
   const { savedCanvases, draft, hydrated } = useSaveCanvases()
   const stateCanvases = useMemo(() => [draft, ...savedCanvases], [draft, savedCanvases])
   const { canvasesGallery } = useCanvasesGallery({ stateCanvases, loaded: hydrated })

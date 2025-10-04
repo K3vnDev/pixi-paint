@@ -1,9 +1,9 @@
+import { CLICK_BUTTON, ROUTES } from '@consts'
+import type { ContextMenuOption } from '@types'
 import { usePathname, useRouter } from 'next/navigation'
 import { useMemo, useRef } from 'react'
-import { CLICK_BUTTON, ROUTES } from '@/consts'
 import { useContextMenu } from '@/hooks/useContextMenu'
 import { useResponsiveness } from '@/hooks/useResponsiveness'
-import type { ContextMenuOption, Route as RouteType } from '@/types'
 import { Route } from './Route'
 
 export const Routes = () => {
@@ -14,15 +14,15 @@ export const Routes = () => {
 
   const routes = useMemo(
     () =>
-      ROUTES.map(name => {
+      ROUTES.map(({ icon, name }) => {
         const path = `/${name.replace(' ', '').toLowerCase()}`
-        return { path, name }
+        return { path, name, icon }
       }),
     []
   )
 
   const [selectedRoute, ctxMenuOptions] = useMemo(() => {
-    let selectedRoute: RouteType = routes[0]
+    let selectedRoute = routes[0]
     const ctxMenuOptions: ContextMenuOption[] = []
 
     for (const route of routes) {
@@ -32,6 +32,7 @@ export const Routes = () => {
       }
       ctxMenuOptions.push({
         label: route.name,
+        icon: route.icon,
         action: () => router.push(route.path)
       })
     }
@@ -48,7 +49,7 @@ export const Routes = () => {
 
   if (media.lg) {
     return routes.map(route => (
-      <Route key={route.path} {...route} isSelected={selectedRoute?.path === route.path} />
+      <Route key={route.path} {...route} isSelected={selectedRoute.path === route.path} />
     ))
   }
 

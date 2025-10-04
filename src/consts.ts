@@ -1,4 +1,4 @@
-import type { Cursor, SavedCanvas } from '@types'
+import type { Cursor, Route, SavedCanvas } from '@types'
 
 // Colors
 export const COLOR_PALETTE = {
@@ -93,7 +93,9 @@ export const ICON_NAMES = [
   'code',
   'selection-mode',
   'loading',
-  'share'
+  'share',
+  'brush',
+  'grid'
 ] as const
 
 export const EVENTS = {
@@ -141,4 +143,8 @@ export const API_ERRORS = {
   CANVAS_ALREADY_EXISTS: 'canvas-already-exists'
 }
 
-export const ROUTES = ['Paint', 'My Creations', 'Gallery'] as const
+export const ROUTES: Route[] = [
+  { name: 'Paint', icon: 'brush' },
+  { name: 'Creations', icon: 'grid' },
+  { name: 'Community', icon: 'heart' }
+] as const

@@ -110,7 +110,7 @@ export interface DialogMenuDetail {
 
 export interface Route {
   name: string
-  path: string
+  icon: IconName
 }
 
 export interface StoredSelectedColors {

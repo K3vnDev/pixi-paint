@@ -1,4 +1,4 @@
-import type { GalleryCanvas as GalleryCanvasType } from '@types'
+import type { GalleryCanvas as CommunityCanvasType } from '@types'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef } from 'react'
 import { twMerge } from 'tailwind-merge'
@@ -9,16 +9,16 @@ import { useGridCanvasStyles } from '@/hooks/useGridCanvasStyles'
 import { useOverwriteDraft } from '@/hooks/useOverwriteDraft'
 import { usePressed } from '@/hooks/usePressed'
 import { CanvasImage } from '../CanvasImage'
-import { CanvasViewMenu } from './CanvasViewMenu'
+import { CommunityCanvasViewMenu } from './CommunityCanvasViewMenu'
 
-interface Props extends GalleryCanvasType {
+interface Props extends CommunityCanvasType {
   setSearchParamsId: (id: string) => void
   initiallyOpenMenu: boolean
   pixels: string[]
   verticalMode: boolean
 }
 
-export const GalleryCanvas = ({
+export const CommunityCanvas = ({
   id,
   dataUrl,
   initiallyOpenMenu,
@@ -40,7 +40,7 @@ export const GalleryCanvas = ({
 
   const openViewMenu = () => {
     openMenu(
-      <CanvasViewMenu
+      <CommunityCanvasViewMenu
         {...{ id, dataUrl, closeMenu, pixels, openInDraft, verticalMode: verticalModeRef.current }}
       />
     )

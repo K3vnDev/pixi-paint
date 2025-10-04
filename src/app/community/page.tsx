@@ -6,10 +6,10 @@ import { CanvasesGridHeader } from '@@/canvases-grid/CanvasesGridHeader'
 import { DMButton } from '@@/dialog-menu/DMButton'
 import { DMHeader } from '@@/dialog-menu/DMHeader'
 import { DMParagraph } from '@@/dialog-menu/DMParagraph'
-import { GalleryCanvas } from '@@/gallery/GalleryCanvas'
 import type { SavedCanvas, StorageCanvas } from '@types'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { CommunityCanvas } from '@/components/community/CommunityCanvas'
 import { useCanvasesGallery } from '@/hooks/useCanvasesGallery'
 import { useDefaultPrevention } from '@/hooks/useDefaultPrevention'
 import { useDialogMenu } from '@/hooks/useDialogMenu'
@@ -21,7 +21,7 @@ import { canvasParser } from '@/utils/canvasParser'
 import { dataFetch } from '@/utils/dataFetch'
 import { shuffleArray } from '@/utils/shuffleArray'
 
-export default function GalleryPage() {
+export default function CommunityPage() {
   const publisedCanvases = useRemoteStore(s => s.publishedCanvases)
   const setPublishedCanvases = useRemoteStore(s => s.setPublishedCanvases)
   const router = useRouter()
@@ -104,7 +104,7 @@ export default function GalleryPage() {
           <CanvasesGridHeader className='h-16' />
           <CanvasesGrid className='2xl:grid-cols-5'>
             {canvasesGallery.map(c => (
-              <GalleryCanvas
+              <CommunityCanvas
                 {...c}
                 setSearchParamsId={setSearchParamsId}
                 initiallyOpenMenu={initiallyOpenMenuId === c.id}

@@ -24,7 +24,14 @@ interface Props {
   openInDraft: () => void
 }
 
-export const CanvasViewMenu = ({ dataUrl, id, closeMenu, pixels, openInDraft, verticalMode }: Props) => {
+export const CommunityCanvasViewMenu = ({
+  dataUrl,
+  id,
+  closeMenu,
+  pixels,
+  openInDraft,
+  verticalMode
+}: Props) => {
   const [shareLinkCopied, setShareLinkCopied] = useState(false)
   const [saveDisabled, setSaveDisabled] = useState(true)
 
